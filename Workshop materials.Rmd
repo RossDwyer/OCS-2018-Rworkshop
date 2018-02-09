@@ -38,7 +38,7 @@ Ross is a spatial ecologist with a strong interest in understanding the drivers 
 For more information and teaching resources, check out [my website](https://www.uq.edu.au/eco-lab/content/dr-ross-dwyer).
 >>>>>>> origin/master
 
-Vinay is...
+Vinay is an ecologist that uses spatial data to understand animal movements and distributions patterns. He has considerable experience using R to analyse and visualise large and complex spatial datasets. He has developed R code to analyse 2 and 3 dimentional movement patterns of animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's R codes can be found on his [github page](https://github.com/vinayudyawer)
 
 ##Course outline
 
