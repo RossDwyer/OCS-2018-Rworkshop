@@ -1,12 +1,8 @@
 ---
 title: ![alt text](Images/Rlogo.jpeg) 
 subtitle: Animals in Motion 2018 Workshop - Stradbroke Island
-author: Dr Ross Dwyer & Dr Vinay Udyweyer
-<<<<<<< HEAD
-date: Feb 06, 2018
-=======
-date: Feb 05, 2018
->>>>>>> origin/master
+author: Dr Ross Dwyer & Dr Vinay Udyawer
+date: Feb 10, 2018
 output:
   html_document:
     toc: true
@@ -22,7 +18,7 @@ output:
 <br>  
 
 ```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
-knitr::include_graphics("Images/Cassowary track.png")
+knitr::include_graphics("Images/telemetry.png")
 ```
 
 --------------------------------------
@@ -30,13 +26,8 @@ knitr::include_graphics("Images/Cassowary track.png")
 #Introductions
 
 ##Who are we?
-<<<<<<< HEAD
-Ross is a spatial ecologist interested in the drivers of movement, space use and community structure in free-ranging animals. He's used R for over 12 years, has published two R packages on CRAN, was lead R developer on the ZoaTrack.org project and regularly teaches R training courses at The University of Queensland and at other institutes around Australia. For more information and teaching resources, check out [Ross's website](https://www.uq.edu.au/eco-lab/content/dr-ross-dwyer).
-=======
-Ross is a spatial ecologist with a strong interest in understanding the drivers of movement, space use and community structure in free-ranging animals. I've used R for over 12 years, have published two R packages on CRAN and regularly teach R training courses at the University of Queensland and at other institutes around Australia.
 
-For more information and teaching resources, check out [my website](https://www.uq.edu.au/eco-lab/content/dr-ross-dwyer).
->>>>>>> origin/master
+Ross is a spatial ecologist interested in the drivers of movement, space use and community structure in free-ranging animals. He's used R for over 12 years, has published two R packages on CRAN, was lead R developer on the ZoaTrack.org project and regularly teaches R training courses at The University of Queensland and at other institutes around Australia. For more information and teaching resources, check out [Ross's website](https://www.uq.edu.au/eco-lab/content/dr-ross-dwyer).
 
 Vinay is an ecologist that uses spatial data to understand animal movements and distributions patterns. He has considerable experience using R to analyse and visualise large and complex spatial datasets. He has developed R code to analyse 2 and 3 dimentional movement patterns of animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's R codes can be found on his [github page](https://github.com/vinayudyawer)
 
@@ -46,15 +37,30 @@ Vinay is an ecologist that uses spatial data to understand animal movements and 
 
 We designed this course not to comprehensively cover all the tools in **R**, but rather to teach you skills for taking your experience with R to the next level. Every new project comes with its own problems and questions and you will need to be independent, patient and creative to solve these challenges. It makes sense to invest time in becoming familiar with **R**, because today **R** is the leading platform for environmental data analysis and has some other functionalities which may surprise you! 
 
+##Course resources
+
+To access data and scripts we will work through in this course, download the **OCS-2018-Rworkshop** folder from [GitHub](https://github.com/RossDwyer/OCS-2018-Rworkshop). This folder contains the course documents, telemetry data and R scripts we are going to work with. To download the folder click on the green "Clone or download" dropdown menu and select "Download ZIP"
+
+```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
+knitr::include_graphics("Images/Github download.png")
+```
+
+Once downloaded, the workshop folder contains the following sub folders:
+
+1.  Documents
+2.  Data
+3.  R Code
+
+------------------------------------------
+
 This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mins each.
 
 * Session 1: 
 
-<<<<<<< HEAD
-0.  Introduction to **R**
-1.  **import** large data files using **data.table**
-2.  **filter** our data using %pipes% the [tidyverse](http://tidyverse.org/) group of **R** packages
-3.  advanced plotting using [ggplot2](http://ggplot2.org/) and [Rcolorbrewer](http://rcolourbrewer.org/)
+0.  A brief introduction to **R**
+1.  **Import** telemetry datasets into **R**
+2.  **Filter** and **manipulate** our data using %pipes%, %plyr% and the [tidyverse](http://tidyverse.org/) group of **R** packages
+3.  **Plot** summary statistics using [ggplot2](http://ggplot2.org/) and [Rcolorbrewer](http://rcolourbrewer.org/)
 
 * Session 2:
 
@@ -67,79 +73,47 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 
 * Session 3:
 
-=======
-1.  **import** our large data files using data.table
-2.  **filter** our data using %pipes% the [tidyverse](http://tidyverse.org/) group of R packages
-3.  advanced plotting using [ggplot2](http://ggplot2.org/) and Rcolourbrewer
+9. Calculating **distance metrics** (direct, circuitous, least cost)
+10. Plotting distance through time
 
-* Session 2:
+* Session 4:
 
-4.  Working with spatial objects
-5.  Export and Import  of Shapefiles
-6.  Animations 
-7.  Integration with Google Earth
-8.  Generate interactive maps using [leaflet](http://leafletjs.com/) 
-
-
-* Session 3:
->>>>>>> origin/master
-9.  Calculating and plotting **home range** area metrics using
-a)  MCPs (array/matrix)
-b)  Linear home ranges
-c)  Brownian bridges
-10. Calculating distance metrics (direct, circuitous, least cost)
-11. Plotting distance through time
-
+11. Calculating short-term centers of activity (**COA**)
+12. Calculating and plotting **home range** area metrics using
+    a)  MCPs (array/matrix)
+    b)  Linear home ranges
+    c)  Brownian bridges
 
 **The main principles we hope you will learn today are...**
 
 1. Data wrangling in **R** is safe, fast, reliable and repeatable
-<<<<<<< HEAD
 2. **R** can easily handle large datasets
 3. **R** is the ideal suite for performing your GIS operations
 4. that in **R**, it is easy to produce amazing publication-ready images 
 
 ---------------------------------------
+<br>  
+<br>  
 
-# Session 1: Working with large tracking datasets
+```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
+knitr::include_graphics("Images/banner1.png")
+```
 
+--------------------------------------
 
-##The Challenge
+# Session 1:
 
-The process of turning raw telemetry data into publishable results is a highly involved process. Ecological data sets are becoming larger and larger as they are  gathered over longer time periods, over larger spatial extents and at increasing temporal resolutions. While this is increasing our ability to detect subtle patterns, these data sets are becoming so vast that they come with additional challenges.
+##A brief introduction to **R**
 
-For example, our analysis may require us to filter these large data sets and integrate with other data types that we have gathered ourselves, acquired from our collaborators or downloaded from online repositories. These data may have different header rows, the values may be in the wrong format/structure or likely cover different spatial or temporal scales. The spatial and temporal component of the data may also be important, requiring us to apply specialised analytical techniques and GIS operations. Finally, multiple software platforms may be needed to process the data, run the analyses and generate results. 
+The process of turning raw telemetry data into publishable results is a highly involved process. Tracking data sets are becoming larger, and larger as they are being gathered over longer time periods, over larger spatial extents and at increasing temporal resolutions. While this is increasing our ability to detect subtle patterns, these data sets are becoming vast and require analytical tools that easily handle, manipulate and visualise these complex datasets.
 
-This process can require a huge personal investment in time: rearranging data, removing erroneous values, purchasing, downloading and learning the new software, and running analyses. Furthermore merging together excel spreadsheets, filtering data and preparing data for statistical analyses and plotting in different software packages can introduce all sorts of errors. 
-=======
-2. R is the ideal suite for performing your GIS operations
-3. R can easily handle large datasets
-4. that in R, it is relativelty easy to produce amazing images and to share these with collaborators
-
----------------------------------------
-
-##The Challenge
-
-The process of turning raw telemetry data into publishable results is a highly involved process. Ecological data sets are becoming larger, and larger as they are being gathered over longer time periods, over larger spatial extents and at increasing temporal resolutions. While this is increasing our ability to detect subtle patterns, these data sets are becoming so vast that they come with additional challenges.
-
-Our analysis may require us to filter these large data sets and integrate components with other data sets that we have gathered ourselves, acquired from our collaborators or downloaded from online repositories. These data may have different header rows, the values may be in the wrong format or likely cover different spatial or temporal scales. This spatial and temporal component may also be important - for integrating with other data sets or requiring us to apply specialised analytical techniques. Finally, multiple software platforms may be needed to process the data, run the analyses and generate results. 
-
-This process can require a huge investment in time: rearranging data, removing erroneous values, purchasing, downloading and learning the new software, and running analyses. Furthermore merging together excel spreadsheets, filtering data and preparing data for statistical analyses and plotting in different software packages can introduce all sorts of errors. 
->>>>>>> origin/master
+Processing and analysing telemetry datasets can require a huge investment in time: rearranging data, removing erroneous values, purchasing, downloading and learning the new software, and running analyses. Furthermore merging together excel spreadsheets, filtering data and preparing data for statistical analyses and plotting in different software packages can introduce all sorts of errors. 
 
 *There is a better way...*
 
----------------------------------------
-
-##Why use **R**
-
 **R** is a powerful language for data wrangling and analysis because...
 
-<<<<<<< HEAD
-1. It is relatively **fast** to run commands
-=======
-1. It is relatively **fast** to process commands
->>>>>>> origin/master
+1. It is relatively **fast** to run and process commands
 2. You can create **repeatable** scripts
 3. You can **trace errors** back to their source
 4. You can **share your scripts** with other people
@@ -149,234 +123,139 @@ This process can require a huge investment in time: rearranging data, removing e
 
 As **R** is open source, the more people we can get helping out on the **R** spatial mailing lists (e.g. **R-sig-geo**) and contributing their own spatial packages to the wider community, the more powerful **R** becomes!
 
----------------------------------------
-
-##Obtaining **R**
-
-If you do not currently have **R** installed on your machine, **R** can be downloaded from <http://cran.r-project.org/>
-Using a script editor, such as **R Studio**, can make the writing and editing of code much more enjoyable and far less of a head-ache. 
-If you do not currently have **R Studio** installed on your machine, it can be downloaded from <http://www.rstudio.com/>. 
-
-It is worth updating these software on a regular basis as some of the most powerful new tools are only available on the latest release.
-
----------------------------------------
+**For this course, we assume you have a basic understanding of the *R* environment, and working with *RStudio*. If you do not have experience working in *R* we encourage you to go through [this online course](https://www.uq.edu.au/eco-lab/gpem-r-course) that will bring you up to speed!**
 
 
-##Working with projects
-
-THere are a number of good reasons why you should work with projects in RStudio.
-1.  We may want our R scripts to be saved into a place where they link seamlessly to other documents and data files for our research project.
-2.  We may also want our tables, figures and statistical results to be written to locations on our computer where they are easy to locate.
-<<<<<<< HEAD
-3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. [Dropbox]<http://www.dropbox.com/>, [OneDrive]<http://www.onedrive.com/>)
-3.  It allows it to shark work folders, data and R code with collaborators who are working on the same projects
-
-![alt text](Images/Github download.png)"
-
-The folder **OCS-2018-Rworkshop** downloaded from [GitHub]<https://github.com/RossDwyer/OCS-2018-Rworkshop>  contains the course documents, telemetry data and GIS files we are going to be working with. This is organised in the same format that we organise all our project files, and we have found it completely transferable across all the projects  we are involved with. The main project folder contains the following sub folders:
-=======
-3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. Dropbox, OneDrive)
-3.  It allows it to shark work folders, data and R code with collaborators who are working on the same projects
-
-The folder **OCS-2018-Rworkshop** downloaded from GitHub<https://github.com/RossDwyer/OCS-2018-Rworkshop>  contains the course documents, telemetry data and GIS files we are going to be working with. This is organised in the same format that we organise all our project files, and we have found it completely transferable across all the projects  we are involved with. The main project folder contains the following sub folders:
->>>>>>> origin/master
-
-1.  Documents
-2.  Data
-3.  R Code
-4.  GIS
-
-First unzip this folder and extract the folder to a location on your computer that you typically store your research files. 
-
-To link with these folders, we are going to use the `Project` functionality of R Studio.
-
-In R Studio, click *File > New Project*.
-
-To create a new project use the *Create Project* command (available on the Projects menu and on the global toolbar):
-
-![alt text](Images/RStudio_newproj.png)"
-
-Select *Existing Directory* then save the project within the "JCU telemetry workshop" folder. 
-
-When a *New Project* is created, R Studio:
-
-1.  Creates a project file (with an **.Rproj** extension) within the project directory. This file contains various project options (discussed below) and can also be used as a shortcut for opening the project directly from the file system.
-2.  Creates a hidden directory (named **.Rproj.user**) where project-specific temporary files (e.g. auto-saved source documents, window-state, etc.) are stored. 
-3.  Loads the project into R Studio and display its name in the Projects toolbar (which is located on the far right side of the main toolbar (very TOP RIGHT of the R Studio window).
-
-Working with Projects is a good idea because it saves the address that files are located and makes you coding much more elegant. It also allows you to share your script easily and seamlessly with collaborators.
-
-<<<<<<< HEAD
----------------------------------------
-
-
-##Installing packages
-
-Part of the reason R has become so popular is the vast array of packages that are freely available and highly accessible. In the last few years, the number of packages has grown exponentially - 8000 at my last check on CRAN! These can help you to do a galaxy of different things in R, including running complex analyses, drawing beautiful figures, running R as a GIS, constructing your own R packages, building web pages and even writing introductory R course handbooks!
-
-Let’s suppose you want to load the *sp* package to access this package's incredible spatial functionality.
-
-If this package is not already installed on your machine, you can download it from the web by using the following command in R.
-
-```
-install.packages("sp", repos='http://cran.us.r-project.org')
+```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
+knitr::include_graphics("Images/blacktip.png")
 ```
 
-In this example, `sp` is the package to be downloaded and 'http://cran.us.r-project.org' is the repository where the package will be accessed from
+##  Importing telemetry data
 
-Multiple packages can be loaded at the same time by listing the required packages in a vector 
-
-```
-install.packages(c("sp","rgdal","rgeos","adehabitatLT","adehabitatHR"), repos='http://cran.us.r-project.org')
-```
-
-We then load the required packages from our computer's R package library using the `library()` function.
-
-```{r, echo=FALSE}
-library(sp)
-library(rgdal)
-library(rgeos)
-library(adehabitatLT)
-library(adehabitatHR)
-library(VTrack)
-```
-
-
-------------------------------------------
-
-![Our animal tracking datasets](Images/croc_tiger_blacktip.jpg)
-
-##  Importing large data files using **data.table**
-
-In the first session we are going to work with a data set containing locations from X estuarine crocodiles (*Crocodylus porosus*). These were all large animals (X m Total length) captured and tagged with assistance of Australia Zoo and funding from the Australian Research Council Linkage scheme. Crocodiles were tracked for between X and X months usong a network of acoustic hydrophones deployed along a river system.
-=======
-------------------------------------------
-
-![Southern cassowary with leg-mounted GPS tag](Images/caro_cass_tag.jpg)
-
-# Session 1: Introduction to spatial data 
-
-In this Session we are going to work with a data set containing locations from 3 GPS-tagged southern cassowaries (*Casuarius johnsonii*). These orphaned birds were tagged and released following up to 12 months rehabilitation at the [DERM facility at Garners Beach, N. QLD](http://savethecassowary.org.au/our-projects/cassowary-rehabilitation/). Their movements were tracked for between 6 and 20 weeks following the bird's release.
-
-These data were obtained from the [ZoaTrack.org online telemetry database](https://zoatrack.org/projects/2), where they were publicly available under a Creative Commons Attribution License.  Terms of use require the following citations for both the data and the scientific manuscript.
-
-1.  Dwyer, R, Campbell, H (2016) Data from: 'Tracking juvenile cassowaries on Cape Tribulation using GPS-based telemetry'. ZoaTrack.org. doi: http://dx.doi.org/10.4226/68/5701F934048EE
-2.  Campbell, H.A., Dwyer, R.G., Sullivan, S., Mead, D., Lauridsen, G. (2014). Chemical immobilisation and satellite tagging of free-living southern cassowaries. Australian Veterinary Journal 92(7): 240-245. 
->>>>>>> origin/master
+In the first session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*). These animals were captured and tagged within Cleveland Bay, Townsville roughly two months prior to the landfall of Cyclone Yasi in 2011. Blacktip sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay.
 
 
 ```{r, echo=FALSE,message=FALSE,include=TRUE}
 
 library(leaflet)
-library(htmlwidgets)
-library(rgdal)
 library(sp) 
-library(rgeos)
-library(RColorBrewer)
 library(knitr)
 
-## Import cleansed 2014 tagged animal file from ZoaTrack
-cassdat <- read.csv('Data/zoatrack-data.csv', header = TRUE)
-cassdat$DATE <- as.character(as.POSIXct(cassdat$DATE,format="%Y-%m-%d %H:%M:%S"))
-sANIMALID <- levels(cassdat$ANIMALID)
+## Import datasets
+blacktip <- read.csv('Data/Blacktip_ClevelandBay.csv')
+statinfo<- read.csv('Data/Station_information.csv')
+cb<-statinfo[statinfo$Installation%in%"Cleveland Bay",]
 
-pal <- colorFactor(c("red","blue","green"), 
-                   domain = as.character(sANIMALID))
-cassdat$ANIMALCOL <- ifelse(cassdat$ANIMALID==sANIMALID[1],"red",
-                            ifelse(cassdat$ANIMALID==sANIMALID[2],"green","blue"))
+coordinates(blacktip) <- ~Longitude+Latitude
+b1<-blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[1],]
+b2<-blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[2],]
+b3<-blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[3],]
 
-cassdat.sp <- cassdat
-coordinates(cassdat.sp) <- ~LONGITUDE+LATITUDE
-
-leaflet(cassdat.sp) %>%
+leaflet() %>%
   
   #Base groups
-  addTiles(group = "OSM (default)") %>%  # Add default OpenStreetMap map tiles
-  addProviderTiles("Esri.WorldImagery") %>%
+  #addProviderTiles(providers$OpenStreetMap,group = "Map") %>%  # Add default OpenStreetMap map tiles
+  addProviderTiles(providers$Esri.WorldImagery, group="Satellite") %>%
   
-  #Overlay groups
-  # All Data
-  addCircleMarkers(popup=paste("DATE=",cassdat.sp$DATE,"DELETED=",cassdat.sp$DELETED,sep=(" ")),
-                   weight=2,
-                   radius=5,
-                   color = cassdat.sp$ANIMALCOL,
-                   stroke = FALSE, fillOpacity = 0.4, group = "Points") %>%
+  #Add recievers and detection data
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = "A69-1303-63639") %>%
+  addCircleMarkers(lng=b1$Longitude, lat= b1$Latitude, popup=paste("ID = ",blacktip$Transmitter),
+                   weight=2,radius=4,color = "red",
+                   stroke = FALSE, fillOpacity = 0.4, group = "A69-1303-63639") %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = "A69-1303-63640") %>%
+  addCircleMarkers(lng=b2$Longitude, lat= b2$Latitude, popup=paste("ID = ",blacktip$Transmitter),
+                   weight=2,radius=4,color = "green",
+                   stroke = FALSE, fillOpacity = 0.4, group = "A69-1303-63640") %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = "A69-1303-63643") %>%
+  addCircleMarkers(lng=b3$Longitude, lat= b3$Latitude, popup=paste("ID = ",blacktip$Transmitter),
+                   weight=2,radius=4,color = "blue",
+                   stroke = FALSE, fillOpacity = 0.4, group = "A69-1303-63643") %>%
 
-  # Layers control
+  #Layers control
   addLayersControl(
-    baseGroups = c("OSM (default)","Esri.WorldImagery"),
-    overlayGroups = c("Points"),
-    options = layersControlOptions(collapsed = FALSE)) %>% 
+    #baseGroups = c("Map","Satellite"),
+    baseGroups = c("A69-1303-63639","A69-1303-63640","A69-1303-63643"),
+    options = layersControlOptions(collapsed = FALSE)) %>%
+
   
-  #Legend
-  addLegend("topright",
-            colors=c("red","green","blue"), 
-            labels=as.character(sANIMALID),
-            labFormat = labelFormat(prefix = "$"),
-            opacity = 1)
+  hideGroup(c("A69-1303-63640","A69-1303-63643"))
 
 ```
-<<<<<<< HEAD
-The web map of hydrophone locations that we will make at the end of **Session 1**
-=======
-The web map of cassowary GPS locations that we will make at the end of **Session 1**
->>>>>>> origin/master
 
+Detection data exported from VUE and other acoustic telemetry data management software is often exported and saved in the 'comma sperated value' (.csv) format. 
 
-------------------------------------------
-
-<<<<<<< HEAD
-##Reading large telemetry data sets into **R**
-
-We load a file into **R**, by telling it which file to load (`croc-data.csv`) and where to find it (i.e. in the `Data` folder).
+Importing a .csv file into **R** is simply done using the %read.csv% base function and by telling it which file to load (`Blacktip_ClevelandBay.csv`) and where to find it (i.e. in the `Data` folder).
 
 ```{r}
-# Load the crocodile data
-crocdat <- read.data('Data/croc-data.csv', header = TRUE) ## Vinay to add data.table functionality
+# Load the blacktip shark data using base read.csv function
+blacktip <- read.csv('Data/Blacktip_ClevelandBay.csv', header = TRUE)
 ```
 
-The data.table package is new functionality within **R** and is very effective at loading in very large files, such as those exported from the [Vemco VUE database]
-=======
-## Reading telemetry data into **R**
-
-We load a file into **R**, by telling it which file to load (`zoatrack_data.csv`) and where to find it (i.e. in the `Data` folder).
+However, loading very large datafiles can take a long time when using the %read.csv% function. The data.table package is new functionality within **R** and is very effective at loading in very large files, such as those exported from the [Vemco VUE database]. The %fread% function within the data.table package can be used to quickly input large files.
 
 ```{r}
-# Load the cassowary data
-cassdat <- read.csv('Data/zoatrack-data.csv', header = TRUE)
+library(data.table)
+# Load the blacktip shark data using data.table
+blacktip <- fread('Data/Blacktip_ClevelandBay.csv', header = TRUE)
+
+## You can also use fread to input data directly from a website URL
+blacktip <- fread('https://raw.githubusercontent.com/RossDwyer/OCS-2018-Rworkshop/master/Data/Blacktip_ClevelandBay.csv')
 ```
 
->>>>>>> origin/master
+Explore other features of the %fread% function and its use with other data.table functionality 
+
+```{r, eval=FALSE}
+browseVignettes("data.table")
+```
 
 **A note about Excel files**  
 
-Don’t use '.xlsx' or '.xls' files for saving data. The problem with '.xls' and '.xlsx' files are that they store extra info with the data that makes files larger than necessary and Excel formats can also unwittingly alter your data! 
+Don’t use '.xlsx' or '.xls' files for saving data. The problem with '.xls' and '.xlsx' files are that they store extra info with the data that makes files larger than necessary and Excel formats can also unwittingly reformat or alter your data! 
 
 A stable way to save your data is as a '.csv' file, which stands for 'comma separated values'. These are simply values separated by 'commas' and rows defined by 'returns'. If you select 'Save as’ in excel, you can choose '.csv' as one of the options. If you open the .csv file I have given you using a text editor, you will see it is just words, numbers and commas.
 
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
-##Accessing variables in the data frame
-The rules we learned above for accessing values of an object also apply to data frames. A data frame is a special ‘class’ of an object, where there are multiple variables, stored in names columns and multiple rows for our samples. Every variable has the same number of samples. A key difference from the objects we created earlier is that now we have both rows and columns. Rows and columns are indexed by using a comma as a separator. Try the following code:
+##**Filtering** and **manipulating** datasets
+
+The ability to quickly filter and manipulate datasets datasets is important when working with large telemetry datasets. The standard input format of tabulated data in R is a %data.frame%. A %data.frame% is a special ‘class’ of an object, where there are multiple variables, stored in named columns and multiple rows for our detections. Every variable has the same number of columns. There are simple rules to filter and select data from a %data.frame%. Rows and columns are indexed by using a comma as a separator %df[row,column]%. Try the following code:
 
 ```{r,eval=FALSE}
-cassdat[1,] # Provides the first row of data
-cassdat[1,3] # Provides the cell value from the 1st row and 3rd column
-cassdat[,3]  # Provides the first column of data
-cassdat[c(1,3),] # Provides the first and third date in the data frame
+blacktip[1,] # Provides the first row of data
+blacktip[1,3] # Provides the cell value from the 1st row and 3rd column
+blacktip[,3]  # Provides the first column of data
+blacktip[c(1,3),] # Provides the first and third date in the data frame
 ```
 
-We can also access objects in a data frame by their names:
+We can also access objects in a %data.frame% by their names:
 
 ```{r,eval=FALSE}
-cassdat$DATE #provides all the data for that object
-cassdat$DATE[1:5] #provides athe first five values for that object
-cassdat[,'DELETED'] #provides all the data for that object
+blacktip$Transmitter #provides all the data for that object
+blacktip$Transmitter[1:5] #provides athe first five values for that object
+blacktip[,'Transmitter'] #provides all the data for that object
+
+## Use the lubridate package to formate date.time field
+library(lubridate)
+blacktip$date.time <- ymd_hms(blacktip$`Date and Time (UTC)`) ## formats date.time column to 'yyyy-mm-dd hh:mm:ss'
 ```
 
-<<<<<<< HEAD
+The data.table package enhances the functionality of the traditional %data.frame% format and allows you do more than just select data based on row and column names.
+
+Firstly, data loaded using the %fread% function inputs detection data as a %data.table% format. This format is slightly different to the %data.frame% format but can still be maniuplated using the same rules as above. 
+
+To understand the enhancements of the %data.table% format we must first understand the general form of the %data.table% syntax. %data.table%s take the form of %DT[row, column, by]%. The additional %by% variable allows for quick and easy subsetting and aggregating. Try the following code:
+
+```{r,eval=FALSE}
+## Subset rows within a data.table
+blacktip[Transmitter == "A69-1303-63639" & Receiver == "VR2W-104912",] # Select detections from "A69-1303-63639" detected on "VR2W-104912" receiver.
+
+## Subset rows and columns within a data.table
+blacktip[Transmitter == "A69-1303-63639", .(date.time, Receiver, Latitude, Longitude),] # Subsets date.time, Receiver, Latitude and Longitude data from Transmitter "A69-1303-63639"
+
+## 
+
+```
+
+
 ![pipes are awesome!](Images/mario.png)
 
 Now that we've successfully loaded in our tracking dataset, lets start having a closer look at the data using pipes `%>%`
@@ -577,7 +456,7 @@ However, this plot is  a little misleading - the longitude and latitude fields h
 
 ------------------------------------------
 
-=======
+```{r}
 str(cassdat) # provides internal structure of an R object
 summary(cassdat) # Provides result summary of the data frame
 ```
