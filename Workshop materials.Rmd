@@ -1,7 +1,7 @@
 ---
 title: ![alt text](Images/OCS.jpeg) 
 subtitle: Animals in Motion 2018 Workshop - Stradbroke Island
-author: Dr Ross Dwyer & Dr Vinay Udyweyer
+author: Dr Ross Dwyer & Dr Vinay Udyawer
 date: Feb 12, 2018
 
 output:
