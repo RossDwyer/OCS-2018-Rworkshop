@@ -1,8 +1,9 @@
 ---
-title: ![alt text](Images/Rlogo.jpeg) 
+title: ![alt text](Images/OCS.jpeg) 
 subtitle: Animals in Motion 2018 Workshop - Stradbroke Island
-author: Dr Ross Dwyer & Dr Vinay Udyawer
-date: Feb 10, 2018
+author: Dr Ross Dwyer & Dr Vinay Udyweyer
+date: Feb 12, 2018
+
 output:
   html_document:
     toc: true
@@ -18,7 +19,7 @@ output:
 <br>  
 
 ```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
-knitr::include_graphics("Images/telemetry.png")
+knitr::include_graphics("Images/img-featured-ntStradbrokeIsland.jpg")
 ```
 
 --------------------------------------
@@ -27,9 +28,10 @@ knitr::include_graphics("Images/telemetry.png")
 
 ##Who are we?
 
-Ross is a spatial ecologist interested in the drivers of movement, space use and community structure in free-ranging animals. He's used R for over 12 years, has published two R packages on CRAN, was lead R developer on the ZoaTrack.org project and regularly teaches R training courses at The University of Queensland and at other institutes around Australia. For more information and teaching resources, check out [Ross's website](https://www.uq.edu.au/eco-lab/content/dr-ross-dwyer).
+Ross is a Postdoctoral Research Fellow in the [School of Biological Sciences](https://www.biology.uq.edu.au/) at the University of Queensland. His research falls within the field of animal ecology, where he uses animal occurrence, abundance and movement information to test hypotheses and make predictions regarding individual- and population-level responses to environmental change. He's used R for over 12 years, has published two R packages on CRAN, was lead R developer on the ZoaTrack.org project and regularly teaches R training courses at The University of Queensland and at other institutes around Australia. For more information and teaching resources, check out [Ross's website](https://www.uq.edu.au/eco-lab/content/dr-ross-dwyer).
 
 Vinay is an ecologist that uses spatial data to understand animal movements and distributions patterns. He has considerable experience using R to analyse and visualise large and complex spatial datasets. He has developed R code to analyse 2 and 3 dimentional movement patterns of animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's R codes can be found on his [github page](https://github.com/vinayudyawer)
+
 
 ##Course outline
 
@@ -50,6 +52,7 @@ Once downloaded, the workshop folder contains the following sub folders:
 1.  Documents
 2.  Data
 3.  R Code
+4.  GIS
 
 ------------------------------------------
 
@@ -58,15 +61,16 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 * Session 1: 
 
 0.  A brief introduction to **R**
-1.  **Import** telemetry datasets into **R**
+1.  **Import** large telemetry datasets into **R** using [data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html)
 2.  **Filter** and **manipulate** our data using %pipes%, %plyr% and the [tidyverse](http://tidyverse.org/) group of **R** packages
 3.  **Plot** summary statistics using [ggplot2](http://ggplot2.org/) and [Rcolorbrewer](http://rcolourbrewer.org/)
 
+
 * Session 2:
 
-4.  Working with **spatial objects**
-5.  Shapefile export and import 
-6.  Producing track animations 
+4.  Working with **Spatial* objects**
+5.  **ESRI Shapefile** export and import 
+6.  Producing track **animations** 
 7.  Integration with [Google Earth](http://googleearth.com/) 
 8.  Generating interactive maps using [leaflet](http://leafletjs.com/) 
 
@@ -74,7 +78,7 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 * Session 3:
 
 9. Calculating **distance metrics** (direct, circuitous, least cost)
-10. Plotting distance through time
+10. Plotting distance travelled through time
 
 * Session 4:
 
@@ -125,9 +129,94 @@ As **R** is open source, the more people we can get helping out on the **R** spa
 
 **For this course, we assume you have a basic understanding of the *R* environment, and working with *RStudio*. If you do not have experience working in *R* we encourage you to go through [this online course](https://www.uq.edu.au/eco-lab/gpem-r-course) that will bring you up to speed!**
 
-
 ```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
 knitr::include_graphics("Images/blacktip.png")
+```
+
+---------------------------------------
+
+##Obtaining **R**
+
+If you do not currently have **R** installed on your machine, **R** can be downloaded from <http://cran.r-project.org/>
+Using a script editor, such as **R Studio**, can make the writing and editing of code much more enjoyable and far less of a head-ache. 
+If you do not currently have **R Studio** installed on your machine, it can be downloaded from <http://www.rstudio.com/>. 
+
+It is worth updating these software on a regular basis as some of the most powerful new tools are only available on the latest release.
+
+---------------------------------------
+
+
+##Working with projects
+
+There are a number of good reasons why you should work with projects in RStudio.
+1.  We may want our R scripts to be saved into a place where they link seamlessly to other documents and data files for our research project.
+2.  We may also want our tables, figures and statistical results to be written to locations on our computer where they are easy to locate.
+3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. [Dropbox]<http://www.dropbox.com/>, [OneDrive]<http://www.onedrive.com/>)
+4.  It allows it to share work folders, data and R code with collaborators who are working on the same projects
+
+![alt text](Images/Github download.png)"
+
+The folder **OCS-2018-Rworkshop** downloaded from [GitHub]<https://github.com/RossDwyer/OCS-2018-Rworkshop>  contains the course documents, telemetry data and GIS files we are going to be working with. This is organised in the same format that we organise all our project files, and we have found it completely transferable across all the projects  we are involved with. The main project folder contains the following sub folders:
+
+1.  Documents
+2.  Data
+3.  R Code
+4.  GIS
+
+First unzip this folder and extract the folder to a location on your computer that you typically store your research files. 
+
+To link with these folders, we are going to use the `Project` functionality of R Studio.
+
+In R Studio, click *File > New Project*.
+
+To create a new project use the *Create Project* command (available on the Projects menu and on the global toolbar):
+
+![alt text](Images/RStudio_newproj.png)"
+
+Select *Existing Directory* then save the project within the "JCU telemetry workshop" folder. 
+
+When a *New Project* is created, R Studio:
+
+1.  Creates a project file (with an **.Rproj** extension) within the project directory. This file contains various project options (discussed below) and can also be used as a shortcut for opening the project directly from the file system.
+2.  Creates a hidden directory (named **.Rproj.user**) where project-specific temporary files (e.g. auto-saved source documents, window-state, etc.) are stored. 
+3.  Loads the project into R Studio and display its name in the Projects toolbar (which is located on the far right side of the main toolbar (very TOP RIGHT of the R Studio window).
+
+Working with Projects is a good idea because it saves the address that files are located and makes you coding much more elegant. It also allows you to share your script easily and seamlessly with collaborators.
+
+---------------------------------------
+
+
+##Installing packages
+
+Part of the reason R has become so popular is the vast array of packages that are freely available and highly accessible. In the last few years, the number of packages has grown exponentially - 8000 at my last check on CRAN! These can help you to do a galaxy of different things in R, including running complex analyses, drawing beautiful figures, running R as a GIS, constructing your own R packages, building web pages and even writing introductory R course handbooks!
+
+Let’s suppose you want to load the *sp* package to access this package's incredible spatial functionality.
+
+If this package is not already installed on your machine, you can download it from the web by using the following command in R.
+
+```
+install.packages("sp", repos='http://cran.us.r-project.org')
+```
+
+In this example, `sp` is the package to be downloaded and 'http://cran.us.r-project.org' is the repository where the package will be accessed from
+
+Multiple packages can be loaded at the same time by listing the required packages in a vector 
+
+```
+install.packages(c("sp","rgdal","rgeos","adehabitatLT","adehabitatHR","VTrack","leaflet',"tidyverse"), repos='http://cran.us.r-project.org')
+```
+
+We then load the required packages from our computer's R package library using the `library()` function.
+
+```{r, echo=FALSE}
+library(sp)
+library(rgdal)
+library(rgeos)
+library(adehabitatLT)
+library(adehabitatHR)
+library(VTrack)
+library(leaflet)
+library(tidyverse)
 ```
 
 ##  Importing telemetry data
@@ -143,13 +232,13 @@ library(knitr)
 
 ## Import datasets
 blacktip <- read.csv('Data/Blacktip_ClevelandBay.csv')
-statinfo<- read.csv('Data/Station_information.csv')
+statinfo <- read.csv('Data/Station_information.csv')
 cb<-statinfo[statinfo$Installation%in%"Cleveland Bay",]
 
 coordinates(blacktip) <- ~Longitude+Latitude
-b1<-blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[1],]
-b2<-blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[2],]
-b3<-blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[3],]
+b1 <- blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[1],]
+b2 <- blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[2],]
+b3 <- blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[3],]
 
 leaflet() %>%
   
@@ -182,6 +271,8 @@ leaflet() %>%
 
 ```
 
+The web map of hydrophone locations that we will make at the end of **Session 1**
+
 Detection data exported from VUE and other acoustic telemetry data management software is often exported and saved in the 'comma sperated value' (.csv) format. 
 
 Importing a .csv file into **R** is simply done using the %read.csv% base function and by telling it which file to load (`Blacktip_ClevelandBay.csv`) and where to find it (i.e. in the `Data` folder).
@@ -213,7 +304,6 @@ browseVignettes("data.table")
 Don’t use '.xlsx' or '.xls' files for saving data. The problem with '.xls' and '.xlsx' files are that they store extra info with the data that makes files larger than necessary and Excel formats can also unwittingly reformat or alter your data! 
 
 A stable way to save your data is as a '.csv' file, which stands for 'comma separated values'. These are simply values separated by 'commas' and rows defined by 'returns'. If you select 'Save as’ in excel, you can choose '.csv' as one of the options. If you open the .csv file I have given you using a text editor, you will see it is just words, numbers and commas.
-
 
 ##**Filtering** and **manipulating** datasets
 
@@ -251,8 +341,6 @@ blacktip[Transmitter == "A69-1303-63639" & Receiver == "VR2W-104912",] # Select 
 ## Subset rows and columns within a data.table
 blacktip[Transmitter == "A69-1303-63639", .(date.time, Receiver, Latitude, Longitude),] # Subsets date.time, Receiver, Latitude and Longitude data from Transmitter "A69-1303-63639"
 
-## 
-
 ```
 
 
@@ -284,13 +372,6 @@ We can get have a quick look at the data frame by typing:
 cassdat.df %>% View()
 cassdat.df %>% head() #first 6 rows by default
 cassdat.df %>% tail(10) #specify we want to look at the last 10 rows
-=======
-#We can get have a quick look at the data frame by typing:
-
-```{r,eval=FALSE}
-head(cassdat) #first 6 rows by default
-tail(cassdat, 10) #last ten rows
->>>>>>> origin/master
 ```
 
 This functionality is particularly useful if the data frame is very large!
@@ -300,25 +381,11 @@ Note the `()` around the data frame, as opposed to the `[]` we used for indexing
 We can look at the data more closely using the `nrow`, `ncol`, `length`, `unique`, `str()` and `summary()` functions.
 
 ```{r,eval=FALSE}
-<<<<<<< HEAD
 cassdat.df %>% nrow() # number of rows in the data frame
 cassdat.df %>% ncol() # number of columns in the data frame
 
 cassdat.df %>% str() # provides internal structure of an R object
 cassdat.df %>% summary() # Provides result summary of the data frame
-=======
-nrow(cassdat) # number of rows in the data frame
-ncol(cassdat) # number of columns in the data frame
->>>>>>> origin/master
-
-length(cassdat$ANIMALID) # the number of values within a vector (same as the number of rows in the dataset)
-
-unique(cassdat$ANIMALID) # We use the unique function to extract the unique values for the tags deployed
-
-<<<<<<< HEAD
-
-min(cassdat$DATE) # provide the date of the first detection in our database
-max(cassdat$DATE) # provide the date of the last detection in our database
 ```
 
 ![Welcome to the tidyverse](Images/TIDYVERSE.jpg)
@@ -374,6 +441,7 @@ cassdat.df2 <-
 head(cassdat.df2)
 ```
 
+
 ###`filter` and `arrange`
 Subset the data to rows matching logical conditions and then arrange according to particular attributes
 ```{r, eval=FALSE}
@@ -384,30 +452,6 @@ filter(cassdat.df2, id == "M2") %>%
   arrange(desc(dist)) 
 ```
 
-##Working with dates and times in **R**
-
-In the following example, we subset our data for only those locations that occurred before a particular date. To do this we will use the `enter here` function in the lubridate package to confirm the string type, and the `mutate` funtion to add this column to our existing data frame
-
-```{r}
-# Here we use functions contained inthe lubridate package to add date columns to our dataset
-library(lubridate)
-
-# Add an hour onto the time fields
-cassdat.df3 <- 
-  cassdat.df2 %>%
-  mutate(date2 = date + (60*60*10)) # Adds a date field and then changes the data from UTM to AEST)(i.e. adds 10 hrs)
-
-# extract hour and month using lubridate function
-# attach the column using the mutate function
-cassdat.df4 <- 
-  cassdat.df3 %>%
-  mutate(hourofday = hour(date2)) %>%
-  mutate(month = month(date2))
-
-## Now convert the duration between locations from seconds to minutes
-cassdat.df5 <-  cassdat.df4 %>%
-  mutate(dt_hr= (dt)/(60*60))
-```
 
 ###`summarise`
 Determine the total distances travelled for the total duration plus in a given month
@@ -421,121 +465,95 @@ cassdat.df5 %>%
   summarise(monthlydist = sum(dist, na.rm=T))
 ```
 
+## Data visualisation using `ggplot`
 
-By plotting these data, we can see which data points hace been removed
 
-ggplot, one of the packages in the tidyverse, has a similar look...
+ggplot2 is a powerful data visualization package for the R programming language. The package makes it very easy to generate some very impressive figures and utilise a range of colour palettes, taking care of many of the fiddly details that can make plotting graphs in R a hassle
+
+The system provides **mappings** from your data to **aesthetics** which are used to construct beautiful plots.
+
+Documentation for ggplot can be found [here](http://ggplot2.org/) and [here](http://docs.ggplot2.org/current/index.html).
+
+There is also this awesome [Cheetsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) for ggplot2
+
+###ggplot2 grammar
+The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want. Building blocks of a graph include:
+* data
+* aesthetic mapping
+* geometric object
+* statistical transformations
+* scales
+* coordinate system
+* position adjustments
+* faceting
+
+In the below script we call the data set we have just made (`cassdat.df5`) and then pipe it into the ggplot function. We than tell ggplot that we want to plot a box plot
+```{r}
+library(ggplot2)   
+
+cassdat.df5 %>%
+  ggplot(mapping = aes(x = id, y = dt_hr)) + 
+  geom_boxplot()
+
+```
+
+In this case, we cant really see what's on the y axis as there's so many outliers. Lets put a log scale on the y axis to see it better and change the name of this axis to reflect our change
+
+```{r}
+cassdat.df5 %>%
+  ggplot(mapping = aes(x = id, y = dt_hr)) + 
+  geom_boxplot() +
+  scale_y_log10() +
+  ylab("log(duration between locations)")
+```
+
+We can also use the `facet_wrap` function to generate a separate plot for each monthly category
+
+```{r}
+cassdat.df5 %>%
+  ggplot(mapping = aes(x = id, y = dt_hr, colour=id)) + 
+  geom_boxplot() +
+  scale_y_log10() +
+  ylab("log(duration between locations)") +
+  facet_wrap(~month)
+```
+###Aesthetic Mapping
+In ggplot, aesthetic means “something you can see”. Aesthetic mapping (i.e., with aes()) only says that a variable should be mapped to an aesthetic. 
+It doesn’t say how that should happen. For example, when mapping a variable to shape with aes(shape = x) you don’t say what shapes should be used. 
+Similarly, aes(color = z) doesn’t say what colors should be used. Describing what colors/shapes/sizes etc. to use is done by modifying the corresponding scale. 
+In ggplot2 scales include
+Examples include:
+* position (i.e., on the x and y axes)
+* color (“outside” color)
+* fill (“inside” color)
+* shape (of points)
+* linetype
+* size
+Each type of geom accepts only a subset of all aesthetics–refer to the geom help pages to see what mappings each geom accepts. Aesthetic mappings are set with the aes() function.
+
+###Geometic Objects (geom)
+Geometric objects are the actual marks we put on a plot. Examples include:
+
+* points (geom_point, for scatter plots, dot plots, etc)
+* lines (geom_line, for time series, trend lines, etc)
+* boxplot (geom_boxplot, for, well, boxplots!)
+A plot must have at least one geom; there is no upper limit. You can add a geom to a plot using the + operator
+
+You can get a list of available geometric objects using the code below:
+
 ```{r, eval = FALSE}
-exampledata  %>% 
-ggplot(aes(x=ntags, y=nPU)) +
-  geom_point(alpha = 0.1,show_guide = F) +
-  geom_jitter(width = 0.01, height = 0.01) +
-  xlab("Number of tags") +
-  ylab("Number of planning units") +
-  theme_bw() +
-  theme(legend.title=element_blank(),
-        axis.line = element_line(colour = "black"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.border = element_blank(),
-        panel.background = element_blank()) +
-  guides(color=guide_legend("season"), fill = guide_legend("season")) +
-  geom_smooth(method="lm", formula = y~log(x), se = F, size = 1) 
 ```
 
+The following arguments are common to most scales in ggplot2:
 
+* name: the first argument gives the axis or legend title
+* limits: the minimum and maximum of the scale
+* breaks: the points along the scale where labels should appear
+* labels: the labels that appear at each break
+Specific scale functions may have additional arguments; for example, the scale_color_continuous function has arguments low and high for setting the colors at the low and high end of the scale.
 
 ```{r}
-plot(cassdat$LONGITUDE,cassdat$LATITUDE)
-points(cassdat2$LONGITUDE,cassdat2$LATITUDE,col=cassdat$ANIMALID,pch=16)
 ```
-
-From the interactive map at the beginning of this exercise, you will see that the deleted locations (white circles) were obatined prior to the devices being attached to the animals (i.e. at our accomodation in Cairns and enroute to our release site!)
-
-However, this plot is  a little misleading - the longitude and latitude fields have been distorted to fit on the x and y axes. In order to fix this, we'll need to install a few additional R packages.
-
-------------------------------------------
-
-```{r}
-str(cassdat) # provides internal structure of an R object
-summary(cassdat) # Provides result summary of the data frame
-```
-
-The `str()` function tell us how **R** has classified our objects into various data types. 
-
-In the result `summary()` of the dataframe, you can see what influence the *data type* has on the results that are presented. Those data columns that are are non-numeric and are not logicals (i.e. TRUE/FALSE) have been converted to factors (e.g. `ANIMALID` and `DATE`). For these factors, we are presented with a *frequency of occurences* for each factor level (note Annabelle has 1013 records). For those data columns that are numeric, we are presented with the minimum, mean, maximum and quartiles in the result summary.
-
-##Working with dates and times in **R**
-
-See how **R** currently believes that our `DATE` column is a factorial? If we would like to plot our data in chronological order, or to extract the first or last locations for each animal, we first need to tell **R** that this `DATE` column represents actual dates.
-
-To do this, we use the `as.POSIXct()` command, and state what datetime format our data is in using the `format = "%"` statement. Note that in this case we have the R default format of dates plus times: "Y-m-d H:M:S". 
-
-We then do some statistical summaries to make sure this is correct using the `min`, `max` and `summary` command in **R**.
-
-```{r,eval=FALSE}
-cassdat$DATE <- as.POSIXct(cassdat$DATE, format = "%Y-%m-%d %H:%M:%S")
-
-min(cassdat$DATE) # First location in our dataset
-max(cassdat$DATE) # Last location in our dataset
-summary(cassdat$DATE) 
-```
-
-##Filtering datasets
-The `subset( )` function is one of the easiest way to select variables and observations. 
-
-In the following example, we subset our data for only those locations that have not been removed in ZoaTrack (`DELETED == FALSE`)
-
-```{r}
-# using subset function 
-cassdat2 <- subset(cassdat, DELETED== "FALSE")
-```
-
-By plotting these data, we can see which data points hace been removed
-
-```{r}
-plot(cassdat$LONGITUDE,cassdat$LATITUDE)
-points(cassdat2$LONGITUDE,cassdat2$LATITUDE,col=cassdat$ANIMALID,pch=16)
-```
-
-From the interactive map at the beginning of this exercise, you will see that the deleted locations (white circles) were obatined prior to the devices being attached to the animals (i.e. at our accomodation in Cairns and enroute to our release site!)
-
-However, this plot is  a little misleading - the longitude and latitude fields have been distorted to fit on the x and y axes. In order to fix this, we'll need to install a few additional R packages.
-
-------------------------------------------
-
-##Installing packages
-
-Part of the reason R has become so popular is the vast array of packages that are freely available and highly accessible. In the last few years, the number of packages has grown exponentially - 8000 at my last check on CRAN! These can help you to do a galaxy of different things in R, including running complex analyses, drawing beautiful figures, running R as a GIS, constructing your own R packages, building web pages and even writing introductory R course handbooks!
-
-Let’s suppose you want to load the *sp* package to access this package's incredible spatial functionality.
-
-If this package is not already installed on your machine, you can download it from the web by using the following command in R.
-
-```
-install.packages("sp", repos='http://cran.us.r-project.org')
-```
-
-In this example, `sp` is the package to be downloaded and 'http://cran.us.r-project.org' is the repository where the package will be accessed from
-
-Multiple packages can be loaded at the same time by listing the required packages in a vector 
-
-```
-install.packages(c("sp","rgdal","rgeos","adehabitatLT","adehabitatHR"), repos='http://cran.us.r-project.org')
-```
-
-We then load the required packages using the `library()` function.
-
-```{r, echo=FALSE}
-library(sp)
-library(rgdal)
-library(rgeos)
-library(adehabitatLT)
-library(adehabitatHR)
-```
-
-Here we have installed and loaded our required **R** spatial packages, including the excellent adehabitatHR and adehabitatLS packages. These last two were built specifically for working with animal telemetry data.
->>>>>>> origin/master
 
 ----------------------------
 
@@ -863,68 +881,7 @@ kml(newXY.st, dtime = 24*3600, colour = id, shape = shape, labels = "", kmz=TRUE
 ------------------------------------------
 
 
-<<<<<<< HEAD
-=======
-# Session 2: tidy style, pipes and ggplot2
 
-
-![The tidyverse](Images/TIDYVERSE.jpg)
-
-<br>  
-
-In this session we will be having a look into the *tidyverse* group of R packages which have really revolutionised the way we work with big data and the way we visualise our results.
-
-##The tidyverse
-
-```{r setup, include=FALSE}
-library(tidyverse)
-```
-
-###What is the tidyverse?
-* The [tidyverse](http://tidyverse.org/) is the collective name given to suite of R packages designed mostly by Hadley Wickham.
-
-* Before it was formalised in 2016 it was loosely referred to as the `hadleyverse`.
-* Packages share a common API and design philosophy intended to create a **"Pit of Success"**.
-
-###Members of the tidyverse
-broom, **dplyr**, forcats, **ggplot2**, haven, httr, hms, jsonlite, lubridate, magrittr, modelr, purrr, **readr**, readxl, stringr, tibble, rvest, **tidyr**, xml2
-
-###tidy style
-tidyverse code has a certain look:
-```{r, eval = FALSE}
-exampledata %>%
-  gather(code, value, new_sp_m014:newrel_f65, na.rm = TRUE) %>% 
-  mutate(code = stringr::str_replace(code, "newrel", "new_rel")) %>%
-  separate(code, c("new", "var", "sexage")) %>% 
-  select(-new, -iso2, -iso3) %>% 
-  separate(sexage, c("sex", "age"), sep = 1)
-```
-
-ggplot, one of the packages in the tidyverse, has a similar look...
-```{r, eval = FALSE}
-exampledata  %>% 
-ggplot(aes(x=ntags, y=nPU)) +
-  geom_point(alpha = 0.1,show_guide = F) +
-  geom_jitter(width = 0.01, height = 0.01) +
-  xlab("Number of tags") +
-  ylab("Number of planning units") +
-  theme_bw() +
-  theme(legend.title=element_blank(),
-        axis.line = element_line(colour = "black"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.border = element_blank(),
-        panel.background = element_blank()) +
-  guides(color=guide_legend("season"), fill = guide_legend("season")) +
-  geom_smooth(method="lm", formula = y~log(x), se = F, size = 1) 
-```
-
-
--[Grolemund, Wickham, 2016 R for Data Science](http://r4ds.had.co.nz/tidy-data.html#case-study)
-* The documentation of this style is still evolving.
-* [This is a good start](https://rpubs.com/yeedle/tidyguide)
-
->>>>>>> origin/master
 ------------------------------------------
 
 ##Loading in our spatial data
@@ -940,202 +897,10 @@ cassdat.lt.WGS <- readOGR("GIS", "cass_points")
 head(cassdat.lt.WGS)
 ```
 
-<<<<<<< HEAD
-
-=======
-------------------------------------------
-
-##Introduction to pipes `%>%`
-
-![pipes are awesome!](Images/mario.png)
-
-Now that we've successfully loaded in our spatial dataset, lets start having a closer look at the data using pipes `%>%`
-
-* Originally from the `magrittr` package but has been imported to the `tidyverse`.
-* `%>%` is an **infix operator**. This means it takes two operands, left and right.
-* 'Pipes' the **output** of the last expression/function (left) forward to the **first input** of the next funciton (right).
-
-```{r, eval = FALSE}
-#For example, to see what class our data is in, we could use this code...
-class(cassdat.lt.WGS)
-
-#Alternatively in the tidy verse we could use this code...
-cassdat.lt.WGS %>% class()
-```
-
-### Benefits of %>% and tidy style
-* Functions flow in natural order that tells story about data.
-* Code effects are easy to reason about by inserting `View()` or `head()` into pipe chain.
-* Common style makes it easy to understand collaborator (or your own) code.
-
-
-```{r}
-# First convert the spatial dataframe back to a data frame
-cassdat.df <- as.data.frame(cassdat.lt.WGS) 
-cassdat.df$date <- as.POSIXct(cassdat.df$date)
-
-# Now insert functions into the pipe chain
-cassdat.df %>% View()
-cassdat.df %>% head()
-```
 
 ------------------------------------------
 
-## Dplyr
-* `dplyr` is the data wrangling workhorse of the tidyverse.
-* Provides functions, **verbs**, that can manipulate tibbles into the shape you need for analysis.
-* Has many backends allowing dplyr code to work on data stored in SQL databases and big data clusters.
-    - Works via translation to SQL. Keep an eye out for the SQL flavour in `dplyr`
 
-###Basic vocabulary
-* `select()` columns from a tibble 
-* `filter()` to rows matching a certain condition
-* `mutate()` a tibble by changing or adding rows
-* `arrange()` rows in order
-* `group_by()` a variable
-* `summarise()` data over a group using a function
-
-Check out this useful [Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) for data wrangling.
-
-
-###`select`
-
-We can use the `select` function in Dplyr to choose the columns we want to include for our analyses and plotting
-
-```{r}
-# Select the rows we are interested in
-cassdat.df2 <- 
-  cassdat.df %>% 
-  select(coords.x1,coords.x2,id,date,dt,dist,abs_angle,rel_angle,R2n) %>%
-  select(-R2n)
-
-head(cassdat.df2)
-```
-
-###`filter` and `arrange`
-Subset the data to rows matching logical conditions and then arrange according to particular attributes
-```{r, eval=FALSE}
-filter(cassdat.df2, id == "M2") %>%
-  arrange(dist)
-
-filter(cassdat.df2, id == "M2") %>%
-  arrange(desc(dist)) 
-```
-
-###`mutate`
-Add additional variables to an existing data frame
-```{r}
-# Add an hour onto the time fields
-cassdat.df3 <- 
-  cassdat.df2 %>%
-  mutate(date2 = date + (60*60*10)) # Adds a date field and then changes the data from UTM to AEST)(i.e. adds 10 hrs)
-
-# Here we use functions contained inthe lubridate package to add date columns to our dataset
-library(lubridate)
-
-# extract hour and month using lubridate function
-# attach the column using the mutate function
-cassdat.df4 <- 
-  cassdat.df3 %>%
-  mutate(hourofday = hour(date2)) %>%
-  mutate(month = month(date2))
-
-## Now convert the duration between locations from seconds to minutes
-cassdat.df5 <-  cassdat.df4 %>%
-  mutate(dt_hr= (dt)/(60*60))
-```
-
-###`summarise`
-Determine the total distances travelled for the total duration plus in a given month
-```{r}
-cassdat.df5 %>%
-  group_by(id) %>%
-  summarise(totaldist = sum(dist, na.rm=T))
-
-cassdat.df5 %>%
-  group_by(month, id) %>%
-  summarise(monthlydist = sum(dist, na.rm=T))
-```
->>>>>>> origin/master
-
-------------------------------------------
-
-## Data visualisation using `ggplot`
-
-ggplot2 is a powerful data visualization package for the R programming language. The system provides **mappings** from your data to **aesthetics** which are used to construct beautiful plots.
-
-The package makes it very easy to generate some very impressive figures and utilise a range of colour palettes. In fact it is so easy to use, most struggles with ggplot2 are really struggles with data!
-
-Documentation for ggplot can be found [here](http://ggplot2.org/) and [here](http://docs.ggplot2.org/current/index.html).
-
-There is also this awesome [Cheetsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) for ggplot2
-
-In the below script we call the data set we have just made (`cassdat.df5`) and then pipe it into the ggplot function. We than tell ggplot that we want to plot a box plot
-
-```{r}
-library(ggplot2)   
-
-cassdat.df5 %>%
-  ggplot(mapping = aes(x = id, y = dt_hr)) + 
-  geom_boxplot()
-
-```
-
-In this case, we cant really see what's on the y axis as there's so many outliers. Lets put a log scale on the y axis to see it better and change the name of this axis to reflect our change
-
-```{r}
-cassdat.df5 %>%
-  ggplot(mapping = aes(x = id, y = dt_hr)) + 
-  geom_boxplot() +
-  scale_y_log10() +
-  ylab("log(duration between locations)")
-```
-
-We can also use the `facet_wrap` function to generate a separate plot for each monthly category
-
-```{r}
-cassdat.df5 %>%
-  ggplot(mapping = aes(x = id, y = dt_hr, colour=id)) + 
-  geom_boxplot() +
-  scale_y_log10() +
-  ylab("log(duration between locations)") +
-  facet_wrap(~month)
-```
-
-Next we generate a circular plot to see when the locations for each bird were obtained
-
-```{r}
-library(circular)
-
-cassdat.df5 %>%
-ggplot(mapping = aes(x =  hourofday)) + 
-  geom_histogram(breaks = seq(0, 24, by=1), colour = "grey") + 
-  coord_polar(start = 0) + 
-  facet_wrap(~id) +
-  theme_minimal()
-```
-
-Notice that the devices were programmed as to not obtain location data at night (i.e. when the birds were likely roosting). Notice how we used `theme_minimal()` to generate a simple plot without and extra colouring in the figure.
-
-In the next exercise we'll generate a circular plot showing the direction  traveled by our tagged birds
-
-```{r}
-rad2deg <- function(rad) {(rad * 180) / (pi)}
-
-cassdat.df6 <- 
-  cassdat.df5 %>%
-  mutate(abs_angle_deg = rad2deg(abs_angle)) %>%
-  mutate(rel_angle_deg = rad2deg(rel_angle))
-
-cassdat.df6 %>%
-  ggplot(mapping = aes(x =  rel_angle_deg)) + 
-  geom_histogram(breaks = seq(-180, 180, by = 10), colour = "grey") + 
-  coord_polar(start = 0) + theme_minimal()+
-  facet_wrap(~id) +
-  theme_minimal()
-```
-
-------------------------------------------
 
 ##Interactive maps using leaflet
 
