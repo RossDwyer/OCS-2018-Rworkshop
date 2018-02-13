@@ -30,7 +30,7 @@ knitr::include_graphics("Images/img-featured-ntStradbrokeIsland.jpg")
 
 Ross is a Postdoctoral Research Fellow in the [School of Biological Sciences](https://www.biology.uq.edu.au/) at the University of Queensland. His research falls within the field of animal ecology, where he uses animal occurrence, abundance and movement information to test hypotheses and make predictions regarding individual- and population-level responses to environmental change. He's used R for over 12 years, has published two R packages on CRAN, was lead R developer on the ZoaTrack.org project and regularly teaches R training courses at The University of Queensland and at other institutes around Australia. For more information and teaching resources, check out [Ross's website](https://www.uq.edu.au/eco-lab/content/dr-ross-dwyer).
 
-Vinay is an Postdoctoral Research Fellow at the [Australian Intitude of Marine Science]<https://www.aims.gov.au/>. He is an ecologist that is particularly interested in using large spatio-temporal datasets to understand animal movements and distributions patterns. He has considerable experience using R to analyse and visualise large and complex spatial datasets. He has developed R code to analyse 2 and 3 dimentional movement patterns of animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's R codes can be found on his [github page](https://github.com/vinayudyawer)
+Vinay is an Postdoctoral Research Fellow at the [Australian Intitute of Marine Science](https://www.aims.gov.au/). He is an ecologist that is particularly interested in using large spatio-temporal datasets to understand animal movements and distributions patterns. He has considerable experience using R to analyse and visualise large and complex spatial datasets. He has developed R code to analyse 2 and 3 dimentional movement patterns of animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's R codes can be found on his [github page](https://github.com/vinayudyawer)
 
 
 ##Course outline
@@ -45,7 +45,7 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 
 0.  A brief introduction to **R**
 1.  **Import** large telemetry datasets into **R** using [data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html)
-2.  **Filter** and **manipulate** our data using %pipes%, %plyr% and the [tidyverse](http://tidyverse.org/) group of **R** packages
+2.  **Filter** and **manipulate** our data using %pipes% and the [tidyverse](http://tidyverse.org/) group of **R** packages
 3.  **Plot** summary statistics using [ggplot2](http://ggplot2.org/) and [Rcolorbrewer](http://rcolourbrewer.org/)
 
 
@@ -159,7 +159,7 @@ When a *New Project* is created, R Studio:
 There are a number of good reasons why you should work with Projects in RStudio.
 1.  We may want our R scripts to be saved into a place where they link seamlessly to other documents and data files for our research project.
 2.  We may also want our tables, figures and statistical results to be written to locations on our computer where they are easy to locate.
-3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. [Dropbox]<http://www.dropbox.com/>, [OneDrive]<http://www.onedrive.com/>)
+3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. [Dropbox](http://www.dropbox.com/), [OneDrive](http://www.onedrive.com/))
 4.  It allows it to share work folders, data and R code with collaborators who are working on the same projects
 
 
@@ -167,17 +167,17 @@ There are a number of good reasons why you should work with Projects in RStudio.
 
 ##Installing packages
 
-Part of the reason R has become so popular is the vast array of packages that are freely available and highly accessible. In the last few years, the number of packages has grown exponentially [> 10,000 at my last check on CRAN!]<http://blog.revolutionanalytics.com/2017/01/cran-10000.html> These can help you to do a galaxy of different things in R, including running complex analyses, drawing beautiful figures, running R as a GIS, constructing your own R packages, building web pages and even writing introductory R course handbooks!
+Part of the reason R has become so popular is the vast array of packages that are freely available and highly accessible. In the last few years, the number of packages has grown exponentially [> 10,000 at my last check on CRAN!](http://blog.revolutionanalytics.com/2017/01/cran-10000.html) These can help you to do a galaxy of different things in R, including running complex analyses, drawing beautiful figures, running R as a GIS, constructing your own R packages, building web pages and even writing introductory R course handbooks!
 
 Let’s suppose you want to load the *sp* package to access this package's incredible spatial functionality. If this package is not already installed on your machine, you can download it from the web by using the following command in R.
 
-```
+```{r, include=TRUE, eval=FALSE}
 install.packages("sp", repos='http://cran.us.r-project.org')
 ```
 
 In this example, `sp` is the package to be downloaded and 'http://cran.us.r-project.org' is the repository where the package will be accessed from. Multiple packages can be loaded at the same time by listing the required packages in a vector... 
 
-```
+``` {r, include=TRUE, eval=FALSE}
 install.packages(c("sp","rgdal","rgeos","adehabitatLT","adehabitatHR","VTrack","leaflet',"tidyverse"), repos='http://cran.us.r-project.org')
 ```
 
@@ -208,9 +208,9 @@ statinfo <- read.csv('Data/Station_information.csv')
 cb<-statinfo[statinfo$Installation%in%"Cleveland Bay",]
 
 coordinates(blacktip) <- ~Longitude+Latitude
-b1 <- blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[1],]
-b2 <- blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[2],]
-b3 <- blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[3],]
+b1 <- blacktip[blacktip$Transmitter.Name%in%levels(blacktip$Transmitter.Name)[1],]
+b2 <- blacktip[blacktip$Transmitter.Name%in%levels(blacktip$Transmitter.Name)[2],]
+b3 <- blacktip[blacktip$Transmitter.Name%in%levels(blacktip$Transmitter.Name)[3],]
 
 leaflet() %>%
   
@@ -219,30 +219,31 @@ leaflet() %>%
   addProviderTiles(providers$Esri.WorldImagery, group="Satellite") %>%
   
   #Add recievers and detection data
-  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = "A69-1303-63639") %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8) %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = levels(blacktip$Transmitter.Name)[1]) %>%
   addCircleMarkers(lng=b1$Longitude, lat= b1$Latitude, popup=paste("ID = ",blacktip$Transmitter),
                    weight=2,radius=4,color = "red",
-                   stroke = FALSE, fillOpacity = 0.4, group = "A69-1303-63639") %>%
-  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = "A69-1303-63640") %>%
+                   stroke = FALSE, fillOpacity = 0.4, group = levels(blacktip$Transmitter.Name)[1]) %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = levels(blacktip$Transmitter.Name)[2]) %>%
   addCircleMarkers(lng=b2$Longitude, lat= b2$Latitude, popup=paste("ID = ",blacktip$Transmitter),
                    weight=2,radius=4,color = "green",
-                   stroke = FALSE, fillOpacity = 0.4, group = "A69-1303-63640") %>%
-  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = "A69-1303-63643") %>%
+                   stroke = FALSE, fillOpacity = 0.4, group = levels(blacktip$Transmitter.Name)[2]) %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = levels(blacktip$Transmitter.Name)[3]) %>%
   addCircleMarkers(lng=b3$Longitude, lat= b3$Latitude, popup=paste("ID = ",blacktip$Transmitter),
                    weight=2,radius=4,color = "blue",
-                   stroke = FALSE, fillOpacity = 0.4, group = "A69-1303-63643") %>%
+                   stroke = FALSE, fillOpacity = 0.4, group = levels(blacktip$Transmitter.Name)[3]) %>%
 
   #Layers control
   addLayersControl(
     #baseGroups = c("Map","Satellite"),
-    baseGroups = c("A69-1303-63639","A69-1303-63640","A69-1303-63643"),
+    baseGroups = levels(blacktip$Transmitter.Name),
     options = layersControlOptions(collapsed = FALSE)) %>%
 
   
-  hideGroup(c("A69-1303-63640","A69-1303-63643"))
+  hideGroup(levels(blacktip$Transmitter.Name))
 
 ```
-The web map of hydrophone locations that we will make at the end of **Session 1**
+The web map of detection data we will explore by the end of **Session 1**
 
 In the first session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*) shown in the image above. These animals were captured and tagged within Cleveland Bay, Townsville roughly two months prior to the landfall of Cyclone Yasi in 2011. Blacktip sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay.
 
@@ -255,7 +256,7 @@ A .csv file can simply be imported into **R** using the %read.csv% base function
 blacktip <- read.csv('Data/Blacktip_ClevelandBay.csv', header = TRUE)
 ```
 
-However, loading very large datafiles can take a long time when using the %read.csv% function. A useful alternative is the %fread% function in the data.table package, which is very effective at loading very large files such as those exported from the [Vemco VUE database]<https://vemco.com/products/vue-software/>.
+However, loading very large datafiles can take a long time when using the %read.csv% function. A useful alternative is the %fread% function in the data.table package, which is very effective at loading very large files such as those exported from the [Vemco VUE database](https://vemco.com/products/vue-software/).
 
 ```{r}
 library(data.table)
@@ -266,17 +267,11 @@ blacktip <- fread('Data/Blacktip_ClevelandBay.csv', header = TRUE)
 blacktip <- fread('https://raw.githubusercontent.com/RossDwyer/OCS-2018-Rworkshop/master/Data/Blacktip_ClevelandBay.csv')
 ```
 
-Explore other features of the %fread% function and its use with other data.table functionality 
-
-```{r, eval=FALSE}
-browseVignettes("data.table")
-```
-
 **A note about Excel files**  
 
 Don’t use '.xlsx' or '.xls' files for saving data. The problem with '.xls' and '.xlsx' files are that they store extra info with the data that makes files larger than necessary and Excel formats can also unwittingly reformat or alter your data! 
 
-A stable way to save your data is as a '.csv' file, which stands for 'comma separated values'. These are simply values separated by 'commas' and rows defined by 'returns'. If you select 'Save as’ in excel, you can choose '.csv' as one of the options. If you open the .csv file I have given you using a text editor, you will see it is just words, numbers and commas.
+A stable way to save your data is as a '.csv' file, which stands for 'comma separated values'. These are simply values separated by 'commas' and rows defined by 'returns'. If you select 'Save as’ in excel, you can choose '.csv' as one of the options. If you open the .csv file provided in the `Data` folder using a text editor, you will see it is just words, numbers and commas.
 
 ##**Filtering** and **manipulating** datasets
 
@@ -295,27 +290,37 @@ We can also access objects in a %data.frame% by their names:
 blacktip$Transmitter #provides all the data for that object
 blacktip$Transmitter[1:5] #provides athe first five values for that object
 blacktip[,'Transmitter'] #provides all the data for that object
-
-## Use the lubridate package to formate date.time field
-library(lubridate)
-blacktip$date.time <- ymd_hms(blacktip$`Date and Time (UTC)`) ## formats date.time column to 'yyyy-mm-dd hh:mm:ss'
 ```
 
-The data.table package enhances the functionality of the traditional %data.frame% format and allows you do more than just select data based on row and column names.
+The `data.table` package enhances the functionality of the traditional %data.frame% format and allows you to do more than just select data based on row and column names.
 
 Firstly, data loaded using the %fread% function inputs detection data as a %data.table% format. This format is slightly different to the %data.frame% format but can still be maniuplated using the same rules as above. 
 
-To understand the enhancements of the %data.table% format we must first understand the general form of the %data.table% syntax. %data.table%s take the form of %DT[row, column, by]%. The additional %by% variable allows for quick and easy subsetting and aggregating. Try the following code:
+To understand the enhancements of the %data.table% format we must first understand the general form of the %data.table% syntax. %data.table%s take the form of %DT[row, column, by]%. The additional `by` variable allows for quick and easy subsetting and aggregating. Try the following code:
 
 ```{r,eval=FALSE}
 ## Subset rows within a data.table
-blacktip[Transmitter == "A69-1303-63639" & Receiver == "VR2W-104912",] # Select detections from "A69-1303-63639" detected on "VR2W-104912" receiver.
+blacktip[`Transmitter Name` == "Ana" & Receiver == "VR2W-104912",] # Select detections from 'Ana' detected on "VR2W-104912" receiver.
 
 ## Subset rows and columns within a data.table
-blacktip[Transmitter == "A69-1303-63639", .(date.time, Receiver, Latitude, Longitude),] # Subsets date.time, Receiver, Latitude and Longitude data from Transmitter "A69-1303-63639"
+blacktip[`Transmitter Name` == "Ana", .(Receiver, Latitude, Longitude),] # Subsets Receiver, Latitude and Longitude data from `Ana`
 
+## Aggregate numbers of detections from each of the three tagged animal
+blacktip[ , .(.N), by = "Transmitter Name"]
 ```
 
+The %.N% call is a special variable that holds the number of rows in that current group. Grouping by `Transmitter` obtains the number of rows (i.e. detections) for each tranmitter. We can include multiple variables in the `by` parameter to subset our datset further:
+
+```{r, eval=FALSE}
+## Aggregate numbers of detections at each reciever for each tagged animal
+blacktip[ , .(.N), by = c("Transmitter Name", "Receiver")]
+```
+
+We encourage you to use the package vignettes to explore additional functionality of the `data.table` package to make data subsetting and manipulation quicker and easier.
+
+```{r, eval=FALSE}
+browseVignettes("data.table")
+```
 
 ![pipes are awesome!](Images/mario.png)
 
@@ -338,28 +343,43 @@ blacktip %>% class()
 * Code effects are easy to reason about by inserting `View()` or `head()` into pipe chain.
 * Common style makes it easy to understand collaborator (or your own) code.
 
-We can get have a quick look at the data frame by typing:
+We can have a quick look at the data by typing:
 
-```{r}
+```{r, eval = FALSE}
 # Now insert functions into the pipe chain
 blacktip %>% View()
 blacktip %>% head() #first 6 rows by default
 blacktip %>% tail(10) #specify we want to look at the last 10 rows
 ```
 
-This functionality is particularly useful if the data frame is very large!
+This functionality is particularly useful if the data is very large!
 
 Note the `()` around the data frame, as opposed to the `[]` we used for indexing. The `()` signify a *function*.
 
 We can look at the data more closely using the `nrow`, `ncol`, `length`, `unique`, `str()` and `summary()` functions.
 
-```{r,eval=FALSE}
+```{r,eval=TRUE}
 blacktip %>% nrow() # number of rows in the data frame
 blacktip %>% ncol() # number of columns in the data frame
+blacktip %>% str() # provides internal structure of an R object
+blacktip %>% summary() # Provides result summary of the data frame
 
-cassdat.df %>% str() # provides internal structure of an R object
-cassdat.df %>% summary() # Provides result summary of the data frame
+## pipes can be used for single column within data frames
+blacktip$`Transmitter Name`<-
+  blacktip$`Transmitter Name` %>% as.factor()
+
+## pipes are used to conduct multiple functions on the dataset in a certain order
+blacktip %>% 
+  subset(`Transmitter Name` == "Colin") %>% # subset dataset to include only detections by 'Colin'
+  nrow() # number of rows (i.e. detections) from 'Colin'
+
+blacktip %>% 
+  subset(`Transmitter Name` == "Colin") %>% # subset dataset to include only detections by 'Colin'
+  with(table(`Receiver`)) %>% # Create a table with the number of rows (i.e. detections) per receiver
+  barplot(las=2) # barplot of number of Colins detections recorded per receiver
 ```
+
+<br>
 
 ![Welcome to the tidyverse](Images/TIDYVERSE.jpg)
 
@@ -378,10 +398,26 @@ library(tidyverse)
 * Before it was formalised in 2016 it was loosely referred to as the `hadleyverse`.
 * Packages share a common API and design philosophy intended to create a **"Pit of Success"**.
 * The documentation of this style is still evolving.
-* [This is a good start](https://rpubs.com/yeedle/tidyguide)
+* This is a good [start](https://rpubs.com/yeedle/tidyguide)
 
 ###Members of the tidyverse
 broom, **dplyr**, forcats, **ggplot2**, haven, httr, hms, jsonlite, **lubridate**, magrittr, modelr, purrr, **readr**, readxl, stringr, tibble, rvest, **tidyr**, xml2
+
+## lubridate
+* `lubridate` is an easy way to convert date time data into a form R can recognise it.
+* Allows for calculation of durations and intervals between dates.
+* This function recognises multiple date time formats and parses them to a standardised 'POSIX' format that R uses (`ymd` for dates; `ymd_hms` for date and time parsing)
+* essential when working with spatio-temporal datasets like telemetry data
+
+Currently in our `blacktip` dataset the "Date and Time (UTC)" column are recognised as "characters" and recorded in the Universal Coordinated Time Zone (UTC). We want to convert this to local time (UTC + 10 hours). Lets use `lubridate` to convert this column into the 'POSIX' format and into local date time.
+
+```{r, eval=TRUE}
+library(lubridate)
+blacktip$local.Date.time<- 
+  blacktip$`Date and Time (UTC)` %>%
+  ymd_hms(tz="UTC") %>% ## first convert the `Date and Time (UTC)` column into a 'POSIX' format 
+  with_tz(tzone="Australia/Brisbane") ## convert to local "Australia/Brisbane" date time (UTC + 10hrs)
+```
 
 
 ## dplyr
@@ -408,40 +444,50 @@ We can use the `select` function in dplyr to choose the columns we want to inclu
 # Select the rows we are interested in
 blacktip <- 
   blacktip %>% 
-  select(coords.x1,coords.x2,id,date,dt,dist,abs_angle,rel_angle,R2n) %>%
-  select(-R2n)
+  select(`local.Date.time`,`Latitude`,`Longitude`,`Receiver`,`Station Name`,`Transmitter Name`,`Transmitter`,`Sensor Value`) %>%
+  select(-`Sensor Value`)
 
-head(cassdat.df2)
+head(blacktip)
 ```
 
 
 ###`filter` and `arrange`
 Subset the data to rows matching logical conditions and then arrange according to particular attributes
 ```{r, eval=FALSE}
-filter(blacktip, id == "M2") %>%
-  arrange(dist)
+filter(blacktip, `Transmitter Name` == "Ana") %>%
+  arrange(local.Date.time) ## arrange Ana's detections in chronological order
 
-filter(cassdat.df2, id == "M2") %>%
-  arrange(desc(dist)) 
+filter(blacktip, `Transmitter Name` == "Bruce") %>%
+  arrange(desc(local.Date.time)) ## arrange Bruce's detections in descending chronological order
 ```
 
 
 ###`summarise`
-Determine the total distances travelled for the total duration plus in a given month
-```{r}
+Determine the total number of detections for each tagged shark
+```{r, eval=FALSE}
 blacktip %>%
-  group_by(id) %>%
-  summarise(totaldist = sum(dist, na.rm=T))
+  group_by(`Transmitter Name`) %>%
+  summarise(NumDetections = n()) ## summarise number of detections per tagged shark
 
 blacktip %>%
-  group_by(month, id) %>%
-  summarise(monthlydist = sum(dist, na.rm=T))
+  group_by(`Transmitter Name`, `Receiver`) %>%
+  summarise(NumDetections = n()) ## summarise number of detections per shark at each receiver
+```
+
+###`mutate`
+Adding and removing data to the data frame through a pipe
+```{r}
+blacktip<-
+  blacktip %>%
+  mutate(date=date(local.Date.time)) %>% ## adding a column to the blacktip data with date of each detection
+  mutate(Transmitter=NULL) ## removing the `Transmitter` column
+
+head(blacktip)
 ```
 
 ## Data visualisation using `ggplot`
 
-
-ggplot2 is a powerful data visualization package for the R programming language. The package makes it very easy to generate some very impressive figures and utilise a range of colour palettes, taking care of many of the fiddly details that can make plotting graphs in R a hassle
+ggplot2 is a powerful data visualization package for the R programming language. The package makes it very easy to generate some very impressive figures and utilise a range of colour palettes, taking care of many of the fiddly details that can make plotting graphs in R a hassle.
 
 The system provides **mappings** from your data to **aesthetics** which are used to construct beautiful plots.
 
@@ -460,36 +506,39 @@ The basic idea: independently specify plot building blocks and combine them to c
 * position adjustments
 * faceting
 
-In the below script we call the data set we have just made (`cassdat.df5`) and then pipe it into the ggplot function. We than tell ggplot that we want to plot a box plot
+In the below script we call the data set we have just made (`blacktip`) and then pipe it into the ggplot function. We than tell ggplot that we want to plot a box plot
 ```{r}
 library(ggplot2)   
 
-cassdat.df5 %>%
-  ggplot(mapping = aes(x = id, y = dt_hr)) + 
-  geom_boxplot()
+blacktip %>%
+  group_by(`Transmitter Name`,`date`) %>% 
+  summarise(DailyDetections= n()) %>% ## use pipes to calculate numbers of detections per day per animal
+  ggplot(mapping = aes(x = `Transmitter Name`, y = DailyDetections)) + ## define the aesthetic map (what to plot)
+  geom_boxplot() ## define the geometric object (how to plot it).. in this case a boxplot
 
 ```
 
-In this case, we cant really see what's on the y axis as there's so many outliers. Lets put a log scale on the y axis to see it better and change the name of this axis to reflect our change
+A common plot used in passive acoustic telemetry to assess temporal patterns in detection is the `Abacus plot`. This plot can help quickly assess which animals are being detected consistently within your array, and identify any temporal patterns in detection.
+
+We can adapt the above script to create an abacus plot using our `blacktip` dataset
 
 ```{r}
-cassdat.df5 %>%
-  ggplot(mapping = aes(x = id, y = dt_hr)) + 
-  geom_boxplot() +
-  scale_y_log10() +
-  ylab("log(duration between locations)")
+blacktip %>%
+  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Transmitter Name`))) + 
+  xlab("Date") + ylab("Tag") +
+  geom_point()
 ```
 
-We can also use the `facet_wrap` function to generate a separate plot for each monthly category
+We can also use the `facet_wrap` function to explore the detection data a bit more and look at how animals were detected at each reciever
 
 ```{r}
-cassdat.df5 %>%
-  ggplot(mapping = aes(x = id, y = dt_hr, colour=id)) + 
-  geom_boxplot() +
-  scale_y_log10() +
-  ylab("log(duration between locations)") +
-  facet_wrap(~month)
+blacktip %>%
+  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Receiver`))) + 
+  xlab("Date") + ylab("Receiver") +
+  geom_point() +
+  facet_wrap(~`Transmitter Name`, ncol=1) ## This time plot seperate boxplots for each shark
 ```
+
 ###Aesthetic Mapping
 In ggplot, aesthetic means “something you can see”. Aesthetic mapping (i.e., with aes()) only says that a variable should be mapped to an aesthetic. 
 It doesn’t say how that should happen. For example, when mapping a variable to shape with aes(shape = x) you don’t say what shapes should be used. 
@@ -515,18 +564,9 @@ A plot must have at least one geom; there is no upper limit. You can add a geom 
 You can get a list of available geometric objects using the code below:
 
 ```{r, eval = FALSE}
+help.search("geom_", package = "ggplot2")
 ```
 
-The following arguments are common to most scales in ggplot2:
-
-* name: the first argument gives the axis or legend title
-* limits: the minimum and maximum of the scale
-* breaks: the points along the scale where labels should appear
-* labels: the labels that appear at each break
-Specific scale functions may have additional arguments; for example, the scale_color_continuous function has arguments low and high for setting the colors at the low and high end of the scale.
-
-```{r}
-```
 
 ----------------------------
 
