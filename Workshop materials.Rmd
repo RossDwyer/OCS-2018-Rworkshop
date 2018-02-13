@@ -45,7 +45,7 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 
 0.  A brief introduction to **R**
 1.  **Import** large telemetry datasets into **R** using [data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html)
-2.  **Filter** and **manipulate** our data using %pipes%, %plyr% and the [tidyverse](http://tidyverse.org/) group of **R** packages
+2.  **Filter** and **manipulate** our data using %pipes% and the [tidyverse](http://tidyverse.org/) group of **R** packages
 3.  **Plot** summary statistics using [ggplot2](http://ggplot2.org/) and [Rcolorbrewer](http://rcolourbrewer.org/)
 
 
@@ -208,9 +208,9 @@ statinfo <- read.csv('Data/Station_information.csv')
 cb<-statinfo[statinfo$Installation%in%"Cleveland Bay",]
 
 coordinates(blacktip) <- ~Longitude+Latitude
-b1 <- blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[1],]
-b2 <- blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[2],]
-b3 <- blacktip[blacktip$Transmitter%in%levels(blacktip$Transmitter)[3],]
+b1 <- blacktip[blacktip$Transmitter.Name%in%levels(blacktip$Transmitter.Name)[1],]
+b2 <- blacktip[blacktip$Transmitter.Name%in%levels(blacktip$Transmitter.Name)[2],]
+b3 <- blacktip[blacktip$Transmitter.Name%in%levels(blacktip$Transmitter.Name)[3],]
 
 leaflet() %>%
   
@@ -220,30 +220,30 @@ leaflet() %>%
   
   #Add recievers and detection data
   addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8) %>%
-  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = "A69-1303-63639") %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = levels(blacktip$Transmitter.Name)[1]) %>%
   addCircleMarkers(lng=b1$Longitude, lat= b1$Latitude, popup=paste("ID = ",blacktip$Transmitter),
                    weight=2,radius=4,color = "red",
-                   stroke = FALSE, fillOpacity = 0.4, group = "A69-1303-63639") %>%
-  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = "A69-1303-63640") %>%
+                   stroke = FALSE, fillOpacity = 0.4, group = levels(blacktip$Transmitter.Name)[1]) %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = levels(blacktip$Transmitter.Name)[2]) %>%
   addCircleMarkers(lng=b2$Longitude, lat= b2$Latitude, popup=paste("ID = ",blacktip$Transmitter),
                    weight=2,radius=4,color = "green",
-                   stroke = FALSE, fillOpacity = 0.4, group = "A69-1303-63640") %>%
-  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = "A69-1303-63643") %>%
+                   stroke = FALSE, fillOpacity = 0.4, group = levels(blacktip$Transmitter.Name)[2]) %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = levels(blacktip$Transmitter.Name)[3]) %>%
   addCircleMarkers(lng=b3$Longitude, lat= b3$Latitude, popup=paste("ID = ",blacktip$Transmitter),
                    weight=2,radius=4,color = "blue",
-                   stroke = FALSE, fillOpacity = 0.4, group = "A69-1303-63643") %>%
+                   stroke = FALSE, fillOpacity = 0.4, group = levels(blacktip$Transmitter.Name)[3]) %>%
 
   #Layers control
   addLayersControl(
     #baseGroups = c("Map","Satellite"),
-    baseGroups = c("A69-1303-63639","A69-1303-63640","A69-1303-63643"),
+    baseGroups = levels(blacktip$Transmitter.Name),
     options = layersControlOptions(collapsed = FALSE)) %>%
 
   
-  hideGroup(c("A69-1303-63639","A69-1303-63640","A69-1303-63643"))
+  hideGroup(levels(blacktip$Transmitter.Name))
 
 ```
-The web map of hydrophone locations that we will make at the end of **Session 1**
+The web map of detection data we will explore by the end of **Session 1**
 
 In the first session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*) shown in the image above. These animals were captured and tagged within Cleveland Bay, Townsville roughly two months prior to the landfall of Cyclone Yasi in 2011. Blacktip sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay.
 
@@ -300,20 +300,20 @@ To understand the enhancements of the %data.table% format we must first understa
 
 ```{r,eval=FALSE}
 ## Subset rows within a data.table
-blacktip[Transmitter == "A69-1303-63639" & Receiver == "VR2W-104912",] # Select detections from "A69-1303-63639" detected on "VR2W-104912" receiver.
+blacktip[`Transmitter Name` == "Ana" & Receiver == "VR2W-104912",] # Select detections from 'Ana' detected on "VR2W-104912" receiver.
 
 ## Subset rows and columns within a data.table
-blacktip[Transmitter == "A69-1303-63639", .(Receiver, Latitude, Longitude),] # Subsets Receiver, Latitude and Longitude data from Transmitter "A69-1303-63639"
+blacktip[`Transmitter Name` == "Ana", .(Receiver, Latitude, Longitude),] # Subsets Receiver, Latitude and Longitude data from `Ana`
 
 ## Aggregate numbers of detections from each of the three tagged animal
-blacktip[ , .(.N), by = "Transmitter"]
+blacktip[ , .(.N), by = "Transmitter Name"]
 ```
 
 The %.N% call is a special variable that holds the number of rows in that current group. Grouping by `Transmitter` obtains the number of rows (i.e. detections) for each tranmitter. We can include multiple variables in the `by` parameter to subset our datset further:
 
 ```{r, eval=FALSE}
 ## Aggregate numbers of detections at each reciever for each tagged animal
-blacktip[ , .(.N), by = c("Transmitter", "Receiver")]
+blacktip[ , .(.N), by = c("Transmitter Name", "Receiver")]
 ```
 
 We encourage you to use the package vignettes to explore additional functionality of the `data.table` package to make data subsetting and manipulation quicker and easier.
@@ -321,7 +321,6 @@ We encourage you to use the package vignettes to explore additional functionalit
 ```{r, eval=FALSE}
 browseVignettes("data.table")
 ```
-
 
 ![pipes are awesome!](Images/mario.png)
 
@@ -359,13 +358,28 @@ Note the `()` around the data frame, as opposed to the `[]` we used for indexing
 
 We can look at the data more closely using the `nrow`, `ncol`, `length`, `unique`, `str()` and `summary()` functions.
 
-```{r,eval=FALSE}
+```{r,eval=TRUE}
 blacktip %>% nrow() # number of rows in the data frame
 blacktip %>% ncol() # number of columns in the data frame
-
 blacktip %>% str() # provides internal structure of an R object
 blacktip %>% summary() # Provides result summary of the data frame
+
+## pipes can be used for single column within data frames
+blacktip$`Transmitter Name`<-
+  blacktip$`Transmitter Name` %>% as.factor()
+
+## pipes are used to conduct multiple functions on the dataset in a certain order
+blacktip %>% 
+  subset(`Transmitter Name` == "Colin") %>% # subset dataset to include only detections by 'Colin'
+  nrow() # number of rows (i.e. detections) from 'Colin'
+
+blacktip %>% 
+  subset(`Transmitter Name` == "Colin") %>% # subset dataset to include only detections by 'Colin'
+  with(table(`Receiver`)) %>% # Create a table with the number of rows (i.e. detections) per receiver
+  barplot(las=2) # barplot of number of Colins detections recorded per receiver
 ```
+
+<br>
 
 ![Welcome to the tidyverse](Images/TIDYVERSE.jpg)
 
@@ -384,10 +398,26 @@ library(tidyverse)
 * Before it was formalised in 2016 it was loosely referred to as the `hadleyverse`.
 * Packages share a common API and design philosophy intended to create a **"Pit of Success"**.
 * The documentation of this style is still evolving.
-* [This is a good start](https://rpubs.com/yeedle/tidyguide)
+* This is a good [start](https://rpubs.com/yeedle/tidyguide)
 
 ###Members of the tidyverse
 broom, **dplyr**, forcats, **ggplot2**, haven, httr, hms, jsonlite, **lubridate**, magrittr, modelr, purrr, **readr**, readxl, stringr, tibble, rvest, **tidyr**, xml2
+
+## lubridate
+* `lubridate` is an easy way to convert date time data into a form R can recognise it.
+* Allows for calculation of durations and intervals between dates.
+* This function recognises multiple date time formats and parses them to a standardised 'POSIX' format that R uses (`ymd` for dates; `ymd_hms` for date and time parsing)
+* essential when working with spatio-temporal datasets like telemetry data
+
+Currently in our `blacktip` dataset the "Date and Time (UTC)" column are recognised as "characters" and recorded in the Universal Coordinated Time Zone (UTC). We want to convert this to local time (UTC + 10 hours). Lets use `lubridate` to convert this column into the 'POSIX' format and into local date time.
+
+```{r, eval=TRUE}
+library(lubridate)
+blacktip$localdt<- 
+  blacktip$`Date and Time (UTC)` %>%
+  ymd_hms(tz="UTC") %>% ## first convert the `Date and Time (UTC)` column into a 'POSIX' format 
+  with_tz(tzone="Australia/Brisbane") ## convert to local "Australia/Brisbane" date time (UTC + 10hrs)
+```
 
 
 ## dplyr
@@ -414,38 +444,46 @@ We can use the `select` function in dplyr to choose the columns we want to inclu
 # Select the rows we are interested in
 blacktip <- 
   blacktip %>% 
-  select(coords.x1,coords.x2,id,date,dt,dist,abs_angle,rel_angle,R2n) %>%
-  select(-R2n)
+  select(`localdt`,`Latitude`,`Longitude`,`Receiver`,`Station Name`,`Transmitter Name`,`Transmitter`,`Sensor Value`) %>%
+  select(-`Sensor Value`)
 
-head(cassdat.df2)
+head(blacktip)
 ```
 
 
 ###`filter` and `arrange`
 Subset the data to rows matching logical conditions and then arrange according to particular attributes
 ```{r, eval=FALSE}
-filter(blacktip, id == "M2") %>%
-  arrange(dist)
+filter(blacktip, `Transmitter Name` == "Ana") %>%
+  arrange(localdt) ## arrange Ana's detections in chronological order
 
-filter(cassdat.df2, id == "M2") %>%
-  arrange(desc(dist)) 
+filter(blacktip, `Transmitter Name` == "Bruce") %>%
+  arrange(desc(localdt)) ## arrange Bruce's detections in descending chronological order
 ```
 
 
 ###`summarise`
-Determine the total distances travelled for the total duration plus in a given month
+Determine the total number of detections for each tagged shark
 ```{r}
 blacktip %>%
-  group_by(id) %>%
-  summarise(totaldist = sum(dist, na.rm=T))
+  group_by(`Transmitter Name`) %>%
+  summarise(NumDetections = n()) ## summarise number of detections per tagged shark
 
 blacktip %>%
-  group_by(month, id) %>%
-  summarise(monthlydist = sum(dist, na.rm=T))
+  group_by(`Transmitter Name`, `Receiver`) %>%
+  summarise(NumDetections = n()) ## summarise number of detections per shark at each receiver
+```
+
+###`mutate`
+Adding and removing data to the data frame through a pipe
+```{r}
+blacktip<-
+  blacktip %>%
+  mutate(date=date(localdt)) %>% ## adding a column to the blacktip data with date of each detection
+  mutate(Transmitter=NULL) ## removing the `Transmitter` column
 ```
 
 ## Data visualisation using `ggplot`
-
 
 ggplot2 is a powerful data visualization package for the R programming language. The package makes it very easy to generate some very impressive figures and utilise a range of colour palettes, taking care of many of the fiddly details that can make plotting graphs in R a hassle
 
@@ -466,35 +504,27 @@ The basic idea: independently specify plot building blocks and combine them to c
 * position adjustments
 * faceting
 
-In the below script we call the data set we have just made (`cassdat.df5`) and then pipe it into the ggplot function. We than tell ggplot that we want to plot a box plot
+In the below script we call the data set we have just made (`blacktip`) and then pipe it into the ggplot function. We than tell ggplot that we want to plot a box plot
 ```{r}
 library(ggplot2)   
 
-cassdat.df5 %>%
-  ggplot(mapping = aes(x = id, y = dt_hr)) + 
+blacktip %>%
+  group_by(`Transmitter Name`,`hour`) %>%
+  summarise(HourlyDetections= n()) %>%
+  ggplot(mapping = aes(x = `Transmitter Name`, y = HourlyDetections)) + 
   geom_boxplot()
 
-```
-
-In this case, we cant really see what's on the y axis as there's so many outliers. Lets put a log scale on the y axis to see it better and change the name of this axis to reflect our change
-
-```{r}
-cassdat.df5 %>%
-  ggplot(mapping = aes(x = id, y = dt_hr)) + 
-  geom_boxplot() +
-  scale_y_log10() +
-  ylab("log(duration between locations)")
 ```
 
 We can also use the `facet_wrap` function to generate a separate plot for each monthly category
 
 ```{r}
-cassdat.df5 %>%
-  ggplot(mapping = aes(x = id, y = dt_hr, colour=id)) + 
+blacktip %>%
+  group_by(`Transmitter Name`,`date`) %>%
+  summarise(DailyDetections= n()) %>%
+  ggplot(mapping = aes(x = `Transmitter Name`, y = DailyDetections)) + 
   geom_boxplot() +
-  scale_y_log10() +
-  ylab("log(duration between locations)") +
-  facet_wrap(~month)
+  facet_wrap(~Receiver)
 ```
 ###Aesthetic Mapping
 In ggplot, aesthetic means “something you can see”. Aesthetic mapping (i.e., with aes()) only says that a variable should be mapped to an aesthetic. 
