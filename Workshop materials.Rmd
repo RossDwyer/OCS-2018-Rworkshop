@@ -413,7 +413,7 @@ Currently in our `blacktip` dataset the "Date and Time (UTC)" column are recogni
 
 ```{r, eval=TRUE}
 library(lubridate)
-blacktip$localdt<- 
+blacktip$local.Date.time<- 
   blacktip$`Date and Time (UTC)` %>%
   ymd_hms(tz="UTC") %>% ## first convert the `Date and Time (UTC)` column into a 'POSIX' format 
   with_tz(tzone="Australia/Brisbane") ## convert to local "Australia/Brisbane" date time (UTC + 10hrs)
@@ -444,7 +444,7 @@ We can use the `select` function in dplyr to choose the columns we want to inclu
 # Select the rows we are interested in
 blacktip <- 
   blacktip %>% 
-  select(`localdt`,`Latitude`,`Longitude`,`Receiver`,`Station Name`,`Transmitter Name`,`Transmitter`,`Sensor Value`) %>%
+  select(`local.Date.time`,`Latitude`,`Longitude`,`Receiver`,`Station Name`,`Transmitter Name`,`Transmitter`,`Sensor Value`) %>%
   select(-`Sensor Value`)
 
 head(blacktip)
@@ -455,16 +455,16 @@ head(blacktip)
 Subset the data to rows matching logical conditions and then arrange according to particular attributes
 ```{r, eval=FALSE}
 filter(blacktip, `Transmitter Name` == "Ana") %>%
-  arrange(localdt) ## arrange Ana's detections in chronological order
+  arrange(local.Date.time) ## arrange Ana's detections in chronological order
 
 filter(blacktip, `Transmitter Name` == "Bruce") %>%
-  arrange(desc(localdt)) ## arrange Bruce's detections in descending chronological order
+  arrange(desc(local.Date.time)) ## arrange Bruce's detections in descending chronological order
 ```
 
 
 ###`summarise`
 Determine the total number of detections for each tagged shark
-```{r}
+```{r, eval=FALSE}
 blacktip %>%
   group_by(`Transmitter Name`) %>%
   summarise(NumDetections = n()) ## summarise number of detections per tagged shark
@@ -479,13 +479,15 @@ Adding and removing data to the data frame through a pipe
 ```{r}
 blacktip<-
   blacktip %>%
-  mutate(date=date(localdt)) %>% ## adding a column to the blacktip data with date of each detection
+  mutate(date=date(local.Date.time)) %>% ## adding a column to the blacktip data with date of each detection
   mutate(Transmitter=NULL) ## removing the `Transmitter` column
+
+head(blacktip)
 ```
 
 ## Data visualisation using `ggplot`
 
-ggplot2 is a powerful data visualization package for the R programming language. The package makes it very easy to generate some very impressive figures and utilise a range of colour palettes, taking care of many of the fiddly details that can make plotting graphs in R a hassle
+ggplot2 is a powerful data visualization package for the R programming language. The package makes it very easy to generate some very impressive figures and utilise a range of colour palettes, taking care of many of the fiddly details that can make plotting graphs in R a hassle.
 
 The system provides **mappings** from your data to **aesthetics** which are used to construct beautiful plots.
 
@@ -509,23 +511,34 @@ In the below script we call the data set we have just made (`blacktip`) and then
 library(ggplot2)   
 
 blacktip %>%
-  group_by(`Transmitter Name`,`hour`) %>%
-  summarise(HourlyDetections= n()) %>%
-  ggplot(mapping = aes(x = `Transmitter Name`, y = HourlyDetections)) + 
-  geom_boxplot()
+  group_by(`Transmitter Name`,`date`) %>% 
+  summarise(DailyDetections= n()) %>% ## use pipes to calculate numbers of detections per day per animal
+  ggplot(mapping = aes(x = `Transmitter Name`, y = DailyDetections)) + ## define the aesthetic map (what to plot)
+  geom_boxplot() ## define the geometric object (how to plot it).. in this case a boxplot
 
 ```
 
-We can also use the `facet_wrap` function to generate a separate plot for each monthly category
+A common plot used in passive acoustic telemetry to assess temporal patterns in detection is the `Abacus plot`. This plot can help quickly assess which animals are being detected consistently within your array, and identify any temporal patterns in detection.
+
+We can adapt the above script to create an abacus plot using our `blacktip` dataset
 
 ```{r}
 blacktip %>%
-  group_by(`Transmitter Name`,`date`) %>%
-  summarise(DailyDetections= n()) %>%
-  ggplot(mapping = aes(x = `Transmitter Name`, y = DailyDetections)) + 
-  geom_boxplot() +
-  facet_wrap(~Receiver)
+  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Transmitter Name`))) + 
+  xlab("Date") + ylab("Tag") +
+  geom_point()
 ```
+
+We can also use the `facet_wrap` function to explore the detection data a bit more and look at how animals were detected at each reciever
+
+```{r}
+blacktip %>%
+  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Receiver`))) + 
+  xlab("Date") + ylab("Receiver") +
+  geom_point() +
+  facet_wrap(~`Transmitter Name`, ncol=1) ## This time plot seperate boxplots for each shark
+```
+
 ###Aesthetic Mapping
 In ggplot, aesthetic means “something you can see”. Aesthetic mapping (i.e., with aes()) only says that a variable should be mapped to an aesthetic. 
 It doesn’t say how that should happen. For example, when mapping a variable to shape with aes(shape = x) you don’t say what shapes should be used. 
@@ -551,18 +564,9 @@ A plot must have at least one geom; there is no upper limit. You can add a geom 
 You can get a list of available geometric objects using the code below:
 
 ```{r, eval = FALSE}
+help.search("geom_", package = "ggplot2")
 ```
 
-The following arguments are common to most scales in ggplot2:
-
-* name: the first argument gives the axis or legend title
-* limits: the minimum and maximum of the scale
-* breaks: the points along the scale where labels should appear
-* labels: the labels that appear at each break
-Specific scale functions may have additional arguments; for example, the scale_color_continuous function has arguments low and high for setting the colors at the low and high end of the scale.
-
-```{r}
-```
 
 ----------------------------
 
