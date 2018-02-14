@@ -570,61 +570,349 @@ help.search("geom_", package = "ggplot2")
 
 ----------------------------
 
-![Cassowary tracks overlayed with the animal's home range](Images/caro_cass_dooley.jpg)
-##Working with spatial objects
+![Close up of one of our spatial obects](Images/banner1.jpg)
+#Session 2: Working with spatial objects
 
-R offers a variety of functions for importing, manipulating, analyzing, and exporting spatial data. Although one might at first consider this to be the exclusive domain of GIS software, using R can frequently provide a much more lightweight, yet equally effective solution that embeds within a larger analytic workflow.
+R offers a variety of functions for importing, manipulating, analysing and exporting spatial data. Although one might at first consider this to be the exclusive domain of GIS software, using R can frequently provide a much more lightweight, yet equally effective solution that embeds within a larger analytic workflow.
 
 One of the tricky aspects of pulling spatial data into your analytic workflow is that there are numerous complicated data formats. In fact, even within R itself, functions from different user-contributed packages often require the data to be structured in very different ways. The good news is that efforts are underway to standardize spatial data classes in R. This movement is facilitated by sp, an important base package for spatial operations in R. It provides definitions for basic spatial classes (points, lines, polygons, pixels, and grids) in an attempt to unify the way R packages represent and manage these sorts of data. It also includes some core functions for creating and manipulating these data structures. The hope is that all spatial R packages will use (or at least provide conversions to) the 'Spatial' data class and it's derivatives, as now defined in the sp package. All else being equal, we favor R functions and packages that conform to the sp standard, as these are likely to provide the greatest future utility and durability.
 
-[Here](http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html) is a very useful style giude for coding using `Spatial` objects. 
+[Here](http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html) is a very useful style guide for coding using `Spatial` objects. 
 
 ---------------------------
 
-##`SpatialPoints` and animal locations
+##`SpatialPoints` and receiver locations
 
 The most basic spatial data object is a point, which may have 2 (X, Y) or 3 components (X, Y, Z). A single coordinate, or a collection of coordinates, may be used to define a `SpatialPoints` object.
 
-In this exercise we are going to convert our cassowary locations from a standard data frame object into a `SpatialPointsDataFrame` object.
+In this exercise we are going to convert our receiver locations from a standard data frame object into a `SpatialPointsDataFrame` object.
 
 ```{r,echo=FALSE}
-# First make a duplicate of points.df to retain the non-spatial version
-cassdat.sp <- cassdat2
+# First load our VR2-W installation dataset for the Cleveland Bay study
+statinfo <- read.csv('Data/Station_information.csv')
+cb <- statinfo[statinfo$Installation%in%"Cleveland Bay",]
 
 # Now convert the data.frame object into a SpatialPoints object
-coordinates(cassdat.sp)<- c("LONGITUDE", "LATITUDE")
+coordinates(cb) <- c("Longitude", "Latitude")
 
 ## Have a look at the created object
-class(cassdat.sp)
-str(cassdat.sp)
+class(cb)
+str(cb)
 ```
 
-Notice the class has now become a `SpatialPointsDataFrame`. The `str()` output contains lots of `@` symbols which denote a different slot in this S4 R object. Typing `points.sp@data` will extract the attribute data (similar to the attribute table in ArcGIS). The X and Y locational information can now be found in the `@coords` slot. In addition `@bbox` contains the bounding box coordinates and the `@pro4string` contains the projection, or coordinate reference system (CRS) information. 
+Notice the class has now become a `SpatialPointsDataFrame`. The `str()` output contains lots of `@` symbols which denote a different slot in this S4 R object. Typing `cb@data` will extract the attribute data (similar to the attribute table in ArcGIS). The X and Y locational information can now be found in the `@coords` slot. In addition `@bbox` contains the bounding box coordinates and the `@pro4string` contains the projection, or coordinate reference system (CRS) information. 
 
 ```{r, eval=FALSE}
-cassdat.sp@coords
-cassdat.sp@proj4string
-cassdat.sp@bbox
-head(cassdat.sp@data)
+cb@coords
+cb@proj4string
+cb@bbox
+head(cb@data)
 
 # alternatively use the slot command to extract different 
 # packages of data. As the data is stored in the data slot
-slot(cassdat.sp,'data') 
+slot(cb,'data') 
 ```
 
-Now let’s draw a simple spatial plot of the cassowary locations 
+Now let’s draw a simple spatial plot of the receiver locations
 
 ```{r}
-# First extract the names of cassowaries to help colour our plots
-myids <- cassdat.sp@data[,1]
-unique(myids)
-
-# Now create a separate plot for each cassowary
-par(mfrow=c(1,3))
-plot(cassdat.sp[cassdat.sp$ANIMALID=="Annabelle",], col="red",pch=16,main="Annabelle")
-plot(cassdat.sp[cassdat.sp$ANIMALID=="Dooley",], col="green",pch=16,main="Dooley")
-plot(cassdat.sp[cassdat.sp$ANIMALID=="M2",], col="blue",pch=16,main="M2")
+# Now create a plot for the receiver stations
+cb %>%
+  ggplot(mapping = aes(x = Longitude, y = Latitude)) + 
+  xlab("Longitude") + ylab("Latitude") +
+  geom_point()
+  
 ```
+
+
+##Interactive maps using leaflet
+
+Now that we have allocated our data as a Spatial* object, we can also use the incredibly powerful [Leaflet]<https://rstudio.github.io/leaflet/> package in R to plot the locations of our hydrophones on an interactive map that  you can share with your collaborators. The leaflet package utilises the open-access leaflet JavaScript library (a web programming language), to create web-based maps. We will cover a basic map with some points on it today. See [Rstudio’s leaflet page](http://rstudio.github.io/leaflet/) for help and more mapping features, like polygons.
+
+To get started with leaflet, first, make sure you have the leaflet and htmlwidgets packages installed, and then load it into this session:
+
+```{r}
+library(leaflet)
+library(htmlwidgets)
+```
+
+We start by specifying a base layer, then we can add features to it. We will string together our layers using the pipes `(%>%)` command. See [this page](http://rstudio.github.io/leaflet/basemaps.html) for the numerous base map options. Finally, we add some markers, located using the longitude and latitude variables in the cassowary data frame:
+
+
+```{r}
+library(leaflet)
+
+myleafletplot <- leaflet() %>%
+  
+  #Base groups
+  addProviderTiles(providers$Esri.WorldImagery, group="Satellite") %>%
+  
+  #Add reciever location data
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8) 
+
+myleafletplot # Print the map
+
+```
+
+We can also now add the locations of our tagged sharks to show their position within the array. (Note I'm concerned here that by using the raw detection data we may break Leaflet if too many detections are loaded)
+
+```{r}
+myleafletplot %>%
+  # add the tag detection data
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = levels(blacktip$Transmitter.Name)[1]) %>%
+  addCircleMarkers(lng=b1$Longitude, lat= b1$Latitude, popup=paste("ID = ",blacktip$Transmitter),
+                   weight=2,radius=4,color = "red",
+                   stroke = FALSE, fillOpacity = 0.4, group = levels(blacktip$Transmitter.Name)[1]) %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = levels(blacktip$Transmitter.Name)[2]) %>%
+  addCircleMarkers(lng=b2$Longitude, lat= b2$Latitude, popup=paste("ID = ",blacktip$Transmitter),
+                   weight=2,radius=4,color = "green",
+                   stroke = FALSE, fillOpacity = 0.4, group = levels(blacktip$Transmitter.Name)[2]) %>%
+  addCircles(lng=cb$Longitude, lat=cb$Latitude,fill=FALSE, color="gray", weight=8, group = levels(blacktip$Transmitter.Name)[3]) %>%
+  addCircleMarkers(lng=b3$Longitude, lat= b3$Latitude, popup=paste("ID = ",blacktip$Transmitter),
+                   weight=2,radius=4,color = "blue",
+                   stroke = FALSE, fillOpacity = 0.4, group = levels(blacktip$Transmitter.Name)[3]) %>%
+  
+  #Layers control
+  addLayersControl(
+    #baseGroups = c("Map","Satellite"),
+    baseGroups = levels(blacktip$Transmitter.Name),
+    options = layersControlOptions(collapsed = FALSE)) %>%
+  
+
+  hideGroup(levels(blacktip$Transmitter.Name))
+```
+
+Finally you can save this leaflet document at an html file and share it with your friends or colleagues
+
+
+```{r, eval = FALSE}
+saveWidget(myleafletplot, file="mymap.html") # uses the htmldidgets package
+```
+
+#Session 3: Accessing the temporal component of the tracking dataset
+
+
+![Crocs Rule!](Images/Croc.png)
+
+In this third session we are going to work with a data set containing detection data from 3 Estuarine Crocodiles (*Crocodylus porosus*) as shown in the image above. These animals were captured and tagged within the Wenlock River, Cape York. Crocodiles were dual tagged using both GPS transmitters and using a network of acoustic hydrophones deployed along the river system. You can read more about this study [here]<http://www.publish.csiro.au/mf/mf14042>
+
+##Producing track **animations**
+
+Vinay to add...
+
+##Integration with [Google Earth](http://googleearth.com/)
+
+Google Earth offers a simple yet powerful way of visualising your acoustic tracking data through time. However Pulling detection datasets into Google earth can be challenging given the size of many detection files. The [VTrack](http://plotkml.r-forge.r-project.org/) R package has a few handy functions for visualising your tag detections as track animations in [Google Earth](https://www.google.com/earth/)). 
+
+For this to work, your receiver locations MUST be in the datum WGS84 and you will need to have Google Earth downloaded on your machine. If you have not already got it, Google Earth can be downloaded for free [here]<https://www.google.com/earth/download/gep/agree.html>
+
+For this workshop, we will need the most recent version of the VTrack R package from our GitHub repository. This contains some new functionality that currently is not on CRAN.
+
+We will then load our tracking detection dataset into the VTrack format and extract a list of transmitters. 
+
+```{r}
+install_github("RossDwyer/VTrack")
+library(VTrack)
+
+# Load crocodile datset into VTrack archive
+data(crocs)
+Vcrocs <- ReadInputData(infile=crocs,
+                        iHoursToAdd=10,
+                        dateformat = NULL,
+                        sVemcoFormat='1.0')
+Vcrocs %>% head()
+
+# Load Wenlock points file
+data(PointsDirect_crocs)
+PointsDirect_crocs %>% head()
+
+# We can have a look at the unique transmitter codes using VTrack's ExtractUniqueValues() function
+ExtractUniqueValues(Vcrocs,2)
+```
+
+Once we have our dataset in the VTrack archive format and a seperate Points file containing the receiver locations, we can then run VTrack's KML creator functions. %GenerateAnimationKMLFile_Track()% generates a moving arrow for a single transmitter as it moves between the detection field of adjacent receiver stations. 
+
+```{r, eval=FALSE}
+# Run the function to generate the KML for a single transmitter
+GenerateAnimationKMLFile_Track(Vcrocs, # VTrack archive file
+                               TransmitterList[1], # Transmitter id
+                               PointsDirect_crocs, # points file
+                               "Track1.kml", # file name
+                               "cc69deb3", # colour of the track
+                               sLocation="RECEIVERID")
+```
+
+
+![time slider in Google Earth](Images/timeslider.png)
+
+The file will be written in your Project folder and can be opened by double clicking the file. Users can adjust the time slider to visualise individual time periods for display or can click the spanner icon to slow down the speed of the animation.
+
+
+There is also a second handy function for visualising the movements of multiple animals at a time.
+
+```{r, eval=FALSE}
+GenerateAnimationKMLFile_Multitag(Vcrocs,
+                                  PointsDirect_crocs,
+                                  "Croc Multi.kml",
+                                  sLocation="RECEIVERID")
+```
+
+##Calculating **distance metrics** (direct, circuitous, least cost)
+
+In this next exercise we will extract a metric to compare how far each of our tagged animals moved during the period of study. To do this, we use one of the %Generate*Distance()% functions within VTrack which calculates the distances between each of our hydrophone stations and assemble the distances within a matrix.
+
+If our receivers are in open water or in an enclosed bay or dam, there may be no obvious barriers to animal movement so we could use the %GenerateDirectDistance()% function to generate our distance matrix. 
+
+```{r}
+VR2ArrayDM <- GenerateDirectDistance(VR2Array) 
+VR2ArrayDM
+```
+
+In, our crocodile example however, our animal's movements are bounded by the banks of the river and so cannot move directly (as the crow flies) between hydrophone stations. As a work around, the VTrack Package has a function %GenerateCircuitousDistance()% that calculates distances in series through a set of locations and waypoints to form an indirect path between receiver stations.
+
+```{r}
+# Load the points file
+data(PointsCircuitous_crocs)
+
+# Generate the Circuitous Distance Matrix
+CircuitousDM <- GenerateCircuitousDistance(PointsCircuitous_crocs)
+
+# Now plot example of how circuitous distances between receivers were generated
+# In this example an individual must follow the course of the river in order to
+#   move between receivers
+par(mfrow=c(1,1),las=1,bty="l")
+plot(PointsCircuitous_crocs$LONGITUDE,PointsCircuitous_crocs$LATITUDE,
+    pch=1,cex=0.5,col="grey",xlab="Longitude",ylab="Latitude")
+lines(PointsCircuitous_crocs$LONGITUDE,PointsCircuitous_crocs$LATITUDE,
+      col="grey",lwd=0.3,lty=3)
+
+Receiversonly <- na.omit(PointsCircuitous_crocs)
+points(Receiversonly$LONGITUDE,Receiversonly$LATITUDE,pch=10,cex=1)
+
+```
+
+We would then use this within the RunResidenceExtraction() function in VTrack to extract the movements between hydrophonme stations and link this to our measure of distance travelled
+
+```{r}
+Res<- RunResidenceExtraction(Vcrocs,  
+                             "STATIONNAME",    
+                             2,              
+                             60*60*12,
+                             sDistanceMatrix=VR2ArrayDM)
+
+# Our movements file
+CrocMovements <- Res$nonresidences
+```
+
+##Plotting distance travelled through time
+
+Generating these distance matrices can also be a useful way of extracting the distance of each receiver stations to a specific location (i.e. receiver positioned at the mouth of an estuary, instream structure or other point of interest). These distances can then be merged with the original detection dataset and plotted through time to look at associations and commonality in the timing of animal movements.
+
+```{r}
+DistDownstream <- CircuitousDM[,1]
+names(DistDownstream) <- c("STATIONNAME","Distance.DS")
+
+Vcrocsm <- merge(Vcrocs,DistDownstream,by="STATIONNAME")
+Vcrocsm <- Vcrocsm[order(Vcrocsm$TRANSMITTERID,Vcrocsm$DATETIME),]
+row.names(Vcrocsm) <- NULL
+Vcrocsm <- Vcrocsm[,c("DATETIME","TRANSMITTERID","SENSOR1","UNITS1","RECEIVERID","STATIONNAME","Distance.DS")]
+
+Vcrocsm %>%
+ggplot(daes(x=DATETIME, y=DistDownstream,group=TRANSMITTERID)) +
+  geom_line(alpha=0.5) +
+  scale_y_continuous(name="Distance from Downstream (km)")+
+  xlab("Date") +
+  theme_bw()+
+  theme(legend.title = element_blank(),
+        legend.position='none',
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank())
+```
+
+Finally, many acoustic array designs will not fall in series like our above example and will insead be made up of multiple creeks and branches like this.
+
+```{r, fig.retina = NULL, echo=FALSE}
+knitr::include_graphics("Images/AMGZones.jpg")
+```
+
+The code for doing this is here
+
+```{r}
+library(sp)
+library(raster)
+library(rgdal)
+library(gdistance)
+
+barra <- read.csv('C:/Users/uqrdwye2/Downloads/barra.csv', header = TRUE)
+barra[,1] <- as.POSIXct(barra[,1])
+barra <- subset(barra[,1]<as.POSIXct("2016-01-31 14:00:00"))
+unique(barra$Station.Name)
+
+Vbarra <- ReadInputData(infile = barra,
+                        iHoursToAdd = 10,
+                        sVemcoFormat = "Default")
+
+r5 <- raster("GIS/wenlock raster UTM.tif")
+# Convert to transition object - required for the river distance algorythm
+tr <- transition(r5, transitionFunction=mean, directions=8) # Create a Transition object from the raster
+
+POINTS <- read.csv("GIS/All wenlock stations snapped to river UTM.csv")
+POINTS2 <- POINTS[-c(4,10,11,12,13,17:26,40:45,58,62:63,71,74:77,99,103,107),] # Removes points that dont fall on raster
+POINTS3 <- POINTS2[POINTS2[, 1] %in%  ExtractUniqueValues(Vbarra,6), ]  # Removes points that were not accessed by our fish
+
+# Function to calculate river distances from multi branch system
+GenerateRasterDistance <- function(sPointsFile,sTransition)
+{
+ 
+  xy <- coordinates(sPointsFile[,2:3])
+  SP <- SpatialPoints(xy,proj4string=crs(sTransition))
+
+  # Initialise variables
+  newDM <- matrix(0,nrow(xy),nrow(xy))
+  iCount <- 1
+  rDISTANCE <- rep(0,nrow(xy)-1)
+  sDISTANCE <- rep(0,nrow(xy)-1)
+    
+  for(i in 1:nrow(xy))     # For each row in the distance matrix
+  {
+    for (j in 1:nrow(xy))  # For each column in the distance matrix
+    {
+      SP1 <- SP[i,]
+      SP2 <- SP[j,]
+      
+      crowdist <- spDists(SP1,SP2, longlat = FALSE) # Extract the direct distance
+      
+      if(crowdist > 200){
+        sPath2 <- shortestPath(sTransition, SP1, SP2, output="SpatialLines")
+        riverdist <- SpatialLinesLengths(sPath2,longlat=FALSE)}
+      if(crowdist <= 200)
+        riverdist <- crowdist
+      
+      #sDISTANCE[j] <- crowdist      
+      rDISTANCE[j] <- riverdist 
+    }
+    newDM[i,] <- rDISTANCE
+    print(paste0(i," of ",nrow(xy)," receivers calculated"))
+  }
+  newDM <- round(newDM/1000,2) #divide by 1000 to convert from m to km
+  newDM[lower.tri(newDM)] = t(newDM)[lower.tri(newDM)] # Ensures matrix symetrical
+  
+  # Format and return the distance matrix
+  DM <- as.character(sPointsFile$LOCATION)
+  colnames(newDM) <- DM
+  newDM <- data.frame(newDM)
+  DM2 <- data.frame(DM = DM,newDM)
+  return(DM2)
+}
+
+GenerateRasterDistance(sPointsFile = POINTS3,
+                       sTransition = tr)
+
+```
+
 
 ------------------------------------------
 
@@ -638,7 +926,7 @@ The EPSG list among other sources is used in the workhorse PROJ.4 library, and h
 
 In the next step, we need to define the CRS which corresponds to our dataset. For the cassowary GPS dataset (`cassdat.sp`), we have not specified the CRS so the `@pro4string` slot is empty at the moment (`= NA`). We therefore need to refer to the correct proj4 string information which is contained within the rgdal package.
 
-Our cassowary coordinates were collected in the **WGS 84** geographic datum in **Decimal Degrees**.
+Our receiver coordinates were collected in the **WGS 84** geographic datum in **Decimal Degrees**.
 
 For simplicity, each projection can be referred to by a unique ID from the European Petroleum Survey Group (EPSG) geodetic parameter dataset. You can find the relevant EPSG code for your coordinate system from the website <http://spatialreference.org>. Here simply enter in a key word in the search box and select from the list the correct coordinate system. There is a map image in the top right of the site to help you. 
 
@@ -657,157 +945,19 @@ In order to calculate distances and areas correctly, we need to now transform ou
 knitr::include_graphics("Images/AMGZones.jpg")
 ```
 
-From the above graphic, can you see which is the correct projection for the Cairns area - here's a [hint](http://spatialreference.org/ref/epsg/gda94-mga-zone-55/)
+From the above graphic, can you see which is the correct projection for the Townsville area - here's a [hint](http://spatialreference.org/ref/epsg/gda94-mga-zone-55/)
 
 ```{r}
 GDA <- CRS("+init=epsg:28355") #The equivalent EPSG code for WGS 84 is 28355. 
-cassdat.P <- spTransform(cassdat.sp,GDA)
+cb.P <- spTransform(cb,GDA)
 ```
 
 ------------------------------------------
 
-##`SpatialPolygons` and home ranges
-
-In the next section we will use functions contained in the [adehabitatHR](http://cran.r-project.org/web/packages/adehabitatHR/) R package to do some home range estimations. 
-
-Home range estimators are often used in animal movement studies to identify important areas to wildlife
-
-More information on these estimators (plus the full citations) can be found in the [R package vignette for adehabitatHR](http://127.0.0.1:12661/help/library/adehabitatHR/doc/adehabitatHR.pdf)
-
-
-The function for calculating the kernel density is `kernelUD()`. In this exercise, we will first estimate the kernel utilization distribution (KUD), and plot this distribution on a map 
-
-```{r}
-# Generate our Home Ranges
-kud <- kernelUD(cassdat.P[,1], h="href") ## Estimation of UD for the three animals
-class(kud)
-image(kud) ## Plot the UD of the four animals
-```
-
-The objects produced when running the `kernelUD()` function are 3 x `estUD` objects (one for each animal). Collectively adehabitat has classifyed them as an `estUDm` object. This adehabitat's own raster-style classification for a density surface.
-
-Suppose instead of a continuous surface we wanted to extract the 95% and 50% home range contours from the probability surface? We can do this using the `getverticeshr()` function.
-
-```{r}
-# Extract the 95% and 50% kerneal for each animal
-
-## 95% KUD
-casskud.P95 <- getverticeshr(kud, percent = 95)
-casskud.P95 ## Notice that this is now a SpatialPolygonsDataFrame object
-
-## 50% KUD
-casskud.P50 <- getverticeshr(kud, percent = 50)
-casskud.P50 ## Notice that this is now a SpatialPolygonsDataFrame object
-
-```
-
-This generates a `SpatialPolygonDataframes` object, is a list of `Polygon` objects (such as animal home range contours) with CRS information and associated attribute data. 
-
-We can investigate the data contained within the object's data frame using the `@data` command. We can also plot these polygons individually by specifying what line of our `SpatialPolygonsDateFrame` to plot.
-
-
-```{r}
-# Home range size 
-casskud.P95@data
-
-# PLot the data for each animal as part of a 3 panel figure
-par(mfrow=c(1,3))
-plot(casskud.P95[1,],border=1,lty=2,main="Annabelle")
-plot(casskud.P50[1,],col="lightgrey", add=T)
-plot(cassdat.P[cassdat.P$ANIMALID=="Annabelle",], col="red",pch=16, add=T)
-
-plot(casskud.P95[2,],border=1,lty=2,main="Dooley")
-plot(casskud.P50[2,],col="lightgrey", add=T)
-plot(cassdat.P[cassdat.P$ANIMALID=="Dooley",], col="green",pch=16,add=T)
-
-plot(casskud.P95[3,],border=1,lty=2,main="M2")
-plot(casskud.P50[3,],col="lightgrey", add=T)
-plot(cassdat.P[cassdat.P$ANIMALID=="M2",], col="blue",pch=16,add=T)
-
-```
 
 ---------------------------
 
-##`SpatialLines` and animal trajectories
 
-In this exercise we are going to extract movement metrics from along an animal's trajectory using the `as.ltraj` function in adehabitatLT. 
-
-
-###Movement metrics
-
-`ltraj` objects were specifically designed to store the movements of animals monitored using tracking devices. 
-
-On running this function, the following parameters are automatically produced...
-
-1.  `dx, dy, dt`: these parameters measured at relocation i describe the increments of the x and y directions and time difference between  relocations i and i + 1.
-
-2.  `dist`: the distance between successive relocations 
-
-3.  `abs.angle`: the absolute angle between the x direction and the step built by relocations i and i + 1.
-
-4.  `rel.angle`: the relative angle measures the change of direction between the step built by relocations i +􀀀 1 and i and the step built by relocations i and i + 1 (often called thwe "turning angle"). 
-
-5.  `R2n`: the squared distance between the first relocation of the trajectory and the current relocation
-
-```{r}
-# Extract the date field, the animal id field and the coordinates of each relocation and save as a vector 
-GPSdates <- as.POSIXct(cassdat.P@data$DATE)
-GPSids <- cassdat.P@data$ANIMALID
-GPSxys <- coordinates(cassdat.P)
-
-# Convert to an ltraj object
-cassdat.lt <- as.ltraj(xy=GPSxys,date=GPSdates,id=GPSids,proj4string = GDA) # Assign it the correct coordinate reference system
-
-#Have a look at the newly created ltraj object
-cassdat.lt
-head(cassdat.lt[[1]])
-
-```
-
-You'll see that the function `as.ltraj` has automatically computed the descriptive parameters from the x and y coordinates, and from the date. Note that `dx,dy,dist` are expressed in the units of the coordinates x,y (here, *metres*), the duration between relocations is in *seconds* and abs.angle,rel.angle are expressed in *radians*.
-
-A graphical display of the bursts can be obtained simply by:
-
-```{r}
-plot(cassdat.lt)
-```
-
-------------------------------------------
-
-###`SpatialLines` objects
-
-Next we will extract what is the minimum distance each cassowary travelled during the survey period. 
-
-To do this we are going to convert our data to a `SpatialLinesDataFrame`. `Line` objects are basically a collection of 2D coordinates linked together in a specific order by a series of lines. `Lines` objects are a list of Line objects, such as the contours on a single elevation, and each hold a specific ID (i.e. the depth of that particular contour). `SpatialLines` are formed by attributing the Lines object with spatial information related to the coordinate reference system. A `SpatialLinesDataFrame` is a spatial lines object with attribute data (e.g. animal id, distance travelled etc.)
-
-The `ltraj2sldf` functions convert the class `ltraj` available in adehabitatLT towards  classes available in the package sp.
-
-```{r}
-# Convert the ltraj object into a spatial lines dataframe
-casstrak.P <- ltraj2sldf(cassdat.lt,byid=TRUE)
-
-# Assign it the correct coordinate reference system
-proj4string(casstrak.P) <- GDA
-
-class(casstrak.P)
-
-```
-
-------------------------------------------
-
-### Distance travelled
-
-`SpatialLines` and `SpatialLinesDataframes` can be very useful if you want to calculate the distance covered or the circumference of an area.
-
-Here we use the `SpatialLinesLengths()` function to calculate the minimum distance moved by each individual cassowary in meters
-
-```{r}
-# Extract the lengths of these lines in meters
-# 1: Annabelle; 2: Dooley; 3: M2
-casstrak.P@data$Distance <- SpatialLinesLengths(casstrak.P)
-
-casstrak.P@data
-```
 
 ------------------------------------------
 
@@ -842,156 +992,6 @@ writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines
          dataset_options=c("NameField=id"))
 ```
 
-
-*Extra task* - try writing the `SpatialPolygons` object containing our home ranges and our `SpatialLines` object containing our trajectory lines to file. 
-
-------------------------------------------
-
-##Visualising your data in [Google Earth](https://www.google.com/earth/)
-
-###Visualising points
-
-Google Earth offers a highly flexible way of visualising your spatial data. `writeOGR()` in the rgdal library also offers this functionality. However the data **MUST** be geographical coordinates with datum WGS84.
-
-If our data isn't already in the datum WGS84, We can transform it using the `spTransform()` function.
-
-The [plotKML](http://plotkml.r-forge.r-project.org/) R package also offers some more advanced functionality for visualising your data in [Google Earth](https://www.google.com/earth/)). The file will be written in your project folder.
-
-```{r, eval=FALSE}
-## First lets export the cassowary locations (Points) (already in WGS84)
-writeOGR(cassdat.lt.WGS,
-         dsn="GIS/cass_points.kml",
-         layer= "gps", driver="KML",
-         dataset_options=c("NameField=id"))
-
-```
-
-If you have time, try exporting your lines and polygons objects as .kml file. You will find help on how to do this by typing `?kml` or having a look on [Google](http://google.com)  
-
-------------------------------------------
-
-###Visualising animations
-
-Next convert your data into a STIDF object to create an animation of your Track
-
-```{r,eval=FALSE}
-# create a STIDF object:
-library(spacetime)
-library(plotKML)
-newXY <- SpatialPoints(coordinates(cassdat.lt.WGS))
-proj4string(newXY) <- CRS("+proj=longlat +datum=WGS84")
-newXY.st <- STIDF(newXY, time = cassdat.lt.WGS@data$date, data = cassdat.lt.WGS@data[,c("id")])
- 
-# write to a KML file:
-shape <- "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
-kml(newXY.st, dtime = 24*3600, colour = id, shape = shape, labels = "", kmz=TRUE)
-```
-
-***End of Session 1
-
-<br>  
-<br> 
-------------------------------------------
-
-
-
-------------------------------------------
-
-##Loading in our spatial data
-First lets load the dataset we created in Session 1.
-
-It is extremely easy to import spatial data into R. We will use the `readOGR` function from the rgdal package. This function is an interface to the OGR software, a famous GIS library used to import many different vector formats.
-
-```{r}
-library(rgdal)
-cassdat.lt.WGS <- readOGR("GIS", "cass_points")
-
-#check our data has loaded
-head(cassdat.lt.WGS)
-```
-
-
-------------------------------------------
-
-
-
-##Interactive maps using leaflet
-
-For our last task I want to show you how you can make some really cutting edge visuals with R, which will help you share your work with collaborators. We are going to make a simple web-based map using the  leaflet package. The leaflet package utilises the open-access leaflet JavaScript library (a web programming language), to create web-based maps. We will cover a basic map with some points on it today. See [Rstudio’s leaflet page](http://rstudio.github.io/leaflet/) for help and more mapping features, like polygons.
-
-To get started with leaflet, first, make sure you have the leaflet and htmlwidgets packages installed, and then load it into this session:
-
-```{r}
-library(leaflet)
-library(htmlwidgets)
-```
-
-Next we'll add a new column to our data specifying the colour we want our points to be, before transforming our data to a `SpatialPointsDataframe` object.
-
-
-```{r}
-
-## Import cleansed 2014 tagged animal file from ZoaTrack
-
-cassdat.df7 <- cassdat.df6 %>%
-  mutate(ANIMALCOL = ifelse(id=="Annabelle","red",
-                            ifelse(id=="Dooley","green",
-                                   "blue")))
-
-coordinates(cassdat.df7) <- ~coords.x1 + coords.x2
-
-```
-
-
-We start by specifying a base layer, then we can add features to it. We will string together our layers using the pipes `(%>%)` command.
-
-The below code first creates a map widget using the cassowary data frame. Then we `addTiles`, which is the background to the map. See [this page](http://rstudio.github.io/leaflet/basemaps.html) for the numerous base map options. Finally, we add some markers, located using the longitude and latitude variables in the cassowary data frame:
-
-```{r, eval = FALSE}
-
-mymap <- 
-leaflet(cassdat.df7) %>%
-  
-  #Base maps
-  addTiles(group = "OSM (default)") %>%  # Add default OpenStreetMap map tiles
-  addProviderTiles("Esri.WorldImagery") %>%
-
-  #Overlay points
-  addCircleMarkers(popup=paste0('id = ', cassdat.df7@data$id, ", DATE = ", cassdat.df7@data$date),
-                   weight=2,
-                   radius=5,
-                   color = cassdat.df7@data$ANIMALCOL,
-                   stroke = FALSE, fillOpacity = 0.4, group = "Points") %>%
-
-  #Add Layers control
-  addLayersControl(
-    baseGroups = c("OSM (default)","Esri.WorldImagery"),
-    overlayGroups = c("Points"),
-    options = layersControlOptions(collapsed = FALSE)) %>% 
-  
-  #Add a Legend
-  addLegend("topright",
-            colors=c("red","green","blue"), 
-            labels=c("Annabelle", "Dooley","M2"),
-            labFormat = labelFormat(prefix = "$"),
-            opacity = 1)
-
-mymap
-```
-
-
-Finally you can save this leaflet document at an html file and share it with your friends or colleagues
-
-
-```{r, eval = FALSE}
-saveWidget(mymap, file="mymap.html") # uses the htmldidgets package
-
-```
-
-*Extra task* - try writing the `SpatialPolygons` object containing our home ranges and our `SpatialLines` object containing our trajectory lines to this leaflet object 
-
-***End of Session 2
-
 --------------------------------------
 
 ```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
@@ -1001,7 +1001,6 @@ knitr::include_graphics("Images/tiger_banner.png")
 --------------------------------------
 
 # Session 4:
-
 
 
 ```{r, echo=FALSE,message=FALSE,include=TRUE}
@@ -1051,22 +1050,24 @@ leaflet() %>%
   
   addCircles(lng=coa.ll$Longitude.coa, lat=coa.ll$Latitude.coa, fill=TRUE, color="red", weight=3, fillOpacity = 0.9, group = "Centers of Activity") %>%
   
+  addPolylines(lng=coa.ll$Longitude.coa, lat=coa.ll$Latitude.coa, color="gray", weight=2, fillOpacity = 0.5, opacity = 0.5, group = "Movement Trajectories") %>%
+  
   addPolygons(data=mcp.ll, color="green", weight=2, group="Minimum Convex Polygon") %>%
   
-  addRasterImage(kud.ras, colors = p1, group="Fixed KUD", opacity = 0.4) %>%
+  #addRasterImage(kud.ras, colors = p1, group="Fixed KUD", opacity = 0.4) %>%
   addPolygons(data=kud, color="white", weight=2, group="Fixed KUD", fillOpacity = 0) %>%
   
-  addRasterImage(kbb.ras, colors = p2, group="Brownian Bridge KUD", opacity = 0.4) %>%
+  #addRasterImage(kbb.ras, colors = p2, group="Brownian Bridge KUD", opacity = 0.4) %>%
   addPolygons(data=kbb, color="white", weight=2, group="Brownian Bridge KUD", fillOpacity = 0) %>%
 
   #Layers control
   addLayersControl(
     #baseGroups = c("Map","Satellite"),
-    overlayGroups = c("Centers of Activity", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"),
+    overlayGroups = c("Centers of Activity", "Movement Trajectories", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"),
     options = layersControlOptions(collapsed = FALSE)) %>%
 
   
-  hideGroup(c("Centers of Activity", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"))
+  hideGroup(c("Centers of Activity", "Movement Trajectories", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"))
 
 ```
 
