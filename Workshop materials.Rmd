@@ -1076,7 +1076,7 @@ writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines
 Text to introduce tigershark data
 
 
-```{r, echo=FALSE, message=FALSE, include=TRUE, results=FALSE}
+```{r, echo=FALSE,message=FALSE,include=TRUE}
 require(leaflet)
 require(sp) 
 require(raster)
