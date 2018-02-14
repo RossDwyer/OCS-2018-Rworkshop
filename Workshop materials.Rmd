@@ -36,37 +36,37 @@ We designed this course not to comprehensively cover all the tools in **R**, but
 
 This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mins each.
 
-**Session 1:**
+* **Session 1: Data wrangling**
 0.  A brief introduction to **R**
 1.  **Import** large telemetry datasets into **R** using [data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html)
 2.  **Filter** and **manipulate** our data using %pipes% and the [tidyverse](http://tidyverse.org/) group of **R** packages
 3.  **Plot** summary statistics using [ggplot2](http://ggplot2.org/)
 
 
-**Session 2:**
+**Session 2: Working with spatial objects**<br>
 4.  Working with **Spatial* objects**
 5.  Generating interactive maps using [leaflet](http://leafletjs.com/) 
 
-**Session 3:**
+**Session 3: Assessing temporal components of tracking datasets**<br>
 6.  Producing track **animations** 
 7.  Integration with [Google Earth](http://googleearth.com/) 
 8.  Calculating **distance metrics** (direct, circuitous, least cost)
-9. Plotting distance travelled through time
+9.  Plotting distance travelled through time
 
-**Session 4:**
+**Session 4: Calculating home ranges**<br>
 10. Calculating short-term centers of activity (**COA**)
 11. Calculating and plotting **home range** area metrics using
-    * MCPs (array/matrix)
-    * Linear home ranges
-    * Brownian bridges
-12.  **ESRI Shapefile** export and import
+    a) MCPs (array/matrix)
+    b) Linear home ranges
+    c) Brownian bridges
+12.  **ESRI Shapefile** import and export
 
 **The main principles we hope you will learn today are...**
 
-1. Data wrangling in **R** is safe, fast, reliable and repeatable
-2. **R** can easily handle large datasets
-3. **R** is the ideal suite for performing your GIS operations
-4. that in **R**, it is easy to produce amazing publication-ready images 
+* Data wrangling in **R** is safe, fast, reliable and repeatable
+* **R** can easily handle large datasets
+* **R** is the ideal suite for performing your GIS operations
+* that in **R**, it is easy to produce amazing publication-ready images 
 
 <br>
 <br>
@@ -175,9 +175,11 @@ library(tidyverse)
 library(devtools)
 ```
 
---------------------------------
+<br>  
+<br> 
 
-##  Importing telemetry data
+----------------------------
+##  Importing large telemetry datasets into **R**
 
 ```{r, echo=FALSE,message=FALSE,include=TRUE}
 
@@ -305,8 +307,8 @@ We encourage you to use the package vignettes to explore additional functionalit
 browseVignettes("data.table")
 ```
 
+### Pipes `%>%`
 ![pipes are awesome!](Images/mario.png)
-
 Now that we've successfully loaded in our tracking dataset, lets start having a closer look at the data using pipes `%>%`
 
 * Originally from the `magrittr` package but has been imported to the `tidyverse`.
@@ -321,7 +323,7 @@ class(blacktip)
 blacktip %>% class()
 ```
 
-###Benefits of pipes %>% 
+#### Benefits of pipes %>% 
 * Functions flow in natural order that tells story about data.
 * Code effects are easy to reason about by inserting `View()` or `head()` into pipe chain.
 * Common style makes it easy to understand collaborator (or your own) code.
@@ -368,7 +370,6 @@ blacktip %>%
 ```
 
 ## The *tidyverse*
-
 ![Welcome to the tidyverse](Images/TIDYVERSE.jpg)
 
 Now that you've fully jumped into the world of pipes, it's time to fully introduce you to the *tidyverse* group of R packages. These have really revolutionised the way we work with big data and the way we visualise our results.
@@ -553,6 +554,8 @@ You can get a list of available geometric objects using the code below:
 help.search("geom_", package = "ggplot2")
 ```
 
+<br>  
+<br> 
 
 ----------------------------
 ![Close up of one of our spatial obects](Images/banner1.png)
@@ -681,11 +684,14 @@ library(htmlwidgets)
 saveWidget(myleafletplot, file="mymap.html") # uses the htmlwidgets package
 ```
 
+<br>  
+<br> 
+
 -------------------------------------
 ![Crocs Rule!](Images/Croc.png)
 -------------------------------------
 
-# Session 3: Accessing the temporal component of the tracking dataset
+# Session 3: Accessing the temporal component of tracking datasets
 
 In this third session we are going to work with a data set containing detection data from 3 Estuarine Crocodiles (*Crocodylus porosus*) as shown in the image above. These animals were captured and tagged within the Wenlock River, Cape York. Crocodiles were dual tagged using both GPS transmitters and using a network of acoustic hydrophones deployed along the river system. You can read more about this study [here]<http://www.publish.csiro.au/mf/mf14042>
 
@@ -956,11 +962,14 @@ writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines
          dataset_options=c("NameField=id"))
 ```
 
+<br>  
+<br> 
+
 --------------------------------------
 ![Session 4 banner](Images/tiger_banner.png)
 --------------------------------------
 
-# Session 4: Quantifying home ranges using passive telemetry
+# Session 4: Calculating home ranges
 
 
 
