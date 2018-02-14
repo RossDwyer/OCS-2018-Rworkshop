@@ -34,32 +34,36 @@ Vinay is an Postdoctoral Research Fellow at the [Australian Institute of Marine 
 
 We designed this course not to comprehensively cover all the tools in **R**, but rather to teach you skills for taking your experience with R to the next level. Every new project comes with its own problems and questions and you will need to be independent, patient and creative to solve these challenges. It makes sense to invest time in becoming familiar with **R**, because today **R** is the leading platform for environmental data analysis and has some other functionalities which may surprise you! 
 
+<br>
+
 This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mins each.
 
-* **Session 1: Data wrangling**
+* Session 1: *Data wrangling*
 0.  A brief introduction to **R**
 1.  **Import** large telemetry datasets into **R** using [data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html)
 2.  **Filter** and **manipulate** our data using %pipes% and the [tidyverse](http://tidyverse.org/) group of **R** packages
 3.  **Plot** summary statistics using [ggplot2](http://ggplot2.org/)
 
-
-**Session 2: Working with spatial objects**<br>
+* Session 2: *Working with spatial objects*
 4.  Working with **Spatial* objects**
 5.  Generating interactive maps using [leaflet](http://leafletjs.com/) 
 
-**Session 3: Assessing temporal components of tracking datasets**<br>
+* Session 3: *Assessing temporal components of tracking datasets*
 6.  Producing track **animations** 
 7.  Integration with [Google Earth](http://googleearth.com/) 
 8.  Calculating **distance metrics** (direct, circuitous, least cost)
 9.  Plotting distance travelled through time
 
-**Session 4: Calculating home ranges**<br>
+* Session 4: *Calculating home ranges*
 10. Calculating short-term centers of activity (**COA**)
 11. Calculating and plotting **home range** area metrics using
     a) MCPs (array/matrix)
     b) Linear home ranges
     c) Brownian bridges
 12.  **ESRI Shapefile** import and export
+
+<br>
+<br>
 
 **The main principles we hope you will learn today are...**
 
@@ -281,7 +285,7 @@ The `data.table` package enhances the functionality of the traditional data.fram
 
 Firstly, data loaded using the `fread` function inputs detection data as a data.table format. This format is slightly different to the data.frame format but can still be maniuplated using the same rules as above. 
 
-To understand the enhancements of the %data.table% format we must first understand the general form of the data.table syntax. data.tables take the form of `DT[row, column, by]`. The additional `by` variable allows for quick and easy subsetting and aggregating. Try the following code:
+To understand the enhancements of the data.table format we must first understand the general form of the data.table syntax. data.tables take the form of `DT[row, column, by]`. The additional `by` variable allows for quick and easy subsetting and aggregating. Try the following code:
 
 ```{r,eval=FALSE}
 ## Subset rows within a data.table
@@ -309,6 +313,7 @@ browseVignettes("data.table")
 
 ### Pipes `%>%`
 ![pipes are awesome!](Images/mario.png)
+
 Now that we've successfully loaded in our tracking dataset, lets start having a closer look at the data using pipes `%>%`
 
 * Originally from the `magrittr` package but has been imported to the `tidyverse`.
@@ -644,18 +649,18 @@ myleafletplot # Print the map
 
 ```
 
-We can also now add the locations of our tagged sharks to show their position within the array. 
+We can also now add the detection data from our tagged sharks to show their positions within the array. 
 
 ```{r}
 ## First lets convert our blacktip data into a spatial points data frame object
 blacktip <- read.csv('Data/Blacktip_ClevelandBay.csv', header = TRUE)
 coordinates(blacktip)<-c("Longitude","Latitude")
 
-## Lets plot detection data from "Ana"
+## Subset detection data from "Ana" and remove duplicate positions
 ana <-
   blacktip %>%
   subset(`Transmitter.Name` == "Ana") %>%
-  remove.duplicates() ## remove duplicated points to reduce the number of points to plot on our leaflet map
+  remove.duplicates() ## remove duplicated positions to reduce the number of points to plot on our leaflet map
 ```
 
 Now lets add Ana's detection data to our leaflet map
@@ -673,7 +678,7 @@ myleafletplot %>%
     overlayGroups = c("Ana"), ## add the groups you want to overlay on the base maps
     options = layersControlOptions(collapsed = FALSE))
 
-## You can try adding detection data from "Colin" and "Bruce" to the map
+## Now try adding detection data from "Colin" and "Bruce" to the map
 ```
 
 Finally, you can save this leaflet document at an html file and share it with your friends or colleagues
@@ -802,7 +807,7 @@ PointsCircuitous_crocs %>%
 
 ```
 
-We would then use this within the `RunResidenceExtraction()` function in VTrack to extract the movements between hydrophonme stations and link this to our measure of distance travelled
+We would then use this within the `RunResidenceExtraction()` function in VTrack to extract the movements between hydrophone stations and link this to our measure of distance travelled
 
 ```{r}
 Res<- RunResidenceExtraction(Vcrocs,  
@@ -818,7 +823,7 @@ CrocMovements <- Res$nonresidences
 ### Least cost distance
 Finally, many acoustic array designs will not fall in series like our above example and will insead be made up of multiple creeks and branches like this.
 
-![receiver array in multi-branch system](Images/receivers and raster.jpeg)
+![receiver array in multi-branch system](Images/wenlock_recievers.jpeg)
 
 In this image the green area is the river and red crosses are the hydrophone locations. This function works by using a rasterised version of our study region (1 = water, 0 = land) then calculating the shortest (i.e. least cost) route transitioning from one cell to another to connect adjacent receiver stations. The function makes use of the [gdistance](https://cran.r-project.org/web/packages/gdistance/vignettes/gdistance1.pdf) R package and will work using any arrangement of acoustic arrays provided they are connected by water. 
 
@@ -833,7 +838,7 @@ tr <- transition(r5, transitionFunction=mean, directions=8) # Create a Transitio
 
 Next we load the tracking dataset and points file which uses a multi-branch array 
 
-```{r}
+```{r, eval=FALSE}
 library(VTrack)
 barra <- read.csv('Data/barra.csv', header = TRUE)
 barra[,1] <- as.POSIXct(barra[,1])
@@ -857,7 +862,7 @@ ggplot(data=df, aes(y=Y, x=X)) +
 
 Finally we run the `GenerateRasterDistance()` function in VTrack to generate the Distance matrix containing the Least cost paths.
 
-```{r}
+```{r, eval=FALSE}
 GenerateLeastCostDistance(sPointsFile = POINTS3,
                        sTransition = tr)
 ```
@@ -866,7 +871,7 @@ GenerateLeastCostDistance(sPointsFile = POINTS3,
 
 Generating distance matrices can also be a useful way of extracting the distance of each receiver stations to a specific location (i.e. receiver positioned at the mouth of an estuary, instream structure or other point of interest). These distances can then be merged with the original detection dataset and plotted through time to look at associations and commonality in the timing of animal movements.
 
-```{r}
+```{r, eval=FALSE}
 DistDownstream <- CircuitousDM[,1:2] # i.e. distance from the the most downstream hydrophone - serial number 103561 
 names(DistDownstream) <- c("RECEIVERID","Distance.DS")
 
@@ -910,20 +915,18 @@ The equivalent EPSG code for WGS 84 is [**4326**](http://spatialreference.org/re
 
 to set the spatial projection we use the `proj4string()` function
 
-```{r}
+```{r, eval=FALSE}
 WGS <- CRS("+init=epsg:4326")
 proj4string(cassdat.sp) <- WGS
 ```
 
 In order to calculate distances and areas correctly, we need to now transform our data to the correct spatial projection. 
 
-```{r, fig.retina = NULL, echo=FALSE}
-knitr::include_graphics("Images/AMGZones.jpg")
-```
+![Map Grid plot](Images/AMGZones.jpg)
 
 From the above graphic, can you see which is the correct projection for the Townsville area - here's a [hint](http://spatialreference.org/ref/epsg/gda94-mga-zone-55/)
 
-```{r}
+```{r, eval=FALSE}
 GDA <- CRS("+init=epsg:28355") #The equivalent EPSG code for WGS 84 is 28355. 
 cb.P <- spTransform(cb,GDA)
 ```
@@ -939,7 +942,7 @@ In this example we are goint to use the `writeOGR()` function in the rgdal packa
 The `ld` function allows to quickly convert an object of class ltraj to a data.frame. We then reproject our data back to Longs and Lats (WGS 1984) for viewing in Arc GIS or Google Earth
 
 
-```{r}
+```{r, eval=FALSE}
 
 # Convert the ltraj object into a standard data frame
 cassdat.lt.proj <- ld(cassdat.lt) # Change to a dataframe object
