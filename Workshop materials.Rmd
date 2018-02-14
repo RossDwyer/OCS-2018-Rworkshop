@@ -82,11 +82,8 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 <br>  
 <br>  
 
-```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
-knitr::include_graphics("Images/banner1.png")
-```
+![alt text](Images/banner1.png)
 
---------------------------------------
 
 #Session 1: Data wrangling
 
@@ -112,20 +109,14 @@ As **R** is open source, the more people we can get helping out on the **R** spa
 
 **For this course, we assume you have a basic understanding of the *R* environment, and working with *RStudio*. If you do not have experience working in *R* we encourage you to go through [this online course](https://www.uq.edu.au/eco-lab/gpem-r-course) that will bring you up to speed!**
 
-```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
-knitr::include_graphics("Images/blacktip.png")
-```
-
----------------------------------------
-
-
+![alt text](Images/blacktip.png)
+``
 ##Course resources
 
 To access data and scripts we will work through in this course, download the **OCS-2018-Rworkshop** folder from [GitHub](https://github.com/RossDwyer/OCS-2018-Rworkshop). This folder contains the course documents, telemetry data and R scripts we are going to work with. To download the folder click on the green "Clone or download" dropdown menu and select "Download ZIP"
 
-```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
-knitr::include_graphics("Images/Github download.png")
-```
+![alt text](Images/Github download.png)
+
 
 Once downloaded, the workshop folder contains the following sub folders:
 
@@ -143,7 +134,7 @@ First, open the R Studio program on your computer and in the TOP LEFT corner of 
 
 Next, create a New Project using the *Create Project* command (available on the Projects menu and on the global toolbar):
 
-![alt text](Images/RStudio_newproj.png)"
+![alt text](Images/RStudio_newproj.png)
 
 Select *Existing Directory* then save the project within the "OCS-2018-Rworkshop" folder. 
 
@@ -159,7 +150,7 @@ When a *New Project* is created, R Studio:
 There are a number of good reasons why you should work with Projects in RStudio.
 1.  We may want our R scripts to be saved into a place where they link seamlessly to other documents and data files for our research project.
 2.  We may also want our tables, figures and statistical results to be written to locations on our computer where they are easy to locate.
-3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. [Dropbox](http://www.dropbox.com/), [OneDrive](http://www.onedrive.com/))
+3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. [Dropbox](http://www.dropbox.com/), [OneDrive](https://onedrive.live.com/about/en-au/))
 4.  It allows it to share work folders, data and R code with collaborators who are working on the same projects
 
 
@@ -180,7 +171,10 @@ In this example, `sp` is the package to be downloaded and 'http://cran.us.r-proj
 Multiple packages can be loaded at the same time by listing the required packages in a vector... 
 
 ``` {r, include=TRUE, eval=FALSE}
-install.packages(c("sp","rgdal","rgeos","adehabitatLT","adehabitatHR","leaflet","tidyverse","devtools"), repos='http://cran.us.r-project.org')
+install.packages(c("rgdal","rgeos","adehabitatHR",
+                   "raster","gdistance",
+                   "leaflet","tidyverse",
+                   'XML', 'gstat', 'Hmisc', 'checkmate',"devtools"), repos='http://cran.us.r-project.org')
 ```
 
 We then load the required packages from our computer's R package library using the `library()` function.
@@ -578,7 +572,6 @@ help.search("geom_", package = "ggplot2")
 
 ----------------------------
 
-![Close up of one of our spatial obects](Images/banner1.jpg)
 #Session 2: Working with spatial objects
 
 R offers a variety of functions for importing, manipulating, analysing and exporting spatial data. Although one might at first consider this to be the exclusive domain of GIS software, using R can frequently provide a much more lightweight, yet equally effective solution that embeds within a larger analytic workflow.
@@ -690,7 +683,7 @@ myleafletplot %>%
   hideGroup(levels(blacktip$Transmitter.Name))
 ```
 
-Finally you can save this leaflet document at an html file and share it with your friends or colleagues
+Finally you can save this leaflet document at an html file and share it with your friends or colleagues. The below code will save the html file to our project folder.
 
 
 ```{r, eval = FALSE}
@@ -716,11 +709,19 @@ For this to work, your receiver locations MUST be in the datum WGS84 and you wil
 
 For this workshop, we will need the most recent version of the VTrack R package from our GitHub repository. This contains some new functionality that currently is not on CRAN.
 
+
+
+```{r}
+library(devtools) # Includes funct
+
+install_github("RossDwyer/VTrack")
+library(VTrack)
+
+```
+
 We will then load our tracking detection dataset into the VTrack format and extract a list of transmitters. 
 
 ```{r}
-install_github("RossDwyer/VTrack")
-library(VTrack)
 
 # Load crocodile datset into VTrack archive
 data(crocs)
@@ -734,16 +735,19 @@ Vcrocs %>% head()
 data(PointsDirect_crocs)
 PointsDirect_crocs %>% head()
 
-# We can have a look at the unique transmitter codes using VTrack's ExtractUniqueValues() function
-ExtractUniqueValues(Vcrocs,2)
 ```
 
 Once we have our dataset in the VTrack archive format and a seperate Points file containing the receiver locations, we can then run VTrack's KML creator functions. %GenerateAnimationKMLFile_Track()% generates a moving arrow for a single transmitter as it moves between the detection field of adjacent receiver stations. 
 
 ```{r, eval=FALSE}
+
+levels(Vcrocs$TRANSMITTERID)
+
+##NEED TO CHECK THIS WORKS
+
 # Run the function to generate the KML for a single transmitter
 GenerateAnimationKMLFile_Track(Vcrocs, # VTrack archive file
-                               TransmitterList[1], # Transmitter id
+                               "139", # Transmitter code
                                PointsDirect_crocs, # points file
                                "Track1.kml", # file name
                                "cc69deb3", # colour of the track
@@ -751,12 +755,11 @@ GenerateAnimationKMLFile_Track(Vcrocs, # VTrack archive file
 ```
 
 
+The file will be written in your Project folder and can be opened in Google Earth. Users can adjust the time slider to visualise individual time periods for display or can click the spanner icon to slow down the speed of the animation.
+
 ![time slider in Google Earth](Images/timeslider.png)
 
-The file will be written in your Project folder and can be opened by double clicking the file. Users can adjust the time slider to visualise individual time periods for display or can click the spanner icon to slow down the speed of the animation.
-
-
-There is also a second handy function for visualising the movements of multiple animals at a time.
+There is also a another handy function for visualising the movements of multiple animals at a time.
 
 ```{r, eval=FALSE}
 GenerateAnimationKMLFile_Multitag(Vcrocs,
@@ -769,12 +772,15 @@ GenerateAnimationKMLFile_Multitag(Vcrocs,
 
 In this next exercise we will extract a metric to compare how far each of our tagged animals moved during the period of study. To do this, we use one of the %Generate*Distance()% functions within VTrack which calculates the distances between each of our hydrophone stations and assemble the distances within a matrix.
 
+###Direct distance
 If our receivers are in open water or in an enclosed bay or dam, there may be no obvious barriers to animal movement so we could use the %GenerateDirectDistance()% function to generate our distance matrix. 
 
 ```{r}
-VR2ArrayDM <- GenerateDirectDistance(VR2Array) 
+VR2ArrayDM <- GenerateDirectDistance(PointsDirect_crocs) 
 VR2ArrayDM
 ```
+
+###Circuitous distance
 
 In, our crocodile example however, our animal's movements are bounded by the banks of the river and so cannot move directly (as the crow flies) between hydrophone stations. As a work around, the VTrack Package has a function %GenerateCircuitousDistance()% that calculates distances in series through a set of locations and waypoints to form an indirect path between receiver stations.
 
@@ -788,14 +794,17 @@ CircuitousDM <- GenerateCircuitousDistance(PointsCircuitous_crocs)
 # Now plot example of how circuitous distances between receivers were generated
 # In this example an individual must follow the course of the river in order to
 #   move between receivers
-par(mfrow=c(1,1),las=1,bty="l")
-plot(PointsCircuitous_crocs$LONGITUDE,PointsCircuitous_crocs$LATITUDE,
-    pch=1,cex=0.5,col="grey",xlab="Longitude",ylab="Latitude")
-lines(PointsCircuitous_crocs$LONGITUDE,PointsCircuitous_crocs$LATITUDE,
-      col="grey",lwd=0.3,lty=3)
 
-Receiversonly <- na.omit(PointsCircuitous_crocs)
-points(Receiversonly$LONGITUDE,Receiversonly$LATITUDE,pch=10,cex=1)
+PointsCircuitous_crocs %>% 
+  ggplot(aes(x=LONGITUDE, y=LATITUDE)) +
+  xlab("LONGITUDE") +
+  ylab("LATITUDE") +
+  geom_path() + 
+  geom_point() +
+  geom_point(data=PointsDirect_crocs, 
+             aes(x=LONGITUDE, y=LATITUDE), color="red", size=3, shape=16) + # Plots the hydrophones in a different colour)
+  geom_point(data=PointsDirect_crocs[1,], 
+             aes(x=LONGITUDE, y=LATITUDE), color="green", size=3, shape=16) # Plots 103561 (i.e. the most downstream hydrophone) in a different colour)
 
 ```
 
@@ -806,7 +815,7 @@ Res<- RunResidenceExtraction(Vcrocs,
                              "STATIONNAME",    
                              2,              
                              60*60*12,
-                             sDistanceMatrix=VR2ArrayDM)
+                             sDistanceMatrix=CircuitousDM)
 
 # Our movements file
 CrocMovements <- Res$nonresidences
@@ -817,18 +826,18 @@ CrocMovements <- Res$nonresidences
 Generating these distance matrices can also be a useful way of extracting the distance of each receiver stations to a specific location (i.e. receiver positioned at the mouth of an estuary, instream structure or other point of interest). These distances can then be merged with the original detection dataset and plotted through time to look at associations and commonality in the timing of animal movements.
 
 ```{r}
-DistDownstream <- CircuitousDM[,1]
-names(DistDownstream) <- c("STATIONNAME","Distance.DS")
+DistDownstream <- CircuitousDM[,1:2] # i.e. distance from the the most downstream hydrophone - serial number 103561 
+names(DistDownstream) <- c("RECEIVERID","Distance.DS")
 
-Vcrocsm <- merge(Vcrocs,DistDownstream,by="STATIONNAME")
+Vcrocsm <- merge(Vcrocs,DistDownstream,by="RECEIVERID")
 Vcrocsm <- Vcrocsm[order(Vcrocsm$TRANSMITTERID,Vcrocsm$DATETIME),]
 row.names(Vcrocsm) <- NULL
 Vcrocsm <- Vcrocsm[,c("DATETIME","TRANSMITTERID","SENSOR1","UNITS1","RECEIVERID","STATIONNAME","Distance.DS")]
 
 Vcrocsm %>%
-ggplot(daes(x=DATETIME, y=DistDownstream,group=TRANSMITTERID)) +
+ggplot(aes(x=DATETIME, y=Distance.DS,group=TRANSMITTERID,colour=TRANSMITTERID)) +
   geom_line(alpha=0.5) +
-  scale_y_continuous(name="Distance from Downstream (km)")+
+  scale_y_continuous(name="Distance from most downstream receiver (km)")+
   xlab("Date") +
   theme_bw()+
   theme(legend.title = element_blank(),
@@ -840,85 +849,51 @@ ggplot(daes(x=DATETIME, y=DistDownstream,group=TRANSMITTERID)) +
         panel.background = element_blank())
 ```
 
+###Least cost distance
 Finally, many acoustic array designs will not fall in series like our above example and will insead be made up of multiple creeks and branches like this.
 
-```{r, fig.retina = NULL, echo=FALSE}
-knitr::include_graphics("Images/AMGZones.jpg")
-```
+![receiver array in multi-branch system](Images/receivers and raster.jpg)
 
-The code for doing this is here
+In this image the green area is the river and red crosses are the hydrophone locations. This function works by using a rasterised version of our study region (1 = water, 0 = land) then calculating the shortest (i.e. least cost) route transitioning from one cell to another to connect adjacent receiver stations. The function makes use of the [gdistance]<https://cran.r-project.org/web/packages/gdistance/vignettes/gdistance1.pdf> R package and will work using any arrangement of acoustic arrays provided they are connected by water. 
 
+First we load the raster layer of our study area using the raster R package and convert this to a transition object
 ```{r}
-library(sp)
 library(raster)
-library(rgdal)
 library(gdistance)
 
-barra <- read.csv('C:/Users/uqrdwye2/Downloads/barra.csv', header = TRUE)
-barra[,1] <- as.POSIXct(barra[,1])
-barra <- subset(barra[,1]<as.POSIXct("2016-01-31 14:00:00"))
-unique(barra$Station.Name)
-
-Vbarra <- ReadInputData(infile = barra,
-                        iHoursToAdd = 10,
-                        sVemcoFormat = "Default")
-
-r5 <- raster("GIS/wenlock raster UTM.tif")
-# Convert to transition object - required for the river distance algorythm
+r5 <- raster("GIS/wenlock raster UTM.tif") # Load the raster
 tr <- transition(r5, transitionFunction=mean, directions=8) # Create a Transition object from the raster
+```
 
-POINTS <- read.csv("GIS/All wenlock stations snapped to river UTM.csv")
-POINTS2 <- POINTS[-c(4,10,11,12,13,17:26,40:45,58,62:63,71,74:77,99,103,107),] # Removes points that dont fall on raster
-POINTS3 <- POINTS2[POINTS2[, 1] %in%  ExtractUniqueValues(Vbarra,6), ]  # Removes points that were not accessed by our fish
+Next we load the tracking dataset and points file which uses a multi-branch array 
 
-# Function to calculate river distances from multi branch system
-GenerateRasterDistance <- function(sPointsFile,sTransition)
-{
- 
-  xy <- coordinates(sPointsFile[,2:3])
-  SP <- SpatialPoints(xy,proj4string=crs(sTransition))
+```{r}
+library(VTrack)
+barra <- read.csv('Data/barra.csv', header = TRUE)
+barra[,1] <- as.POSIXct(barra[,1])
 
-  # Initialise variables
-  newDM <- matrix(0,nrow(xy),nrow(xy))
-  iCount <- 1
-  rDISTANCE <- rep(0,nrow(xy)-1)
-  sDISTANCE <- rep(0,nrow(xy)-1)
-    
-  for(i in 1:nrow(xy))     # For each row in the distance matrix
-  {
-    for (j in 1:nrow(xy))  # For each column in the distance matrix
-    {
-      SP1 <- SP[i,]
-      SP2 <- SP[j,]
-      
-      crowdist <- spDists(SP1,SP2, longlat = FALSE) # Extract the direct distance
-      
-      if(crowdist > 200){
-        sPath2 <- shortestPath(sTransition, SP1, SP2, output="SpatialLines")
-        riverdist <- SpatialLinesLengths(sPath2,longlat=FALSE)}
-      if(crowdist <= 200)
-        riverdist <- crowdist
-      
-      #sDISTANCE[j] <- crowdist      
-      rDISTANCE[j] <- riverdist 
-    }
-    newDM[i,] <- rDISTANCE
-    print(paste0(i," of ",nrow(xy)," receivers calculated"))
-  }
-  newDM <- round(newDM/1000,2) #divide by 1000 to convert from m to km
-  newDM[lower.tri(newDM)] = t(newDM)[lower.tri(newDM)] # Ensures matrix symetrical
-  
-  # Format and return the distance matrix
-  DM <- as.character(sPointsFile$LOCATION)
-  colnames(newDM) <- DM
-  newDM <- data.frame(newDM)
-  DM2 <- data.frame(DM = DM,newDM)
-  return(DM2)
-}
+PointsLeastCost_crocs <- read.csv("Data/PointsLeastCost_crocs.csv")
 
-GenerateRasterDistance(sPointsFile = POINTS3,
+
+#convert the raster to points for plotting
+map.p <- rasterToPoints(r5)
+df <- data.frame(map.p) #Make the points a dataframe for ggplot
+colnames(df) <- c("X", "Y", "Water") #Make appropriate column headings
+
+#Now plot the map
+ggplot(data=df, aes(y=Y, x=X)) +
+  geom_raster(aes(fill=Water)) +
+  geom_point(data=POINTS3, 
+             aes(x=X, y=Y), color="white", size=3, shape=16) +
+  theme_bw() +
+  coord_equal() 
+```
+
+Finally we run the GenerateRasterDistance() function in VTrack to generate the Distance matrix containing the Least cost paths.
+
+```{r}
+GenerateLeastCostDistance(sPointsFile = POINTS3,
                        sTransition = tr)
-
 ```
 
 

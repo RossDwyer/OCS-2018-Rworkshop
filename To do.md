@@ -7,7 +7,7 @@ Working with and manipulating large datasets
 - [X] ddply, dplyr \ tidyverse for subsetting data
 - [X] vtrack  
 - [X] advanced plotting using ggplot2 and Rcolorbrewer 
-- [ ] abacus plots
+- [X] abacus plots
 - [ ] residency
 
 
