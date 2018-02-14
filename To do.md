@@ -4,23 +4,23 @@ Introduction
 
 Working with and manipulating large datasets
 - [X] import export using data.table
-- [ ] ddply, dplyr \ tidyverse for subsetting data
-- [ ] vtrack  
-- [ ] advanced plotting using ggplot2 and Rcolorbrewer 
+- [X] ddply, dplyr \ tidyverse for subsetting data
+- [X] vtrack  
+- [X] advanced plotting using ggplot2 and Rcolorbrewer 
 - [ ] abacus plots
 - [ ] residency
 
 
 Working with spatial objects
-- [ ] libraries - sp, rgeos, raster
+- [X] libraries - sp, rgeos, raster
 - [ ] polygons of land
 - [ ] lines or contours
 - [ ] raster (land vs sea)
-- [ ] points and the locations of hydrophones
-- [ ] leaflet
+- [X] points and the locations of hydrophones
+- [X] leaflet
 - [ ] export import of shapefiles
 - [ ] animations 
-- [ ] google earth
+- [X] google earth
 
 Calculating area metrics
 - [ ] centers of activity
@@ -29,7 +29,7 @@ Calculating area metrics
 - [ ] brownian bridge
 
 Calculating distance metrics
-- [ ] distance travelled (direct, circuitous, least cost)
-- [ ] plot distance through time
+- [X] distance travelled (direct, circuitous, least cost)
+- [X] plot distance through time
 
 
