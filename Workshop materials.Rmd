@@ -1,9 +1,8 @@
 ---
 title: ![alt text](Images/OCS.jpeg) 
-subtitle: Animals in Motion 2018 Workshop - Stradbroke Island
+subtitle: Animals in Motion 2018 Workshop - North Stradbroke Island
 author: Dr Ross Dwyer & Dr Vinay Udyawer
 date: Feb 14, 2018
-
 output:
   html_document:
     toc: true
@@ -49,18 +48,18 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 5.  Generating interactive maps using [leaflet](http://leafletjs.com/) 
 
 **Session 3:**
-7.  Producing track **animations** 
-8.  Integration with [Google Earth](http://googleearth.com/) 
-9.  Calculating **distance metrics** (direct, circuitous, least cost)
-10. Plotting distance travelled through time
+6.  Producing track **animations** 
+7.  Integration with [Google Earth](http://googleearth.com/) 
+8.  Calculating **distance metrics** (direct, circuitous, least cost)
+9. Plotting distance travelled through time
 
 **Session 4:**
-11. Calculating short-term centers of activity (**COA**)
-12. Calculating and plotting **home range** area metrics using
+10. Calculating short-term centers of activity (**COA**)
+11. Calculating and plotting **home range** area metrics using
     * MCPs (array/matrix)
     * Linear home ranges
     * Brownian bridges
-13.  **ESRI Shapefile** export and import
+12.  **ESRI Shapefile** export and import
 
 **The main principles we hope you will learn today are...**
 
@@ -107,6 +106,7 @@ To access data and scripts we will work through in this course, download the **O
 
 ![How to acces course resources](Images/Github download.png)
 
+
 Once downloaded, the workshop folder contains the following sub folders:
 
 1.  Documents
@@ -133,13 +133,12 @@ When a *New Project* is created, R Studio:
 2.  Creates a hidden directory (named **.Rproj.user**) where project-specific temporary files (e.g. auto-saved source documents, window-state, etc.) are stored. 
 3.  Loads the project into R Studio and display its name in the Projects toolbar (which is located on the far right side of the main toolbar (very TOP RIGHT of the R Studio window).
 
-
 ## Why Projects are awesome
 
 There are a number of good reasons why you should work with Projects in RStudio.
 1.  We may want our R scripts to be saved into a place where they link seamlessly to other documents and data files for our research project.
 2.  We may also want our tables, figures and statistical results to be written to locations on our computer where they are easy to locate.
-3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. [Dropbox](http://www.dropbox.com/), [OneDrive](http://www.onedrive.com/))
+3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. [Dropbox](http://www.dropbox.com/), [OneDrive](https://onedrive.live.com/about/en-au/))
 4.  It allows it to share work folders, data and R code with collaborators who are working on the same projects
 
 ## Installing packages
@@ -152,10 +151,15 @@ Let’s suppose you want to load the *sp* package to access this package's incre
 install.packages("sp", repos='http://cran.us.r-project.org')
 ```
 
-In this example, `sp` is the package to be downloaded and 'http://cran.us.r-project.org' is the repository where the package will be accessed from. Multiple packages can be loaded at the same time by listing the required packages in a vector... 
+In this example, `sp` is the package to be downloaded and 'http://cran.us.r-project.org' is the repository where the package will be accessed from. 
+
+Multiple packages can be loaded at the same time by listing the required packages in a vector... 
 
 ``` {r, include=TRUE, eval=FALSE}
-install.packages(c("sp","rgdal","rgeos","adehabitatLT","adehabitatHR","VTrack","leaflet',"tidyverse"), repos='http://cran.us.r-project.org')
+install.packages(c("rgdal","rgeos","adehabitatHR",
+                   "raster","gdistance",
+                   "leaflet","tidyverse",
+                   'XML', 'gstat', 'Hmisc', 'checkmate',"devtools"), repos='http://cran.us.r-project.org')
 ```
 
 We then load the required packages from our computer's R package library using the `library()` function.
@@ -166,9 +170,9 @@ library(rgdal)
 library(rgeos)
 library(adehabitatLT)
 library(adehabitatHR)
-library(VTrack)
 library(leaflet)
 library(tidyverse)
+library(devtools)
 ```
 
 --------------------------------
@@ -317,7 +321,7 @@ class(blacktip)
 blacktip %>% class()
 ```
 
-### Benefits of pipes %>% 
+###Benefits of pipes %>% 
 * Functions flow in natural order that tells story about data.
 * Code effects are easy to reason about by inserting `View()` or `head()` into pipe chain.
 * Common style makes it easy to understand collaborator (or your own) code.
@@ -486,6 +490,7 @@ The basic idea: independently specify plot building blocks and combine them to c
 * faceting
 
 In the below script we call the data set we have just made (`blacktip`) and then pipe it into the ggplot function. We than tell ggplot that we want to plot a box plot
+
 ```{r}
 library(ggplot2)   
 
@@ -522,14 +527,16 @@ blacktip %>%
 In ggplot, aesthetic means “something you can see”. Aesthetic mapping (i.e., with aes()) only says that a variable should be mapped to an aesthetic. 
 It doesn’t say how that should happen. For example, when mapping a variable to shape with aes(shape = x) you don’t say what shapes should be used. 
 Similarly, aes(color = z) doesn’t say what colors should be used. Describing what colors/shapes/sizes etc. to use is done by modifying the corresponding scale. 
-In ggplot2 scales include
-Examples include:
+
+In ggplot2 scales include:
+
 * position (i.e., on the x and y axes)
 * color (“outside” color)
 * fill (“inside” color)
 * shape (of points)
 * linetype
 * size
+
 Each type of geom accepts only a subset of all aesthetics–refer to the geom help pages to see what mappings each geom accepts. Aesthetic mappings are set with the aes() function.
 
 #### Geometic Objects (geom)
@@ -603,7 +610,6 @@ data.frame(cb) %>%
   geom_point()
   
 ```
-
 
 ## Interactive maps using `leaflet`
 
@@ -718,7 +724,6 @@ Vcrocs %>% head()
 # Load Wenlock points file
 data(PointsDirect_crocs)
 PointsDirect_crocs %>% head()
-
 ```
 
 Once we have our dataset in the VTrack archive format and a seperate Points file containing the receiver locations, we can then run VTrack's KML creator functions. `GenerateAnimationKMLFile_Track()` generates a moving arrow for a single transmitter as it moves between the detection field of adjacent receiver stations. 
@@ -765,7 +770,6 @@ VR2ArrayDM
 ```
 
 ### Circuitous distance
-
 In, our crocodile example however, our animal's movements are bounded by the banks of the river and so cannot move directly (as the crow flies) between hydrophone stations. As a work around, the VTrack Package has a function `GenerateCircuitousDistance()` that calculates distances in series through a set of locations and waypoints to form an indirect path between receiver stations.
 
 ```{r}
@@ -880,7 +884,6 @@ ggplot(aes(x=DATETIME, y=Distance.DS,group=TRANSMITTERID,colour=TRANSMITTERID)) 
         panel.background = element_blank())
 ```
 
-
 ------------------------------------------
 
 ## Coordinate Reference Systems (CRS)
@@ -919,7 +922,7 @@ GDA <- CRS("+init=epsg:28355") #The equivalent EPSG code for WGS 84 is 28355.
 cb.P <- spTransform(cb,GDA)
 ```
 
-------------------------------------------
+---------------------------------------
 
 ## Writing a shapefile object from **R**
 
@@ -928,6 +931,7 @@ Once you have the `Spatial` object the way you like it, you will want to export 
 In this example we are goint to use the `writeOGR()` function in the rgdal package. to write the data containing the movement metrics to a shapefile.
 
 The `ld` function allows to quickly convert an object of class ltraj to a data.frame. We then reproject our data back to Longs and Lats (WGS 1984) for viewing in Arc GIS or Google Earth
+
 
 ```{r}
 
@@ -1082,5 +1086,3 @@ writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines
          layer= "cass_points", driver="ESRI Shapefile",
          dataset_options=c("NameField=id"))
 ```
-
-
