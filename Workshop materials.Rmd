@@ -1,25 +1,32 @@
 ---
-title: ![alt text](Images/OCS.jpeg) 
-subtitle: Animals in Motion 2018 Workshop - North Stradbroke Island
+title: Animals in Motion 2018 Workshop 
+subtitle: North Stradbroke Island
 author: Dr Ross Dwyer & Dr Vinay Udyawer
 date: Feb 14, 2018
 output:
   html_document:
     toc: true
-    depth: 3
-    number_sections: true
-    theme: united
-    highlight: tango
+    toc_float: true 
+    depth: 5
+    number_sections: false
+    theme: spacelab
+    highlight: pygments
 ---
-
+```{r, echo=FALSE}
+htmltools::img(src =knitr::image_uri('Images/OCS.jpeg'),
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px;')
+```
 <br>  
 <br> 
 
 --------------------------------------
-![Workshop banner](Images/img-featured-ntStradbrokeIsland.jpg)
---------------------------------------
 
 # Introductions
+
+![ ](Images/img-featured-ntStradbrokeIsland.jpg)
+
+<br>
 
 ## Who are we?
 
@@ -27,6 +34,7 @@ Ross is a Postdoctoral Research Fellow in the [School of Biological Sciences](ht
 
 Vinay is an Postdoctoral Research Fellow at the [Australian Institute of Marine Science](https://www.aims.gov.au/). He is an ecologist that is particularly interested in using large spatio-temporal datasets to understand animal movements and distributions patterns. He has considerable experience using R to analyse and visualise large and complex spatial datasets. He has developed R code to analyse 2 and 3 dimentional movement patterns of animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's R codes can be found on his [github page](https://github.com/vinayudyawer)
 
+<br>
 
 ## Course outline
 
@@ -38,21 +46,29 @@ We designed this course not to comprehensively cover all the tools in **R**, but
 
 This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mins each.
 
+<br>
+
 * Session 1: *Data wrangling*
 0.  A brief introduction to **R**
 1.  **Import** large telemetry datasets into **R** using [data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html)
 2.  **Filter** and **manipulate** our data using %pipes% and the [tidyverse](http://tidyverse.org/) group of **R** packages
 3.  **Plot** summary statistics using [ggplot2](http://ggplot2.org/)
 
+<br>
+
 * Session 2: *Working with spatial objects*
 4.  Working with **Spatial* objects**
 5.  Generating interactive maps using [leaflet](http://leafletjs.com/) 
+
+<br>
 
 * Session 3: *Assessing temporal components of tracking datasets*
 6.  Producing track **animations** 
 7.  Integration with [Google Earth](http://googleearth.com/) 
 8.  Calculating **distance metrics** (direct, circuitous, least cost)
 9.  Plotting distance travelled through time
+
+<br>
 
 * Session 4: *Calculating home ranges*
 10. Calculating short-term centers of activity (**COA**)
@@ -76,10 +92,12 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 <br>
 
 ---------------------------------------
-![Blacktip shark banner](Images/telemetry.png)
---------------------------------------
 
 # Session 1: Data wrangling
+
+![ ](Images/telemetry.png)
+
+<br>
 
 ## A brief introduction to **R**
 
@@ -103,13 +121,14 @@ As **R** is open source, the more people we can get helping out on the **R** spa
 
 **For this course, we assume you have a basic understanding of the *R* environment, and working with *RStudio*. If you do not have experience working in *R* we encourage you to go through [this online course](https://www.uq.edu.au/eco-lab/gpem-r-course) that will bring you up to speed!**
 
+<br>
+
 ## Course resources
 
 To access data and scripts we will work through in this course, download the **OCS-2018-Rworkshop** folder from [GitHub](https://github.com/RossDwyer/OCS-2018-Rworkshop). This folder contains the course documents, telemetry data and R scripts we are going to work with. To download the folder click on the green "Clone or download" dropdown menu and select "Download ZIP"
 
 
 ![How to acces course resources](Images/Github download.png)
-
 
 Once downloaded, the workshop folder contains the following sub folders:
 
@@ -137,6 +156,8 @@ When a *New Project* is created, R Studio:
 2.  Creates a hidden directory (named **.Rproj.user**) where project-specific temporary files (e.g. auto-saved source documents, window-state, etc.) are stored. 
 3.  Loads the project into R Studio and display its name in the Projects toolbar (which is located on the far right side of the main toolbar (very TOP RIGHT of the R Studio window).
 
+<br>
+
 ## Why Projects are awesome
 
 There are a number of good reasons why you should work with Projects in RStudio.
@@ -144,6 +165,8 @@ There are a number of good reasons why you should work with Projects in RStudio.
 2.  We may also want our tables, figures and statistical results to be written to locations on our computer where they are easy to locate.
 3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. [Dropbox](http://www.dropbox.com/), [OneDrive](https://onedrive.live.com/about/en-au/))
 4.  It allows it to share work folders, data and R code with collaborators who are working on the same projects
+
+<br>
 
 ## Installing packages
 
@@ -168,7 +191,7 @@ install.packages(c("rgdal","rgeos","adehabitatHR",
 
 We then load the required packages from our computer's R package library using the `library()` function.
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=TRUE, eval=FALSE}
 library(sp)
 library(rgdal)
 library(rgeos)
@@ -183,9 +206,18 @@ library(devtools)
 <br> 
 
 ----------------------------
-![Blacktip shark banner](Images/blacktip.png)
-----------------------------
+
 ##  Importing large telemetry datasets into **R**
+
+![ ](Images/blacktip.png)
+
+<br>
+
+In the first session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*) shown in the image above. These animals were captured and tagged within Cleveland Bay, Townsville roughly one month prior to the landfall of Cyclone Yasi in 2011. Blacktip sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay. 
+
+Telemetry data from these sharks were analysed alongside 45 others from five species to examine movement patterns of coastal sharks before, during and after three extreme weather events (i.e. cyclones, hurricane and tropical storms) in Australia and the US. You can read more about that study [here](http://www.int-res.com/abstracts/meps/v480/p171-183/).
+
+<br>
 
 ```{r, echo=FALSE,message=FALSE,include=TRUE}
 
@@ -193,7 +225,7 @@ library(leaflet)
 library(sp) 
 library(knitr)
 
-## Import datasets
+# Import datasets
 blacktip <- read.csv('Data/Blacktip_ClevelandBay.csv')
 statinfo <- read.csv('Data/Station_information.csv')
 cb<-statinfo[statinfo$Installation%in%"Cleveland Bay",]
@@ -237,7 +269,7 @@ leaflet() %>%
 
 The web map of detection data we will explore by the end of **Session 1**
 
-In the first session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*) shown in the image above. These animals were captured and tagged within Cleveland Bay, Townsville roughly one month prior to the landfall of Cyclone Yasi in 2011. Blacktip sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay.
+<br>
 
 Before we can analyse these data, we first need to read this dataset into R. As with most acoustic detection datasets exported from VUE or other acoustic telemetry data management software, our data set is in the 'comma sperated value' (.csv) format. 
 
@@ -255,15 +287,19 @@ library(data.table)
 # Load the blacktip shark data using data.table
 blacktip <- fread('Data/Blacktip_ClevelandBay.csv', header = TRUE)
 
-## You can also use fread to input data directly from a website URL
+# You can also use fread to input data directly from a website URL
 blacktip <- fread('https://raw.githubusercontent.com/RossDwyer/OCS-2018-Rworkshop/master/Data/Blacktip_ClevelandBay.csv')
 ```
+
+<br>
 
 **A note about Excel files**  
 
 Don’t use '.xlsx' or '.xls' files for saving data. The problem with '.xls' and '.xlsx' files are that they store extra info with the data that makes files larger than necessary and Excel formats can also unwittingly reformat or alter your data! 
 
 A stable way to save your data is as a '.csv' file, which stands for 'comma separated values'. These are simply values separated by 'commas' and rows defined by 'returns'. If you select 'Save as’ in excel, you can choose '.csv' as one of the options. If you open the .csv file provided in the `Data` folder using a text editor, you will see it is just words, numbers and commas.
+
+<br>
 
 ## **Filtering** and **manipulating** datasets
 
@@ -284,6 +320,8 @@ blacktip$Transmitter[1:5] #provides athe first five values for that object
 blacktip[,'Transmitter'] #provides all the data for that object
 ```
 
+<br>
+
 The `data.table` package enhances the functionality of the traditional data.frame format and allows you to do more than just select data based on row and column names.
 
 Firstly, data loaded using the `fread` function inputs detection data as a data.table format. This format is slightly different to the data.frame format but can still be maniuplated using the same rules as above. 
@@ -291,20 +329,20 @@ Firstly, data loaded using the `fread` function inputs detection data as a data.
 To understand the enhancements of the data.table format we must first understand the general form of the data.table syntax. data.tables take the form of `DT[row, column, by]`. The additional `by` variable allows for quick and easy subsetting and aggregating. Try the following code:
 
 ```{r,eval=FALSE}
-## Subset rows within a data.table
+# Subset rows within a data.table
 blacktip[`Transmitter Name` == "Ana" & Receiver == "VR2W-104912",] # Select detections from 'Ana' detected on "VR2W-104912" receiver.
 
-## Subset rows and columns within a data.table
+# Subset rows and columns within a data.table
 blacktip[`Transmitter Name` == "Ana", .(Receiver, Latitude, Longitude),] # Subsets Receiver, Latitude and Longitude data from `Ana`
 
-## Aggregate numbers of detections from each of the three tagged animal
+# Aggregate numbers of detections from each of the three tagged animal
 blacktip[ , .(.N), by = "Transmitter Name"]
 ```
 
 The `.N` call is a special variable that holds the number of rows in that current group. Grouping by `Transmitter Name` obtains the number of rows (i.e. detections) for each shark. We can include multiple variables in the `by` parameter to subset our datset further:
 
 ```{r, eval=FALSE}
-## Aggregate numbers of detections at each reciever for each tagged animal
+# Aggregate numbers of detections at each reciever for each tagged animal
 blacktip[ , .(.N), by = c("Transmitter Name", "Receiver")]
 ```
 
@@ -314,9 +352,13 @@ We encourage you to use the package vignettes to explore additional functionalit
 browseVignettes("data.table")
 ```
 
+<br>
+
 ### Pipes `%>%`
 
-![pipes are awesome!](Images/mario.png)
+![ ](Images/mario.png)
+
+<br>
 
 Now that we've successfully loaded in our tracking dataset, lets start having a closer look at the data using pipes `%>%`
 
@@ -325,12 +367,14 @@ Now that we've successfully loaded in our tracking dataset, lets start having a 
 * 'Pipes' the **output** of the last expression/function (left) forward to the **first input** of the next funciton (right).
 
 ```{r, eval = FALSE}
-#For example, to see what class our data is in, we could use this code...
+# For example, to see what class our data is in, we could use this code...
 class(blacktip)
 
-#Alternatively in the tidy verse we could use this code...
+# Alternatively in the tidy verse we could use this code...
 blacktip %>% class()
 ```
+
+<br>
 
 #### Benefits of pipes %>% 
 * Functions flow in natural order that tells story about data.
@@ -342,8 +386,8 @@ We can have a quick look at the data by typing:
 ```{r, eval = FALSE}
 # Now insert functions into the pipe chain
 blacktip %>% View()
-blacktip %>% head() #first 6 rows by default
-blacktip %>% tail(10) #specify we want to look at the last 10 rows
+blacktip %>% head() # first 6 rows by default
+blacktip %>% tail(10) # specify we want to look at the last 10 rows
 ```
 
 This functionality is particularly useful if the data is very large!
@@ -356,14 +400,14 @@ We can look at the data more closely using the `nrow`, `ncol`, `length`, `unique
 blacktip %>% nrow() # number of rows in the data frame
 blacktip %>% ncol() # number of columns in the data frame
 blacktip %>% str() # provides internal structure of an R object
-blacktip %>% summary() # Provides result summary of the data frame
+blacktip %>% summary() # provides result summary of the data frame
 ```
-```{r, eval=TRUE}
-## pipes can be used for single column within data frames
+```{r, eval=TRUE, results='hide'}
+# pipes can be used for single column within data frames
 blacktip$`Transmitter Name`<-
   blacktip$`Transmitter Name` %>% as.factor()
 
-## pipes are used to conduct multiple functions on the dataset in a certain order
+# pipes are used to conduct multiple functions on the dataset in a certain order
 blacktip %>% 
   subset(`Transmitter Name` == "Colin") %>% # subset dataset to include only detections by 'Colin'
   nrow() # number of rows (i.e. detections) from 'Colin'
@@ -374,19 +418,25 @@ Pipes can also be used to pre-process our data before plotting them. Lets now us
 ```{r, eval=TRUE}
 blacktip %>% 
   subset(`Transmitter Name` == "Colin") %>% # subset dataset to include only detections by 'Colin'
-  with(table(`Station Name`)) %>% # Create a table with the number of rows (i.e. detections) per receiver
+  with(table(`Station Name`)) %>% # create a table with the number of rows (i.e. detections) per receiver
   barplot(las=2) # barplot of number of Colins detections recorded per receiver
 ```
 
+<br>
+
 ## The *tidyverse*
 
-![Welcome to the tidyverse](Images/TIDYVERSE.jpg)
+![ ](Images/TIDYVERSE.jpg)
+
+<br>
 
 Now that you've fully jumped into the world of pipes, it's time to fully introduce you to the *tidyverse* group of R packages. These have really revolutionised the way we work with big data and the way we visualise our results.
 
 ```{r setup, include=FALSE}
 library(tidyverse)
 ```
+
+<br>
 
 ### What is the tidyverse?
 * The [tidyverse](http://tidyverse.org/) is the collective name given to suite of **R** packages designed mostly by Hadley Wickham.
@@ -398,6 +448,8 @@ library(tidyverse)
 #### Members of the tidyverse
 broom, **dplyr**, forcats, **ggplot2**, haven, httr, hms, jsonlite, **lubridate**, magrittr, modelr, purrr, **readr**, readxl, stringr, tibble, rvest, **tidyr**, xml2
 
+<br>
+
 ##### `lubridate`
 * `lubridate` is an easy way to convert date time data into a form R can recognise it.
 * Allows for calculation of durations and intervals between dates.
@@ -406,14 +458,15 @@ broom, **dplyr**, forcats, **ggplot2**, haven, httr, hms, jsonlite, **lubridate*
 
 Currently in our `blacktip` dataset the "Date and Time (UTC)" column is recognised as "characters" and recorded in the Universal Coordinated Time Zone (UTC). We want to convert this to local time (UTC + 10 hours). Lets use `lubridate` to convert this column into the 'POSIX' format and into local date time.
 
-```{r, eval=TRUE}
+```{r, eval=TRUE, message=FALSE}
 library(lubridate)
 blacktip$local.Date.time<- 
   blacktip$`Date and Time (UTC)` %>%
-  ymd_hms(tz="UTC") %>% ## first convert the `Date and Time (UTC)` column into a 'POSIX' format 
-  with_tz(tzone="Australia/Brisbane") ## convert to local "Australia/Brisbane" date time (UTC + 10hrs)
+  ymd_hms(tz="UTC") %>% # first convert the `Date and Time (UTC)` column into a 'POSIX' format 
+  with_tz(tzone="Australia/Brisbane") # convert to local "Australia/Brisbane" date time (UTC + 10hrs)
 ```
 
+<br>
 
 ##### `dplyr`
 * `dplyr` is the data wrangling workhorse of the tidyverse.
@@ -431,6 +484,8 @@ blacktip$local.Date.time<-
 
 Check out this useful [Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) for data wrangling.
 
+<br>
+
 ##### `select`
 
 We can use the `select` function in dplyr to choose the columns we want to include for our analyses and plotting
@@ -445,39 +500,46 @@ blacktip <-
 head(blacktip)
 ```
 
+<br>
+
 ##### `filter` and `arrange`
 Subset the data to rows matching logical conditions and then arrange according to particular attributes
 ```{r, eval=FALSE}
 filter(blacktip, `Transmitter Name` == "Ana") %>%
-  arrange(local.Date.time) ## arrange Ana's detections in chronological order
+  arrange(local.Date.time) # arrange Ana's detections in chronological order
 
 filter(blacktip, `Transmitter Name` == "Bruce") %>%
-  arrange(desc(local.Date.time)) ## arrange Bruce's detections in descending chronological order
+  arrange(desc(local.Date.time)) # arrange Bruce's detections in descending chronological order
 ```
 
+<br>
 
 ##### `summarise`
 Determine the total number of detections for each tagged shark
 ```{r, eval=FALSE}
 blacktip %>%
   group_by(`Transmitter Name`) %>%
-  summarise(NumDetections = n()) ## summarise number of detections per tagged shark
+  summarise(NumDetections = n()) # summarise number of detections per tagged shark
 
 blacktip %>%
   group_by(`Transmitter Name`, `Receiver`) %>%
-  summarise(NumDetections = n()) ## summarise number of detections per shark at each receiver
+  summarise(NumDetections = n()) # summarise number of detections per shark at each receiver
 ```
+
+<br>
 
 ##### `mutate`
 Adding and removing data to the data frame through a pipe
 ```{r}
 blacktip<-
   blacktip %>%
-  mutate(date=date(local.Date.time)) %>% ## adding a column to the blacktip data with date of each detection
-  mutate(Transmitter=NULL) ## removing the `Transmitter` column
+  mutate(date=date(local.Date.time)) %>% # adding a column to the blacktip data with date of each detection
+  mutate(Transmitter=NULL) # removing the `Transmitter` column
 
 head(blacktip)
 ```
+
+<br>
 
 ## Data visualisation using `ggplot2`
 
@@ -488,6 +550,8 @@ The system provides **mappings** from your data to **aesthetics** which are used
 Documentation for ggplot can be found [here](http://ggplot2.org/) and [here](http://docs.ggplot2.org/current/index.html).
 
 There is also this awesome [Cheetsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) for ggplot2
+
+<br>
 
 ### `ggplot2` grammar
 The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want. Building blocks of a graph include:
@@ -507,9 +571,9 @@ library(ggplot2)
 
 blacktip %>%
   group_by(`Transmitter Name`,`date`) %>% 
-  summarise(DailyDetections= n()) %>% ## use summarise to calculate numbers of detections per day per animal
-  ggplot(mapping = aes(x = `Transmitter Name`, y = DailyDetections)) + ## define the aesthetic map (what to plot)
-  geom_boxplot() ## define the geometric object (how to plot it).. in this case a boxplot
+  summarise(DailyDetections= n()) %>% # use summarise to calculate numbers of detections per day per animal
+  ggplot(mapping = aes(x = `Transmitter Name`, y = DailyDetections)) + # define the aesthetic map (what to plot)
+  geom_boxplot() # define the geometric object (how to plot it).. in this case a boxplot
 
 ```
 
@@ -531,8 +595,10 @@ blacktip %>%
   ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Station Name`))) + 
   xlab("Date") + ylab("Receiver station") +
   geom_point() +
-  facet_wrap(~`Transmitter Name`, nrow=1) ## This time plot seperate boxplots for each shark
+  facet_wrap(~`Transmitter Name`, nrow=1) # This time plot seperate boxplots for each shark
 ```
+
+<br>
 
 #### Aesthetic Mapping
 In ggplot, aesthetic means “something you can see”. Aesthetic mapping (i.e., with aes()) only says that a variable should be mapped to an aesthetic. 
@@ -549,6 +615,8 @@ In ggplot2 scales include:
 * size
 
 Each type of geom accepts only a subset of all aesthetics–refer to the geom help pages to see what mappings each geom accepts. Aesthetic mappings are set with the aes() function.
+
+<br>
 
 #### Geometic Objects (geom)
 Geometric objects are the actual marks we put on a plot. Examples include:
@@ -568,10 +636,12 @@ help.search("geom_", package = "ggplot2")
 <br> 
 
 ----------------------------
-![Close up of one of our spatial obects](Images/banner1.png)
-----------------------------
 
 # Session 2: Working with spatial objects
+
+![ ](Images/banner1.png)
+
+<br>
 
 R offers a variety of functions for importing, manipulating, analysing and exporting spatial data. Although one might at first consider this to be the exclusive domain of GIS software, using R can frequently provide a much more lightweight, yet equally effective solution that embeds within a larger analytic workflow.
 
@@ -579,7 +649,7 @@ One of the tricky aspects of pulling spatial data into your analytic workflow is
 
 [Here](http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html) is a very useful style guide for coding using `Spatial` objects.
 
----------------------------
+<br>
 
 ## `SpatialPoints` and receiver locations
 
@@ -587,7 +657,7 @@ The most basic spatial data object is a point, which may have 2 (X, Y) or 3 comp
 
 In this exercise we are going to convert our receiver locations from a standard data frame object into a `SpatialPointsDataFrame` object.
 
-```{r,echo=FALSE}
+```{r, echo=TRUE}
 # First load our VR2-W installation dataset for the Cleveland Bay study
 statinfo <- read.csv('Data/Station_information.csv')
 cb <- statinfo[statinfo$Installation%in%"Cleveland Bay",]
@@ -595,7 +665,7 @@ cb <- statinfo[statinfo$Installation%in%"Cleveland Bay",]
 # Now convert the data.frame object into a SpatialPoints object
 coordinates(cb) <- c("Longitude", "Latitude")
 
-## Have a look at the created object
+# Have a look at the created object
 class(cb)
 str(cb)
 ```
@@ -624,13 +694,15 @@ data.frame(cb) %>%
   
 ```
 
+<br>
+
 ## Interactive maps using `leaflet`
 
 Now that we have allocated our data as a Spatial* object, we can also use the incredibly powerful [Leaflet](https://rstudio.github.io/leaflet/) package in R to plot the locations of our hydrophones on an interactive map that  you can share with your collaborators. The leaflet package utilises the open-access leaflet JavaScript library (a web programming language), to create web-based maps. We will cover a basic map with some points on it today. See [Rstudio’s leaflet page](http://rstudio.github.io/leaflet/) for help and more mapping features, like polygons.
 
 To get started with leaflet, first, make sure you have the `leaflet` and `htmlwidgets` packages installed, and then load it into this session:
 
-```{r}
+```{r, message=FALSE}
 library(leaflet)
 library(htmlwidgets)
 ```
@@ -643,30 +715,34 @@ library(leaflet)
 
 myleafletplot <- leaflet() %>%
   
-  #Base groups (you can add multiple basemaps)
+  # Base groups (you can add multiple basemaps)
   addProviderTiles(providers$Esri.WorldImagery, group="Satellite") %>%
   addProviderTiles(providers$OpenStreetMap, group="Map") %>%
   
-  #Add reciever location data
+  # Add reciever location data
   addCircles(lng=cb$Longitude, lat=cb$Latitude, fill=FALSE, color="gray", weight=8) 
 
 myleafletplot # Print the map
 
 ```
 
+<br>
+
 We can also now add the detection data from our tagged sharks to show their positions within the array. 
 
 ```{r}
-## First lets convert our blacktip data into a spatial points data frame object
+# First lets convert our blacktip data into a spatial points data frame object
 blacktip <- read.csv('Data/Blacktip_ClevelandBay.csv', header = TRUE)
 coordinates(blacktip)<-c("Longitude","Latitude")
 
-## Subset detection data from "Ana" and remove duplicate positions
+# Subset detection data from "Ana" and remove duplicate positions
 ana <-
   blacktip %>%
   subset(`Transmitter.Name` == "Ana") %>%
-  remove.duplicates() ## remove duplicated positions to reduce the number of points to plot on our leaflet map
+  remove.duplicates() # remove duplicated positions to reduce the number of points to plot on our leaflet map
 ```
+
+<br>
 
 Now lets add Ana's detection data to our leaflet map
 
@@ -675,16 +751,18 @@ myleafletplot %>%
   
   # add the tag detection data
   addCircleMarkers(lng=ana$Longitude, lat=ana$Latitude, weight=2,radius=4,color = "red",
-                   stroke = FALSE, fillOpacity = 1, group = "Ana") %>% ## Dont forget to assign a group to the markers
+                   stroke = FALSE, fillOpacity = 1, group = "Ana") %>% # Dont forget to assign a group to the markers
   
-  #Layers control
+  # Layers control
   addLayersControl(
     baseGroups= c("Satellite","Map"),
-    overlayGroups = c("Ana"), ## add the groups you want to overlay on the base maps
+    overlayGroups = c("Ana"), # add the groups you want to overlay on the base maps
     options = layersControlOptions(collapsed = FALSE))
 
-## Now try adding detection data from "Colin" and "Bruce" to the map
+# Now try adding detection data from "Colin" and "Bruce" to the map
 ```
+
+<br>
 
 Finally, you can save this leaflet document at an html file and share it with your friends or colleagues
 
@@ -698,16 +776,22 @@ saveWidget(myleafletplot, file="mymap.html") # uses the htmlwidgets package
 <br> 
 
 -------------------------------------
-![Crocs Rule!](Images/Croc.png)
--------------------------------------
 
 # Session 3: Accessing the temporal component of tracking datasets
 
-In this third session we are going to work with a data set containing detection data from 3 Estuarine Crocodiles (*Crocodylus porosus*) as shown in the image above. These animals were captured and tagged within the Wenlock River, Cape York. Crocodiles were dual tagged using both GPS transmitters and using a network of acoustic hydrophones deployed along the river system. You can read more about this study [here]<http://www.publish.csiro.au/mf/mf14042>
+![ ](Images/Croc.png)
+
+<br>
+
+In this third session we are going to work with a data set containing detection data from 3 Estuarine Crocodiles (*Crocodylus porosus*) as shown in the image above. These animals were captured and tagged within the Wenlock River, Cape York. Crocodiles were dual tagged using both GPS transmitters and using a network of acoustic hydrophones deployed along the river system. You can read more about this study [here](http://www.publish.csiro.au/mf/mf14042)
+
+<br>
 
 ## Producing track **animations**
 
 Vinay to add...
+
+<br>
 
 ## Integration with [Google Earth](http://googleearth.com/)
 
@@ -717,7 +801,7 @@ For this to work, your receiver locations MUST be in the datum WGS84 and you wil
 
 For this workshop, we will need the most recent version of the VTrack R package from our GitHub repository. This contains some new functionality that currently is not on CRAN.
 
-```{r}
+```{r, message=FALSE}
 library(devtools) # Includes funct
 
 install_github("RossDwyer/VTrack")
@@ -748,7 +832,7 @@ Once we have our dataset in the VTrack archive format and a seperate Points file
 
 levels(Vcrocs$TRANSMITTERID)
 
-##NEED TO CHECK THIS WORKS
+# NEED TO CHECK THIS WORKS
 
 # Run the function to generate the KML for a single transmitter
 GenerateAnimationKMLFile_Track(Vcrocs, # VTrack archive file
@@ -762,7 +846,7 @@ GenerateAnimationKMLFile_Track(Vcrocs, # VTrack archive file
 
 The file will be written in your Project folder and can be opened in Google Earth. Users can adjust the time slider to visualise individual time periods for display or can click the spanner icon to slow down the speed of the animation.
 
-![time slider in Google Earth](Images/timeslider.png)
+![ ](Images/timeslider.png)
 
 There is also a another handy function for visualising the movements of multiple animals at a time.
 
@@ -797,7 +881,7 @@ CircuitousDM <- GenerateCircuitousDistance(PointsCircuitous_crocs)
 
 # Now plot example of how circuitous distances between receivers were generated
 # In this example an individual must follow the course of the river in order to
-#   move between receivers
+# move between receivers
 
 PointsCircuitous_crocs %>% 
   ggplot(aes(x=LONGITUDE, y=LATITUDE)) +
@@ -828,18 +912,20 @@ CrocMovements <- Res$nonresidences
 ### Least cost distance
 Finally, many acoustic array designs will not fall in series like our above example and will insead be made up of multiple creeks and branches like this.
 
-![receiver array in multi-branch system](Images/wenlock_recievers.jpeg)
+![ ](Images/wenlock_recievers.jpeg)
 
 In this image the green area is the river and red crosses are the hydrophone locations. This function works by using a rasterised version of our study region (1 = water, 0 = land) then calculating the shortest (i.e. least cost) route transitioning from one cell to another to connect adjacent receiver stations. The function makes use of the [gdistance](https://cran.r-project.org/web/packages/gdistance/vignettes/gdistance1.pdf) R package and will work using any arrangement of acoustic arrays provided they are connected by water. 
 
 First we load the raster layer of our study area using the raster R package and convert this to a transition object
-```{r}
+```{r, message=FALSE}
 library(raster)
 library(gdistance)
 
 r5 <- raster("GIS/wenlock raster UTM.tif") # Load the raster
 tr <- transition(r5, transitionFunction=mean, directions=8) # Create a Transition object from the raster
 ```
+
+<br>
 
 Next we load the tracking dataset and points file which uses a multi-branch array 
 
@@ -851,12 +937,12 @@ barra[,1] <- as.POSIXct(barra[,1])
 PointsLeastCost_crocs <- read.csv("Data/PointsLeastCost_crocs.csv")
 
 
-#convert the raster to points for plotting
+# convert the raster to points for plotting
 map.p <- rasterToPoints(r5)
-df <- data.frame(map.p) #Make the points a dataframe for ggplot
-colnames(df) <- c("X", "Y", "Water") #Make appropriate column headings
+df <- data.frame(map.p) # Make the points a dataframe for ggplot
+colnames(df) <- c("X", "Y", "Water") # Make appropriate column headings
 
-#Now plot the map
+# Now plot the map
 ggplot(data=df, aes(y=Y, x=X)) +
   geom_raster(aes(fill=Water)) +
   geom_point(data=POINTS3, 
@@ -865,12 +951,16 @@ ggplot(data=df, aes(y=Y, x=X)) +
   coord_equal() 
 ```
 
+<br>
+
 Finally we run the `GenerateRasterDistance()` function in VTrack to generate the Distance matrix containing the Least cost paths.
 
 ```{r, eval=FALSE}
 GenerateLeastCostDistance(sPointsFile = POINTS3,
                        sTransition = tr)
 ```
+
+<br>
 
 ## Plotting distance travelled through time
 
@@ -900,7 +990,7 @@ ggplot(aes(x=DATETIME, y=Distance.DS,group=TRANSMITTERID,colour=TRANSMITTERID)) 
         panel.background = element_blank())
 ```
 
-------------------------------------------
+<br>
 
 ## Coordinate Reference Systems (CRS)
 
@@ -927,16 +1017,18 @@ proj4string(cassdat.sp) <- WGS
 
 In order to calculate distances and areas correctly, we need to now transform our data to the correct spatial projection. 
 
-![Map Grid plot](Images/AMGZones.jpg)
+![ ](Images/AMGZones.jpg)
+
+<br>
 
 From the above graphic, can you see which is the correct projection for the Townsville area - here's a [hint](http://spatialreference.org/ref/epsg/gda94-mga-zone-55/)
 
 ```{r, eval=FALSE}
-GDA <- CRS("+init=epsg:28355") #The equivalent EPSG code for WGS 84 is 28355. 
+GDA <- CRS("+init=epsg:28355") # The equivalent EPSG code for WGS 84 is 28355. 
 cb.P <- spTransform(cb,GDA)
 ```
 
----------------------------------------
+<br>
 
 ## Writing a shapefile object from **R**
 
@@ -974,21 +1066,24 @@ writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines
 <br> 
 
 --------------------------------------
-![Session 4 banner](Images/tiger_banner.png)
---------------------------------------
 
 # Session 4: Calculating home ranges
 
+![ ](Images/tiger_banner.png)
+
+<br>
+
+Text to introduce tigershark data
 
 
-```{r, echo=FALSE, message=FALSE, include=TRUE}
+```{r, echo=FALSE, message=FALSE, include=TRUE, results=FALSE}
 require(leaflet)
 require(sp) 
 require(raster)
 require(knitr)
 require(adehabitatHR)
 
-## Import datasets
+# Import datasets
 tiger <- read.csv('Data/TigerShark_HeronIsland.csv')
 statinfo <- read.csv('Data/Station_information.csv')
 heron<-statinfo[statinfo$Installation%in%"Heron and One Tree Island",]
@@ -997,22 +1092,21 @@ pts.ll <- tiger[tiger$Transmitter.Name%in%"Tony",]
 coordinates(pts.ll)<-~Longitude+Latitude
 projection(pts.ll)<-CRS("+proj=longlat +datum=WGS84")
 
-## Source COA script and calculate COAs
-source("R Code/COA.R")
-coa.ll<- supressMessages(COA(tiger[tiger$Transmitter.Name%in%"Tony",], "Transmitter.Name", 60))
+# Source COA data
+coa.ll<- read.csv("Data/tiger_coa.csv")
 coordinates(coa.ll)<-~Longitude.coa+Latitude.coa
 projection(coa.ll)<-CRS("+proj=longlat +datum=WGS84")
 
-## MCP
+# MCP
 mcp.ll<-mcp(coa.ll[,"Transmitter.Name"], percent=100)
 
-## Fixed Kernel
+# Fixed Kernel
 kud.ras<-raster("GIS/Tiger_FixedKUD.asc"); projection(kud.ras)<-CRS("+proj=longlat +datum=WGS84")
 kud<-rasterToContour(kud.ras, levels=c(50,95))
 kud.ras[values(kud.ras)>95]<-NA
 p1 <- colorNumeric(rev(c("steelblue2","gold", "red")), values(kud.ras),na.color = "transparent")
 
-## Brownian Bridge KUD calculation
+# Brownian Bridge KUD calculation
 kbb.ras<-raster("GIS/Tiger_BrownianBridgeUD.asc"); projection(kbb.ras)<-CRS("+proj=longlat +datum=WGS84")
 kbb<-rasterToContour(kbb.ras, levels=c(50,95))
 kbb.ras[values(kbb.ras)>95]<-NA
@@ -1020,10 +1114,10 @@ p2 <- colorNumeric(rev(c("steelblue2","gold", "red")), values(kbb.ras),na.color 
 
 leaflet() %>%
   
-  #Base groups
+  # Base groups
   addProviderTiles(providers$Esri.WorldImagery, group="Satellite") %>%
   
-  #Add recievers and detection data
+  # Add recievers and detection data
   addCircles(lng=heron$Longitude, lat=heron$Latitude, fill=FALSE, color="gray", weight=8) %>%
   
   addCircles(lng=coa.ll$Longitude.coa, lat=coa.ll$Latitude.coa, fill=TRUE, color="red", weight=3, fillOpacity = 0.9, group = "Centers of Activity") %>%
@@ -1032,22 +1126,22 @@ leaflet() %>%
   
   addPolygons(data=mcp.ll, color="green", weight=2, group="Minimum Convex Polygon") %>%
   
-  #addRasterImage(kud.ras, colors = p1, group="Fixed KUD", opacity = 0.4) %>%
+  # addRasterImage(kud.ras, colors = p1, group="Fixed KUD", opacity = 0.4) %>%
   addPolygons(data=kud[kud$level%in%"95",], color="white", weight=2, group="Fixed KUD", fillOpacity = 0) %>%
   addPolygons(data=kud[kud$level%in%"50",], color="firebrick", weight=2, group="Fixed KUD", fillOpacity = 0.4) %>%
   
-  #addRasterImage(kbb.ras, colors = p2, group="Brownian Bridge KUD", opacity = 0.4) %>%
+  # addRasterImage(kbb.ras, colors = p2, group="Brownian Bridge KUD", opacity = 0.4) %>%
   addPolygons(data=kbb[kbb$level%in%"95",], color="white", weight=2, group="Brownian Bridge KUD", fillOpacity = 0) %>%
   addPolygons(data=kbb[kbb$level%in%"50",], color="firebrick", weight=2, group="Brownian Bridge KUD", fillOpacity = 0.4) %>%
 
-  #Layers control
+  # Layers control
   addLayersControl(
-    #baseGroups = c("Map","Satellite"),
+    # baseGroups = c("Map","Satellite"),
     overlayGroups = c("Centers of Activity", "Movement Trajectories", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"),
     options = layersControlOptions(collapsed = FALSE)) %>%
 
   
-  hideGroup(c("Centers of Activity", "Movement Trajectories", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"))
+  hideGroup(c("Movement Trajectories", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"))
 
 ```
 
