@@ -57,9 +57,9 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 * Session 4: *Calculating home ranges*
 10. Calculating short-term centers of activity (**COA**)
 11. Calculating and plotting **home range** area metrics using
-    a) MCPs (array/matrix)
-    b) Linear home ranges
-    c) Brownian bridges
+    + MCPs (array/matrix)
+    + Kernel distributions
+    + Brownian bridges
 12.  **ESRI Shapefile** import and export
 
 <br>
@@ -76,7 +76,7 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 <br>
 
 ---------------------------------------
-![Blacktip shark banner](Images/blacktip.png)
+![Blacktip shark banner](Images/telemetry.png)
 --------------------------------------
 
 # Session 1: Data wrangling
@@ -168,7 +168,7 @@ install.packages(c("rgdal","rgeos","adehabitatHR",
 
 We then load the required packages from our computer's R package library using the `library()` function.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(sp)
 library(rgdal)
 library(rgeos)
@@ -182,6 +182,8 @@ library(devtools)
 <br>  
 <br> 
 
+----------------------------
+![Blacktip shark banner](Images/blacktip.png)
 ----------------------------
 ##  Importing large telemetry datasets into **R**
 
@@ -232,6 +234,7 @@ leaflet() %>%
   hideGroup(levels(blacktip$Transmitter.Name))
 
 ```
+
 The web map of detection data we will explore by the end of **Session 1**
 
 In the first session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*) shown in the image above. These animals were captured and tagged within Cleveland Bay, Townsville roughly one month prior to the landfall of Cyclone Yasi in 2011. Blacktip sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay.
@@ -247,7 +250,7 @@ blacktip <- read.csv('Data/Blacktip_ClevelandBay.csv', header = TRUE)
 
 However, loading very large datafiles can take a long time when using the `read.csv` function. A useful alternative is the `fread` function in the 'data.table' package, which is very effective at loading very large files such as those exported from the [Vemco VUE database](https://vemco.com/products/vue-software/).
 
-```{r}
+```{r, message=FALSE}
 library(data.table)
 # Load the blacktip shark data using data.table
 blacktip <- fread('Data/Blacktip_ClevelandBay.csv', header = TRUE)
@@ -312,6 +315,7 @@ browseVignettes("data.table")
 ```
 
 ### Pipes `%>%`
+
 ![pipes are awesome!](Images/mario.png)
 
 Now that we've successfully loaded in our tracking dataset, lets start having a closer look at the data using pipes `%>%`
@@ -348,13 +352,13 @@ Note the `()` around the data frame, as opposed to the `[]` we used for indexing
 
 We can look at the data more closely using the `nrow`, `ncol`, `length`, `unique`, `str()` and `summary()` functions.
 
-```{r,eval=FALSE}
+```{r, eval=FALSE}
 blacktip %>% nrow() # number of rows in the data frame
 blacktip %>% ncol() # number of columns in the data frame
 blacktip %>% str() # provides internal structure of an R object
 blacktip %>% summary() # Provides result summary of the data frame
 ```
-```{r,eval=TRUE}
+```{r, eval=TRUE}
 ## pipes can be used for single column within data frames
 blacktip$`Transmitter Name`<-
   blacktip$`Transmitter Name` %>% as.factor()
@@ -375,6 +379,7 @@ blacktip %>%
 ```
 
 ## The *tidyverse*
+
 ![Welcome to the tidyverse](Images/TIDYVERSE.jpg)
 
 Now that you've fully jumped into the world of pipes, it's time to fully introduce you to the *tidyverse* group of R packages. These have really revolutionised the way we work with big data and the way we visualise our results.
@@ -994,7 +999,7 @@ projection(pts.ll)<-CRS("+proj=longlat +datum=WGS84")
 
 ## Source COA script and calculate COAs
 source("R Code/COA.R")
-coa.ll<- COA(tiger[tiger$Transmitter.Name%in%"Tony",], "Transmitter.Name", 60)
+coa.ll<- supressMessages(COA(tiger[tiger$Transmitter.Name%in%"Tony",], "Transmitter.Name", 60))
 coordinates(coa.ll)<-~Longitude.coa+Latitude.coa
 projection(coa.ll)<-CRS("+proj=longlat +datum=WGS84")
 
