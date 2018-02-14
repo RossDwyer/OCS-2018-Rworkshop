@@ -245,18 +245,18 @@ leaflet() %>%
 ```
 The web map of detection data we will explore by the end of **Session 1**
 
-In the first session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*) shown in the image above. These animals were captured and tagged within Cleveland Bay, Townsville roughly two months prior to the landfall of Cyclone Yasi in 2011. Blacktip sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay.
+In the first session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*) shown in the image above. These animals were captured and tagged within Cleveland Bay, Townsville roughly one month prior to the landfall of Cyclone Yasi in 2011. Blacktip sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay.
 
 Before we can analyse these data, we first need to read this dataset into R. As with most acoustic detection datasets exported from VUE or other acoustic telemetry data management software, our data set is in the 'comma sperated value' (.csv) format. 
 
-A .csv file can simply be imported into **R** using the %read.csv% base function, and by telling R which file to load (`Blacktip_ClevelandBay.csv`) and where to find it (i.e. in the `Data` folder).
+A .csv file can simply be imported into **R** using the `read.csv` base function, and by telling R which file to load (`Blacktip_ClevelandBay.csv`) and where to find it (i.e. in the `Data` folder).
 
 ```{r}
 # Load the blacktip shark data using base read.csv function
 blacktip <- read.csv('Data/Blacktip_ClevelandBay.csv', header = TRUE)
 ```
 
-However, loading very large datafiles can take a long time when using the %read.csv% function. A useful alternative is the %fread% function in the data.table package, which is very effective at loading very large files such as those exported from the [Vemco VUE database](https://vemco.com/products/vue-software/).
+However, loading very large datafiles can take a long time when using the `read.csv` function. A useful alternative is the `fread` function in the 'data.table' package, which is very effective at loading very large files such as those exported from the [Vemco VUE database](https://vemco.com/products/vue-software/).
 
 ```{r}
 library(data.table)
@@ -275,7 +275,7 @@ A stable way to save your data is as a '.csv' file, which stands for 'comma sepa
 
 ##**Filtering** and **manipulating** datasets
 
-The ability to quickly filter and manipulate datasets datasets is important when working with large telemetry datasets. The standard input format of tabulated data in R is a %data.frame%. A %data.frame% is a special ‘class’ of an object, where there are multiple variables, stored in named columns and multiple rows for our detections. Every variable has the same number of columns. There are simple rules to filter and select data from a %data.frame%. Rows and columns are indexed by using a comma as a separator %df[row,column]%. Try the following code:
+The ability to quickly filter and manipulate datasets datasets is important when working with large telemetry datasets. The standard input format of tabulated data in R is a `data.frame`. A data.frame is a special ‘class’ of an object, where there are multiple variables, stored in named columns and multiple rows for our detections. Every variable has the same number of columns. There are simple rules to filter and select data from a data.frame. Rows and columns are indexed by using a comma as a separator `df[row,column]`. Try the following code:
 
 ```{r,eval=FALSE}
 blacktip[1,] # Provides the first row of data
@@ -284,7 +284,7 @@ blacktip[,3]  # Provides the first column of data
 blacktip[c(1,3),] # Provides the first and third date in the data frame
 ```
 
-We can also access objects in a %data.frame% by their names:
+We can also access objects in a data.frame by their names:
 
 ```{r,eval=FALSE}
 blacktip$Transmitter #provides all the data for that object
@@ -292,11 +292,11 @@ blacktip$Transmitter[1:5] #provides athe first five values for that object
 blacktip[,'Transmitter'] #provides all the data for that object
 ```
 
-The `data.table` package enhances the functionality of the traditional %data.frame% format and allows you to do more than just select data based on row and column names.
+The `data.table` package enhances the functionality of the traditional data.frame format and allows you to do more than just select data based on row and column names.
 
-Firstly, data loaded using the %fread% function inputs detection data as a %data.table% format. This format is slightly different to the %data.frame% format but can still be maniuplated using the same rules as above. 
+Firstly, data loaded using the `fread` function inputs detection data as a data.table format. This format is slightly different to the data.frame format but can still be maniuplated using the same rules as above. 
 
-To understand the enhancements of the %data.table% format we must first understand the general form of the %data.table% syntax. %data.table%s take the form of %DT[row, column, by]%. The additional `by` variable allows for quick and easy subsetting and aggregating. Try the following code:
+To understand the enhancements of the %data.table% format we must first understand the general form of the data.table syntax. data.tables take the form of `DT[row, column, by]`. The additional `by` variable allows for quick and easy subsetting and aggregating. Try the following code:
 
 ```{r,eval=FALSE}
 ## Subset rows within a data.table
@@ -309,7 +309,7 @@ blacktip[`Transmitter Name` == "Ana", .(Receiver, Latitude, Longitude),] # Subse
 blacktip[ , .(.N), by = "Transmitter Name"]
 ```
 
-The %.N% call is a special variable that holds the number of rows in that current group. Grouping by `Transmitter` obtains the number of rows (i.e. detections) for each tranmitter. We can include multiple variables in the `by` parameter to subset our datset further:
+The `.N` call is a special variable that holds the number of rows in that current group. Grouping by `Transmitter Name` obtains the number of rows (i.e. detections) for each shark. We can include multiple variables in the `by` parameter to subset our datset further:
 
 ```{r, eval=FALSE}
 ## Aggregate numbers of detections at each reciever for each tagged animal
@@ -406,7 +406,7 @@ broom, **dplyr**, forcats, **ggplot2**, haven, httr, hms, jsonlite, **lubridate*
 ## lubridate
 * `lubridate` is an easy way to convert date time data into a form R can recognise it.
 * Allows for calculation of durations and intervals between dates.
-* This function recognises multiple date time formats and parses them to a standardised 'POSIX' format that R uses (`ymd` for dates; `ymd_hms` for date and time parsing)
+* This package recognises multiple date time formats and parses them to a standardised 'POSIX' format that R uses (`ymd` for dates; `ymd_hms` for date and time parsing)
 * essential when working with spatio-temporal datasets like telemetry data
 
 Currently in our `blacktip` dataset the "Date and Time (UTC)" column are recognised as "characters" and recorded in the Universal Coordinated Time Zone (UTC). We want to convert this to local time (UTC + 10 hours). Lets use `lubridate` to convert this column into the 'POSIX' format and into local date time.
@@ -512,7 +512,7 @@ library(ggplot2)
 
 blacktip %>%
   group_by(`Transmitter Name`,`date`) %>% 
-  summarise(DailyDetections= n()) %>% ## use pipes to calculate numbers of detections per day per animal
+  summarise(DailyDetections= n()) %>% ## use summarise to calculate numbers of detections per day per animal
   ggplot(mapping = aes(x = `Transmitter Name`, y = DailyDetections)) + ## define the aesthetic map (what to plot)
   geom_boxplot() ## define the geometric object (how to plot it).. in this case a boxplot
 
@@ -533,10 +533,10 @@ We can also use the `facet_wrap` function to explore the detection data a bit mo
 
 ```{r}
 blacktip %>%
-  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Receiver`))) + 
-  xlab("Date") + ylab("Receiver") +
+  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Station Name`))) + 
+  xlab("Date") + ylab("Receiver station") +
   geom_point() +
-  facet_wrap(~`Transmitter Name`, ncol=1) ## This time plot seperate boxplots for each shark
+  facet_wrap(~`Transmitter Name`, nrow=1) ## This time plot seperate boxplots for each shark
 ```
 
 ###Aesthetic Mapping
@@ -991,4 +991,82 @@ saveWidget(mymap, file="mymap.html") # uses the htmldidgets package
 *Extra task* - try writing the `SpatialPolygons` object containing our home ranges and our `SpatialLines` object containing our trajectory lines to this leaflet object 
 
 ***End of Session 2
+
+--------------------------------------
+
+```{r, out.width = 1000, fig.retina = NULL, echo=FALSE}
+knitr::include_graphics("Images/tiger_banner.png")
+```
+
+--------------------------------------
+
+# Session 4:
+
+
+
+```{r, echo=FALSE,message=FALSE,include=TRUE}
+require(leaflet)
+require(sp) 
+require(raster)
+require(knitr)
+require(adehabitatHR)
+
+## Import datasets
+tiger <- read.csv('Data/TigerShark_HeronIsland.csv')
+statinfo <- read.csv('Data/Station_information.csv')
+heron<-statinfo[statinfo$Installation%in%"Heron and One Tree Island",]
+
+pts.ll <- tiger[tiger$Transmitter.Name%in%"Tony",]
+coordinates(pts.ll)<-~Longitude+Latitude
+projection(pts.ll)<-CRS("+proj=longlat +datum=WGS84")
+
+## Source COA script and calculate COAs
+source("R Code/COA.R")
+coa.ll<- COA(tiger[tiger$Transmitter.Name%in%"Tony",], "Transmitter.Name", 60)
+coordinates(coa.ll)<-~Longitude.coa+Latitude.coa
+projection(coa.ll)<-CRS("+proj=longlat +datum=WGS84")
+
+## MCP
+mcp.ll<-mcp(coa.ll[,"Transmitter.Name"], percent=100)
+
+## Fixed Kernel
+kud.ras<-raster("GIS/Tiger_FixedKUD.asc"); projection(kud.ras)<-CRS("+proj=longlat +datum=WGS84")
+kud<-rasterToContour(kud.ras, levels=c(50,95))
+kud.ras[values(kud.ras)>95]<-NA
+p1 <- colorNumeric(rev(c("steelblue2","gold", "red")), values(kud.ras),na.color = "transparent")
+
+## Brownian Bridge KUD calculation
+kbb.ras<-raster("GIS/Tiger_BrownianBridgeUD.asc"); projection(kbb.ras)<-CRS("+proj=longlat +datum=WGS84")
+kbb<-rasterToContour(kbb.ras, levels=c(50,95))
+kbb.ras[values(kbb.ras)>95]<-NA
+p2 <- colorNumeric(rev(c("steelblue2","gold", "red")), values(kbb.ras),na.color = "transparent")
+
+leaflet() %>%
+  
+  #Base groups
+  addProviderTiles(providers$Esri.WorldImagery, group="Satellite") %>%
+  
+  #Add recievers and detection data
+  addCircles(lng=heron$Longitude, lat=heron$Latitude, fill=FALSE, color="gray", weight=8) %>%
+  
+  addCircles(lng=coa.ll$Longitude.coa, lat=coa.ll$Latitude.coa, fill=TRUE, color="red", weight=3, fillOpacity = 0.9, group = "Centers of Activity") %>%
+  
+  addPolygons(data=mcp.ll, color="green", weight=2, group="Minimum Convex Polygon") %>%
+  
+  addRasterImage(kud.ras, colors = p1, group="Fixed KUD", opacity = 0.4) %>%
+  addPolygons(data=kud, color="white", weight=2, group="Fixed KUD", fillOpacity = 0) %>%
+  
+  addRasterImage(kbb.ras, colors = p2, group="Brownian Bridge KUD", opacity = 0.4) %>%
+  addPolygons(data=kbb, color="white", weight=2, group="Brownian Bridge KUD", fillOpacity = 0) %>%
+
+  #Layers control
+  addLayersControl(
+    #baseGroups = c("Map","Satellite"),
+    overlayGroups = c("Centers of Activity", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"),
+    options = layersControlOptions(collapsed = FALSE)) %>%
+
+  
+  hideGroup(c("Centers of Activity", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"))
+
+```
 
