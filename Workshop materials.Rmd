@@ -439,6 +439,7 @@ library(tidyverse)
 <br>
 
 ### What is the tidyverse?
+
 * The [tidyverse](http://tidyverse.org/) is the collective name given to suite of **R** packages designed mostly by Hadley Wickham.
 * Before it was formalised in 2016 it was loosely referred to as the `hadleyverse`.
 * Packages share a common API and design philosophy intended to create a **"Pit of Success"**.
@@ -451,6 +452,7 @@ broom, **dplyr**, forcats, **ggplot2**, haven, httr, hms, jsonlite, **lubridate*
 <br>
 
 ##### `lubridate`
+
 * `lubridate` is an easy way to convert date time data into a form R can recognise it.
 * Allows for calculation of durations and intervals between dates.
 * This package recognises multiple date time formats and parses them to a standardised 'POSIX' format that R uses (`ymd` for dates; `ymd_hms` for date and time parsing)
@@ -469,6 +471,7 @@ blacktip$local.Date.time<-
 <br>
 
 ##### `dplyr`
+
 * `dplyr` is the data wrangling workhorse of the tidyverse.
 * Provides functions, **verbs**, that can manipulate tibbles into the shape you need for analysis.
 * Has many backends allowing dplyr code to work on data stored in SQL databases and big data clusters.
@@ -504,6 +507,7 @@ head(blacktip)
 <br>
 
 ##### `filter` and `arrange`
+
 Subset the data to rows matching logical conditions and then arrange according to particular attributes
 ```{r, eval=FALSE}
 filter(blacktip, Transmitter.Name == "Ana") %>%
@@ -516,6 +520,7 @@ filter(blacktip, Transmitter.Name == "Bruce") %>%
 <br>
 
 ##### `summarise`
+
 Determine the total number of detections for each tagged shark
 ```{r, eval=FALSE}
 blacktip %>%
@@ -530,6 +535,7 @@ blacktip %>%
 <br>
 
 ##### `mutate`
+
 Adding and removing data to the data frame through a pipe
 ```{r}
 blacktip<-
@@ -555,7 +561,11 @@ There is also this awesome [Cheetsheet](https://www.rstudio.com/wp-content/uploa
 <br>
 
 ### `ggplot2` grammar
-The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want. Building blocks of a graph include:
+
+The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want. 
+
+Building blocks of a graph include:
+
 * data
 * aesthetic mapping
 * geometric object
@@ -566,6 +576,7 @@ The basic idea: independently specify plot building blocks and combine them to c
 * faceting
 
 #### Aesthetic Mapping
+
 In ggplot, aesthetic means “something you can see”. Aesthetic mapping (i.e., with aes()) only says that a variable should be mapped to an aesthetic. 
 It doesn’t say how that should happen. For example, when mapping a variable to shape with aes(shape = x) you don’t say what shapes should be used. 
 Similarly, aes(color = z) doesn’t say what colors should be used. Describing what colors/shapes/sizes etc. to use is done by modifying the corresponding scale. 
@@ -584,6 +595,7 @@ Each type of geom accepts only a subset of all aesthetics–refer to the geom he
 <br>
 
 #### Geometic Objects (geom)
+
 Geometric objects are the actual marks we put on a plot. Examples include:
 
 * points (geom_point, for scatter plots, dot plots, etc)
@@ -1170,7 +1182,7 @@ ggplot(aes(x=DATETIME, y=Distance.DS,group=TRANSMITTERID,colour=TRANSMITTERID)) 
 
 <br>
 
-In this last session, we will be working with data from 3 Tiger sharks (*Galeocerdo cuvier*) that were monitored around Heron and One Tree Islands, and was contributed for this workshop by Dr. Michelle Heupel. These tiger sharks were monitored over three years as part of a larger study examining the ecology and movement patterns of reef predators. In this session we will use these data to calculate three types of home ranges for tiger sharks around Heron and One Tree Island.
+In this last session, we will be working with data from 3 Tiger sharks (*Galeocerdo cuvier*) that were monitored around Heron and One Tree Islands, and was contributed for this workshop by [Dr. Michelle Heupel](http://data.aims.gov.au/staffcv/jsf/external/view.xhtml?partyId=900003933). These tiger sharks were monitored over three years as part of a larger study examining the ecology and movement patterns of reef predators. In this session we will use these data to calculate three types of home ranges for tiger sharks around Heron and One Tree Island.
 
 <br>
 
@@ -1307,7 +1319,7 @@ There are three input variables needed to calculate COAs using this function:
 
 <br>
 
-```{r, results=FALSE}
+```{r, results=FALSE, warnings=FALSE, message=FALSE}
 # lets estimate COAs for our tiger dataset. We will use 60 min timesteps for this excersise
 tiger_coa <- COA(tagdata=tiger, id="Transmitter.Name", timestep= 60)
 ```
