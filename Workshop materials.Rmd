@@ -419,7 +419,7 @@ Pipes can also be used to pre-process our data before plotting them. Lets now us
 blacktip %>% 
   subset(`Transmitter Name` == "Colin") %>% # subset dataset to include only detections by 'Colin'
   with(table(`Station Name`)) %>% # create a table with the number of rows (i.e. detections) per receiver
-  barplot(las=2) # barplot of number of Colins detections recorded per receiver
+  barplot(las=2, xlab="Receiver station", ylab="Number of Detections") # barplot of number of Colins detections recorded per receiver
 ```
 
 <br>
@@ -652,6 +652,51 @@ One of the tricky aspects of pulling spatial data into your analytic workflow is
 
 <br>
 
+## Coordinate Reference Systems (CRS)
+
+Central to working with spatial data, is that these data have a coordinate reference system (CRS class) associated with it. Geographical CRS are expressed in degrees and associated with an ellipse, a prime meridian and a datum. Projected CRS are expressed in a measure of length and a chosen position on the earth, as well as the underlying ellipse, prime meridian and datum.
+
+Most countries have multiple coordinate reference systems, and where they meet there is usually a big mess — this led to the collection by the European Petroleum Survey Group (EPSG) of a geodetic parameter dataset.
+
+The EPSG list among other sources is used in the workhorse PROJ.4 library, and handles transformation of spatial positions between different CRS. This library is interfaced with R in the `rgdal` package, and the CRS class is defined partly in the `sp` package and partly in `rgdal`.
+
+In the next step, we will convert our blacktip dataset (`blacktip`) into a spatial object and specify the CRS. We therefore need to refer to the correct proj4 string information which is contained within the `rgdal` package.
+
+Our reciever coordinates, and hence detection coordinates, were recorded in the **WGS 84** geographic datum in **Decimal Degrees**.
+
+For simplicity, each projection can be referred to by a unique ID from the European Petroleum Survey Group (EPSG) geodetic parameter dataset. You can find the relevant EPSG code for your coordinate system from this [website](http://spatialreference.org). There, simply enter in a key word in the search box and select from the list the correct coordinate system. There is a map image in the top right of the site to help you. 
+
+The equivalent EPSG code for WGS 84 is [**4326**](http://spatialreference.org/ref/epsg/4326/)
+
+to set the spatial projection we use the `proj4string()` function
+
+```{r, eval=FALSE}
+# convert our blacktip data.frame into a spatial object by assigning latitude and longitude values
+coordinates(blacktip)<- c("Longitude","Latitude")
+
+# Lets check if we have assigned a CRS to our spatial data
+proj4string(blacktip)
+
+# We can now assign the correct CRS class to our blacktip data
+WGS <- CRS("+init=epsg:4326")
+proj4string(blacktip) <- WGS
+```
+
+Now our `blacktip` data are associated with the correct CRS, we can use this spatial object with many of R's GIS tools. However, any measurements of distance and area calculated using this dataset will provide information in decimal degrees, which may not be very useful. In order to calculate distances and areas correctly, we need to transform our data to the correct spatial projection. 
+
+![ ](Images/AMGZones.jpg)
+
+<br>
+
+From the above graphic, can you see which is the correct projection for the Townsville area - here's a [hint](http://spatialreference.org/ref/epsg/gda94-mga-zone-55/)
+
+```{r, eval=FALSE}
+GDA <- CRS("+init=epsg:28355") # The equivalent EPSG code for WGS 84 is 28355. 
+blacktip.GDA <- spTransform(blacktip,GDA)
+```
+
+<br>
+
 ## `SpatialPoints` and receiver locations
 
 The most basic spatial data object is a point, which may have 2 (X, Y) or 3 components (X, Y, Z). A single coordinate, or a collection of coordinates, may be used to define a `SpatialPoints` object.
@@ -869,7 +914,6 @@ jacko <- COA(jacko_detections, "Transmitter.Name", 200)
 
 # Format the date time field so R can read it properly
 jacko$dt <- lubridate::ymd_hms(jacko$DateTime)
-#jacko <- jacko[order(jacko$dt),]
 
 # Lets have a quick look at what jacko's tracks look like
 ggplot() +
@@ -1114,78 +1158,6 @@ ggplot(aes(x=DATETIME, y=Distance.DS,group=TRANSMITTERID,colour=TRANSMITTERID)) 
         panel.background = element_blank())
 ```
 
-<br>
-
-## Coordinate Reference Systems (CRS)
-
-Central to working with spatial data, is that these data have a coordinate reference system (CRS class) associated with it. Geographical CRS are expressed in degrees and associated with an ellipse, a prime meridian and a datum. Projected CRS are expressed in a measure of length and a chosen position on the earth, as well as the underlying ellipse, prime meridian and datum.
-
-Most countries have multiple coordinate reference systems, and where they meet there is usually a big mess — this led to the collection by the European Petroleum Survey Group (EPSG) of a geodetic parameter dataset.
-
-The EPSG list among other sources is used in the workhorse PROJ.4 library, and handles transformation of spatial positions between different CRS. This library is interfaced with R in the rgdal package, and the CRS class is defined partly in the sp package and partly in rgdal.
-
-In the next step, we need to define the CRS which corresponds to our dataset. For the cassowary GPS dataset (`cassdat.sp`), we have not specified the CRS so the `@pro4string` slot is empty at the moment (`= NA`). We therefore need to refer to the correct proj4 string information which is contained within the rgdal package.
-
-Our receiver coordinates were collected in the **WGS 84** geographic datum in **Decimal Degrees**.
-
-For simplicity, each projection can be referred to by a unique ID from the European Petroleum Survey Group (EPSG) geodetic parameter dataset. You can find the relevant EPSG code for your coordinate system from the website <http://spatialreference.org>. Here simply enter in a key word in the search box and select from the list the correct coordinate system. There is a map image in the top right of the site to help you. 
-
-The equivalent EPSG code for WGS 84 is [**4326**](http://spatialreference.org/ref/epsg/4326/)
-
-to set the spatial projection we use the `proj4string()` function
-
-```{r, eval=FALSE}
-WGS <- CRS("+init=epsg:4326")
-proj4string(cassdat.sp) <- WGS
-```
-
-In order to calculate distances and areas correctly, we need to now transform our data to the correct spatial projection. 
-
-![ ](Images/AMGZones.jpg)
-
-<br>
-
-From the above graphic, can you see which is the correct projection for the Townsville area - here's a [hint](http://spatialreference.org/ref/epsg/gda94-mga-zone-55/)
-
-```{r, eval=FALSE}
-GDA <- CRS("+init=epsg:28355") # The equivalent EPSG code for WGS 84 is 28355. 
-cb.P <- spTransform(cb,GDA)
-```
-
-<br>
-
-## Writing a shapefile object from **R**
-
-Once you have the `Spatial` object the way you like it, you will want to export it to view in a GIS. Here we show you two options for exporting your `Spatial` object, as a **shapefile** or as a **.kml** for viewing in [Google Earth](https://www.google.com/earth/). As with reading in spatial objects, there are a number of **R** packages out there to help you. Simply type `??kml` or `??shapefile` to look up a few of these options.
-
-In this example we are goint to use the `writeOGR()` function in the rgdal package. to write the data containing the movement metrics to a shapefile.
-
-The `ld` function allows to quickly convert an object of class ltraj to a data.frame. We then reproject our data back to Longs and Lats (WGS 1984) for viewing in Arc GIS or Google Earth
-
-
-```{r, eval=FALSE}
-
-# Convert the ltraj object into a standard data frame
-cassdat.lt.proj <- ld(cassdat.lt) # Change to a dataframe object
-cassdat.lt.proj$date <- as.POSIXct(cassdat.lt.proj$date) # Reassigns date as a date object
-
-# Convert the data frame object into a SpatialPointsDataFrame
-coordinates(cassdat.lt.proj) <- ~x+y # Extract the coordinates
-proj4string(cassdat.lt.proj) <- GDA  # Assigns the coordinate reference system
-
-# Change it back to WGS 1984 projection
-cassdat.lt.WGS <- spTransform(cassdat.lt.proj,WGS)
-```
-
-Finally we run the `writeOGR` function to write this file to disk. We specify the folder as being within the GIS folder.
-
-```{r,eval=FALSE}
-writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines* or SpatialPolygons* object
-         dsn="GIS",
-         layer= "cass_points", driver="ESRI Shapefile",
-         dataset_options=c("NameField=id"))
-```
-
 <br>  
 <br> 
 
@@ -1197,10 +1169,9 @@ writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines
 
 <br>
 
-In this last session, we will be working with data from 3 Tiger sharks (*Galeocerdo cuvier*) that were monitored around Heron and One Tree Islands, and was kindly contributed for this workshop by [Dr. Michelle Heupel](http://data.aims.gov.au/staffcv/jsf/external/view.xhtml?partyId=900003933). Sharks were monitored over three years as part of a larger study examining the ecology and movement patterns of reef predators. We will use this data to  
+In this last session, we will be working with data from 3 Tiger sharks (*Galeocerdo cuvier*) that were monitored around Heron and One Tree Islands, and was contributed for this workshop by Dr. Michelle Heupel. These tiger sharks were monitored over three years as part of a larger study examining the ecology and movement patterns of reef predators. In this session we will use these data to calculate three types of home ranges for tiger sharks around Heron and One Tree Island.
 
-
-
+<br>
 
 ```{r, echo=FALSE,message=FALSE,include=TRUE}
 require(leaflet)
@@ -1271,11 +1242,78 @@ leaflet() %>%
 
 ```
 
+<br>
 
-## Calculating short-term centers of activity (**COA**)
+## Estimating short-term centers of activity (**COA**)
 
+A primary use of telemetry data is to understand where animals go and estimate how much space they use. Passive acoustic telemetry, compared to other forms of telemetry (e.g. satellite telemetry, active tracking), are inherently spatio-temporally biased depending on where we deploy our recievers and how often animals come close to recievers. Using raw detection data can produce heavily biased measures of home ranges. 
 
+Estimating short-term centers of activity (`COA`) as a first step can help account for some of the spatio-temporal biases when calculating home range metrics. COAs are estimated by calculating mean positions for a tagged animal within set time bins. These positions do not account for the varying listening ranges between recievers within an array, therefore detection probability needs to be considered using other techniques (e.g. kernel distribution smoothing parameter). This technique of calculating short-term centers of activity is based on [this](http://www.nrcresearchpress.com/doi/abs/10.1139/f01-191#.WoUvUGZ7ExE) previous work.
 
+<br>
+
+In this next excersise, lets estimate and plot short-term centers of activity for the three tiger sharks monitored at Heron and One Tree Islands.
+
+First, lets use the techniques we learnt earlier today to *input*, *manipulate* and *plot* the raw detection data.
+
+```{r}
+library(data.table)
+library(lubridate)
+library(ggmap)
+
+# First lets input the tigershark dataset
+tiger <- fread("Data/TigerShark_HeronIsland.csv")
+
+# Lets convert the UTC time recorded to local time (UTC + 10 hours)
+tiger$local.Date.time<- 
+  tiger$`Date and Time (UTC)` %>%
+  ymd_hms(tz="UTC") %>% 
+  with_tz(tzone="Australia/Brisbane") 
+
+tiger <- 
+  tiger %>%
+  mutate(ID=`Transmitter Name`) %>%
+  select(-c(`Date and Time (UTC)`,`Transmitter Name`))
+
+# Lets plot our raw detection using `ggmap`
+hoi_bbox <- make_bbox(lon = tiger$Longitude, lat = tiger$Latitude, f=0.3)
+
+# Lets download a Google base map for our region
+hoi_map <- get_map(location = hoi_bbox, source = "google", maptype = "satellite")
+
+# Finally plot the reciever stations using the same `ggplot` grammar
+tiger_plot <-
+  ggmap(hoi_map) + 
+  geom_point(data = tiger, mapping = aes(x = Longitude, y = Latitude), shape=1, color=8) +
+  facet_wrap(~`ID`, nrow=1)
+
+tiger_plot # view map of raw detections
+  
+```
+
+<br>
+
+Now that the data is correctly formatted, we can calculate centers of activity using the custom `COA()` function we have provided in the course. This function is in the "R Code" folder within the course materials and can be sourced directly into your R project using this bit of code
+
+```{r}
+source("R Code/COA.R")
+```
+
+There are three input variables needed to calculate COAs using this function:
+
+* `tagdata`   : the data frame with your tag detection data
+* `id`        : the name of the column with a unique identifier for each tag/animal
+* `timestep`  : the size of the temporal bin used to calculate COAs (in minutes)
+
+**Note:** The selection of time bins (`timesteps`) can greatly influence your COA positions, therefore test multiple timestep bins before you conduct further analyses.
+
+<br>
+
+```{r}
+# lets estimate COAs for our tiger dataset. We will use 60 min timesteps for this excersise
+tiger_coa <- COA(tagdata=tiger, id="ID", timestep= 60)
+
+```
 
 
 ## Calculating and plotting **home range** area metrics
@@ -1323,3 +1361,6 @@ writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines
          layer= "cass_points", driver="ESRI Shapefile",
          dataset_options=c("NameField=id"))
 ```
+
+
+
