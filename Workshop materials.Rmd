@@ -32,7 +32,7 @@ htmltools::img(src =knitr::image_uri('Images/OCS.jpeg'),
 
 Ross is a Postdoctoral Research Fellow in the [School of Biological Sciences](https://www.biology.uq.edu.au/) at the University of Queensland. His research falls within the field of animal ecology, where he uses animal occurrence, abundance and movement information to test hypotheses and make predictions regarding individual- and population-level responses to environmental change. He's used R for over 12 years, has published two R packages on CRAN, was lead R developer on the ZoaTrack.org project and regularly teaches R training courses at The University of Queensland and at other institutes around Australia. For more information and teaching resources, check out [Ross's website](https://www.uq.edu.au/eco-lab/content/dr-ross-dwyer).
 
-Vinay is an Postdoctoral Research Fellow at the [Australian Institute of Marine Science](https://www.aims.gov.au/). He is an ecologist that is particularly interested in using large spatio-temporal datasets to understand animal movements and distributions patterns. He has considerable experience using R to analyse and visualise large and complex spatial datasets. He has developed R code to analyse 2 and 3 dimentional movement patterns of animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's R codes can be found on his [github page](https://github.com/vinayudyawer)
+Vinay is an Postdoctoral Research Fellow at the [Australian Institute of Marine Science](https://www.aims.gov.au/). He is an ecologist that is particularly interested in using large spatio-temporal datasets to understand animal movements and distributions patterns. He has considerable experience using R to analyse and visualise large and complex spatial datasets. He has developed R code to analyse 2 and 3 dimensional movement patterns of animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's R codes can be found on his [github page](https://github.com/vinayudyawer)
 
 <br>
 
@@ -475,6 +475,7 @@ blacktip$local.Date.time<-
     - Works via translation to SQL. Keep an eye out for the SQL flavour in `dplyr`
 
 **Basic vocabulary**
+
 * `select()` columns from a tibble 
 * `filter()` to rows matching a certain condition
 * `mutate()` a tibble by changing or adding rows
@@ -564,42 +565,6 @@ The basic idea: independently specify plot building blocks and combine them to c
 * position adjustments
 * faceting
 
-In the below script we call the data set we have just made (`blacktip`) and then pipe it into the ggplot function. We than tell ggplot that we want to plot a box plot
-
-```{r}
-library(ggplot2)   
-
-blacktip %>%
-  group_by(`Transmitter Name`,`date`) %>% 
-  summarise(DailyDetections= n()) %>% # use summarise to calculate numbers of detections per day per animal
-  ggplot(mapping = aes(x = `Transmitter Name`, y = DailyDetections)) + # define the aesthetic map (what to plot)
-  geom_boxplot() # define the geometric object (how to plot it).. in this case a boxplot
-
-```
-
-A common plot used in passive acoustic telemetry to assess temporal patterns in detection is the `Abacus plot`. This plot can help quickly assess which animals are being detected consistently within your array, and identify any temporal patterns in detection.
-
-We can adapt the above script to create an abacus plot using our `blacktip` dataset
-
-```{r}
-blacktip %>%
-  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Transmitter Name`))) + 
-  xlab("Date") + ylab("Tag") +
-  geom_point()
-```
-
-We can also use the `facet_wrap` function to explore the detection data a bit more and look at how animals were detected at each reciever
-
-```{r}
-blacktip %>%
-  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Station Name`))) + 
-  xlab("Date") + ylab("Receiver station") +
-  geom_point() +
-  facet_wrap(~`Transmitter Name`, nrow=1) # This time plot seperate boxplots for each shark
-```
-
-<br>
-
 #### Aesthetic Mapping
 In ggplot, aesthetic means “something you can see”. Aesthetic mapping (i.e., with aes()) only says that a variable should be mapped to an aesthetic. 
 It doesn’t say how that should happen. For example, when mapping a variable to shape with aes(shape = x) you don’t say what shapes should be used. 
@@ -630,6 +595,42 @@ You can get a list of available geometric objects using the code below:
 
 ```{r, eval = FALSE}
 help.search("geom_", package = "ggplot2")
+```
+
+<br>
+
+In the below script we call the data set we have just made (`blacktip`) and then pipe it into the ggplot function. We than tell ggplot that we want to plot a box plot.
+
+```{r}
+library(ggplot2)   
+
+blacktip %>%
+  group_by(`Transmitter Name`,`date`) %>% 
+  summarise(DailyDetections= n()) %>% # use summarise to calculate numbers of detections per day per animal
+  ggplot(mapping = aes(x = `Transmitter Name`, y = DailyDetections)) + # define the aesthetic map (what to plot)
+  geom_boxplot() # define the geometric object (how to plot it).. in this case a boxplot
+
+```
+
+A common plot used in passive acoustic telemetry to assess temporal patterns in detection is the 'abacus plot'. This plot can help quickly assess which animals are being detected consistently within your array, and identify any temporal or spatial patterns in detection.
+
+We can adapt the above script to create an abacus plot using our `blacktip` dataset.
+
+```{r}
+blacktip %>%
+  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Transmitter Name`))) + 
+  xlab("Date") + ylab("Tag") +
+  geom_point()
+```
+
+We can also use the `facet_wrap` function to explore the detection data further and look at how animals were detected at each reciever.
+
+```{r}
+blacktip %>%
+  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Station Name`))) + 
+  xlab("Date") + ylab("Receiver station") +
+  geom_point() +
+  facet_wrap(~`Transmitter Name`, nrow=1) # This time plot seperate boxplots for each shark
 ```
 
 <br>  
@@ -683,7 +684,7 @@ head(cb@data)
 slot(cb,'data') 
 ```
 
-Now let’s draw a simple spatial plot of the receiver locations
+Now let’s draw a simple spatial plot of the receiver locations.
 
 ```{r}
 # Now create a plot for the receiver stations
@@ -692,6 +693,27 @@ data.frame(cb) %>%
   xlab("Longitude") + ylab("Latitude") +
   geom_point()
   
+```
+
+<br>
+
+We can also plot nicer looking static maps using the [ggmap](https://github.com/dkahle/ggmap) package
+
+```{r, message=FALSE}
+# Lets replot our reciever stations with a Google base map using the `ggmap` package
+library(ggmap)
+
+# First define our region of Cleveland Bay
+cb_bbox <- make_bbox(lon = cb$Longitude, lat = cb$Latitude, f=0.3) # f controls the Google Zoom
+
+# Lets download a Google base map for our region
+cb_map <- get_map(location = cb_bbox, source = "google", maptype = "hybrid")
+
+# Finally plot the reciever stations using the same `ggplot` grammar
+ggmap(cb_map) + 
+  geom_point(data = data.frame(cb), mapping = aes(x = Longitude, y = Latitude)) +
+  xlab("Longitude") + ylab("Latitude")
+
 ```
 
 <br>
@@ -1073,7 +1095,11 @@ writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines
 
 <br>
 
-Text to introduce tigershark data
+
+In this last session, we will be working with passive telemetry data from three Tiger sharks (*Galeocerdo cuvier*) that were monitored around Heron and One Tree Islands, and was kindly contributed for this workshop by [Dr. Michelle Heupel](http://data.aims.gov.au/staffcv/jsf/external/view.xhtml?partyId=900003933). Sharks were monitored over three years as part of a larger study examining the ecology and movement patterns of reef predators.
+
+We will use this dataset to  
+
 
 
 ```{r, echo=FALSE, message=FALSE, include=TRUE, results=FALSE}
