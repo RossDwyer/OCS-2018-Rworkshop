@@ -2,7 +2,7 @@
 title: Animals in Motion 2018 Workshop 
 subtitle: North Stradbroke Island
 author: Dr Ross Dwyer & Dr Vinay Udyawer
-date: Feb 14, 2018
+date: Feb 20, 2018
 output:
   html_document:
     toc: true
@@ -30,15 +30,15 @@ htmltools::img(src =knitr::image_uri('Images/OCS.jpeg'),
 
 ## Who are we?
 
-Ross is a Postdoctoral Research Fellow in the [School of Biological Sciences](https://www.biology.uq.edu.au/) at the University of Queensland. His research falls within the field of animal ecology, where he uses animal occurrence, abundance and movement information to test hypotheses and make predictions regarding individual- and population-level responses to environmental change. He's used R for over 12 years, has published two R packages on CRAN, was lead R developer on the ZoaTrack.org project and regularly teaches R training courses at The University of Queensland and at other institutes around Australia. For more information and teaching resources, check out [Ross's website](https://www.uq.edu.au/eco-lab/content/dr-ross-dwyer).
+Ross is a Postdoctoral Research Fellow in the [School of Biological Sciences](https://www.biology.uq.edu.au/) at the University of Queensland. His research falls within the field of animal ecology, where he uses animal occurrence, abundance and movement information to test hypotheses and make predictions regarding individual- and population-level responses to environmental change. He's used **R** for over 12 years, has published two R packages on CRAN, was lead **R** developer on the ZoaTrack.org project and regularly teaches R training courses at The University of Queensland and at other institutes around Australia. For more information and teaching resources, check out [Ross's website](https://www.uq.edu.au/eco-lab/content/dr-ross-dwyer).
 
-Vinay is an Postdoctoral Research Fellow at the [Australian Institute of Marine Science](https://www.aims.gov.au/). He is an ecologist that is particularly interested in using large spatio-temporal datasets to understand animal movements and distributions patterns. He has considerable experience using R to analyse and visualise large and complex spatial datasets. He has developed R code to analyse 2 and 3 dimensional movement patterns of animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's R codes can be found on his [github page](https://github.com/vinayudyawer)
+Vinay is an Postdoctoral Research Fellow at the [Australian Institute of Marine Science](https://www.aims.gov.au/). He is an ecologist that is particularly interested in using large spatio-temporal datasets to understand animal movements and distributions patterns. He has considerable experience using **R** to analyse and visualise large and complex spatial datasets. He has developed **R** code to analyse 2 and 3 dimensional movement patterns of animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's **R** codes can be found on his [github page](https://github.com/vinayudyawer)
 
 <br>
 
 ## Course outline
 
-**In this course you will learn how to analyse and interpret your aquatic telemetry datasets in R**. This workshop will hopefully show you how **R** can make the processing of spatial data much quicker and easier than using standard GIS software, and can help you plot some *deadly* figures! At the end of this workshop you will also have the annotated **R** code that you can re-run at any time, share with collaborators and build on with those newly acquired data!
+**In this course you will learn how to analyse and interpret your aquatic telemetry datasets in R**. This workshop will demonstrate how **R** can make the processing of spatial data much quicker and easier than using standard GIS software, and can help you plot some *deadly* figures! At the end of this workshop you will also have the annotated **R** code that you can re-run at any time, share with collaborators and build on with those newly acquired data!
 
 We designed this course not to comprehensively cover all the tools in **R**, but rather to teach you skills for taking your experience with R to the next level. Every new project comes with its own problems and questions and you will need to be independent, patient and creative to solve these challenges. It makes sense to invest time in becoming familiar with **R**, because today **R** is the leading platform for environmental data analysis and has some other functionalities which may surprise you! 
 
@@ -103,7 +103,7 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 
 The process of turning raw telemetry data into publishable results is a highly involved process. Tracking data sets are becoming larger, and larger as they are being gathered over longer time periods, over larger spatial extents and at increasing temporal resolutions. While this is increasing our ability to detect subtle patterns, these data sets are becoming vast and require analytical tools that easily handle, manipulate and visualise these complex datasets.
 
-Processing and analysing telemetry datasets can require a huge investment in time: rearranging data, removing erroneous values, purchasing, downloading and learning the new software, and running analyses. Furthermore merging together excel spreadsheets, filtering data and preparing data for statistical analyses and plotting in different software packages can introduce all sorts of errors. 
+Processing and analysing telemetry datasets can require a huge investment in time: rearranging data, removing erroneous values, purchasing, downloading and learning the new software, and running analyses. Furthermore merging together Excel spreadsheets, filtering data and preparing data for statistical analyses and plotting in different software packages can introduce all sorts of errors. 
 
 *There is a better way...*
 
@@ -117,7 +117,7 @@ Processing and analysing telemetry datasets can require a huge investment in tim
 6. Having your data in **R** opens up a huge array of **cutting edge analysis tools**.
 7. **R** is also totally **FREE!** 
 
-As **R** is open source, the more people we can get helping out on the **R** spatial mailing lists (e.g. **R-sig-geo**) and contributing their own spatial packages to the wider community, the more powerful **R** becomes!
+As **R** is open source, the more people we can get helping out on the **R** mailing lists (e.g. **R-sig-geo**) and contributing their own packages to the wider community, the more powerful **R** becomes!
 
 **For this course, we assume you have a basic understanding of the *R* environment, and working with *RStudio*. If you do not have experience working in *R* we encourage you to go through [this online course](https://www.uq.edu.au/eco-lab/gpem-r-course) that will bring you up to speed!**
 
@@ -125,7 +125,7 @@ As **R** is open source, the more people we can get helping out on the **R** spa
 
 ## Course Resources
 
-To access data and scripts we will work through in this course, download the **OCS-2018-Rworkshop** folder from [GitHub](https://github.com/RossDwyer/OCS-2018-Rworkshop). This folder contains the course documents, telemetry data and R scripts we are going to work with. To download the folder click on the green "Clone or download" dropdown menu and select "Download ZIP"
+To access data and scripts we will work through in this course, download the **OCS-2018-Rworkshop** folder from [GitHub](https://github.com/RossDwyer/OCS-2018-Rworkshop). This folder contains the course documents, telemetry data and R scripts we are going to work with. To download the folder click on the green <span style="color:green">Clone or download</span>, dropdown menu and select "Download ZIP"
 
 
 ![How to acces course resources](Images/Github download.png)
@@ -160,19 +160,20 @@ When a *New Project* is created, R Studio:
 
 ## Why Projects are Awesome
 
-There are a number of good reasons why you should work with Projects in RStudio.
-1.  We may want our R scripts to be saved into a place where they link seamlessly to other documents and data files for our research project.
+There are a number of good reasons why you should work with Projects in R Studio:
+
+1.  We may want our **R** scripts to be saved into a place where they link seamlessly to other documents and data files for our research project.
 2.  We may also want our tables, figures and statistical results to be written to locations on our computer where they are easy to locate.
 3.  We may work on multiple workstations (desktops, laptops) that we want our code to be completely transferable using cloud infrastructure (e.g. [Dropbox](http://www.dropbox.com/), [OneDrive](https://onedrive.live.com/about/en-au/))
-4.  It allows it to share work folders, data and R code with collaborators who are working on the same projects
+4.  It allows it to share work folders, data and **R** code with collaborators who are working on the same projects
 
 <br>
 
 ## Installing packages
 
-Part of the reason R has become so popular is the vast array of packages that are freely available and highly accessible. In the last few years, the number of packages has grown exponentially [> 10,000 at my last check on CRAN!](http://blog.revolutionanalytics.com/2017/01/cran-10000.html) These can help you to do a galaxy of different things in R, including running complex analyses, drawing beautiful figures, running R as a GIS, constructing your own R packages, building web pages and even writing introductory R course handbooks!
+Part of the reason **R** has become so popular is the vast array of packages that are freely available and highly accessible. In the last few years, the number of packages has grown exponentially [> 10,000 at my last check on CRAN!](http://blog.revolutionanalytics.com/2017/01/cran-10000.html) These can help you to do a galaxy of different things in **R**, including running complex analyses, drawing beautiful figures, running **R** as a GIS, constructing your own **R** packages, building web pages and even writing introductory **R** course handbooks!
 
-Let’s suppose you want to load the *sp* package to access this package's incredible spatial functionality. If this package is not already installed on your machine, you can download it from the web by using the following command in R.
+Let’s suppose you want to load the *sp* package to access this package's incredible spatial functionality. If this package is not already installed on your machine, you can download it from the web by using the following command in **R**.
 
 ```{r, include=TRUE, eval=FALSE}
 install.packages("sp", repos='http://cran.us.r-project.org')
@@ -192,20 +193,19 @@ install.packages(c("rgdal","rgeos","adehabitatHR",
                    "leaflet","htmlwidgets"), repos='http://cran.us.r-project.org')
 ```
 
-We then load the required packages from our computer's R package library using the `library()` function.
+We then load the required packages from our computer's **R** package library using the `library()` function.
 
 ```{r, echo=TRUE, eval=FALSE}
 library(sp)
 library(rgdal)
 library(rgeos)
-library(adehabitatLT)
 library(adehabitatHR)
 library(leaflet)
 library(tidyverse)
 library(devtools)
 ```
 
-It is that simple to access powerful statistical, visualisation and GIS tools in R. Best of all, it' completely *FREE!!
+It is that simple to access powerful statistical, visualisation and GIS tools in **R**. Best of all, it is completely *FREE!!*
 
 <br>  
 <br> 
@@ -302,13 +302,13 @@ blacktip <- fread('https://raw.githubusercontent.com/RossDwyer/OCS-2018-Rworksho
 
 Don’t use '.xlsx' or '.xls' files for saving data. The problem with '.xls' and '.xlsx' files are that they store extra info with the data that makes files larger than necessary and Excel formats can also unwittingly reformat or alter your data! 
 
-A stable way to save your data is as a '.csv' file, which stands for 'comma separated values'. These are simply values separated by 'commas' and rows defined by 'returns'. If you select 'Save as’ in excel, you can choose '.csv' as one of the options. If you open the .csv file provided in the `Data` folder using a text editor, you will see it is just words, numbers and commas.
+A stable way to save your data is as a '.csv' file, which stands for 'comma separated values'. These are simply values separated by 'commas' and rows defined by 'returns'. If you select 'Save as’ in Excel, you can choose '.csv' as one of the options. If you open the .csv file provided in the `Data` folder using a text editor, you will see it is just words, numbers and commas.
 
 <br>
 
 ## **Filtering** and **manipulating** datasets
 
-The ability to quickly filter and manipulate datasets datasets is important when working with large telemetry datasets. The standard input format of tabulated data in R is a `data.frame`. A data.frame is a special ‘class’ of an object, where there are multiple variables, stored in named columns and multiple rows for our detections. Every variable has the same number of columns. There are simple rules to filter and select data from a data.frame. Rows and columns are indexed by using a comma as a separator `df[row,column]`. Try the following code:
+The ability to quickly filter and manipulate datasets datasets is important when working with large telemetry datasets. The standard input format of tabulated data in **R** is a `data.frame`. A data.frame is a special ‘class’ of an object, where there are multiple variables, stored in named columns and multiple rows for our detections. Every variable has the same number of columns. There are simple rules to filter and select data from a data.frame. Rows and columns are indexed by using a comma as a separator `df[row,column]`. Try the following code:
 
 ```{r,eval=FALSE}
 blacktip[1,] # Provides the first row of data
@@ -424,7 +424,7 @@ Pipes can also be used to pre-process our data before plotting them. Lets now us
 blacktip %>% 
   subset(Transmitter.Name == "Colin") %>% # subset dataset to include only detections by 'Colin'
   with(table(Station.Name)) %>% # create a table with the number of rows (i.e. detections) per receiver
-  barplot(las=2, xlab="Receiver station", ylab="Number of Detections") # barplot of number of Colins detections recorded per receiver
+  barplot(las=2, xlab="Receiver station", ylab="Number of Detections") # barplot of number of Colin's detections recorded per receiver
 ```
 
 <br>
@@ -435,7 +435,7 @@ blacktip %>%
 
 <br>
 
-Now that you've fully jumped into the world of pipes, it's time to fully introduce you to the *tidyverse* group of R packages. These have really revolutionised the way we work with big data and the way we visualise our results.
+Now that you've fully jumped into the world of pipes, it's time to fully introduce you to the *tidyverse* group of **R** packages. These have really revolutionised the way we work with big data and the way we visualise our results.
 
 ```{r setup, include=FALSE}
 library(tidyverse)
@@ -446,10 +446,6 @@ library(tidyverse)
 ### What is the tidyverse?
 
 * The [tidyverse](http://tidyverse.org/) is the collective name given to suite of **R** packages designed mostly by Hadley Wickham.
-* Before it was formalised in 2016 it was loosely referred to as the `hadleyverse`.
-* Packages share a common API and design philosophy intended to create a **"Pit of Success"**.
-* The documentation of this style is still evolving.
-* This is a good [start](https://rpubs.com/yeedle/tidyguide)
 
 #### Members of the tidyverse
 broom, **dplyr**, forcats, **ggplot2**, haven, httr, hms, jsonlite, **lubridate**, magrittr, modelr, purrr, **readr**, readxl, stringr, tibble, rvest, **tidyr**, xml2
@@ -458,9 +454,9 @@ broom, **dplyr**, forcats, **ggplot2**, haven, httr, hms, jsonlite, **lubridate*
 
 ##### `lubridate`
 
-* `lubridate` is an easy way to convert date time data into a form R can recognise it.
+* `lubridate` is an easy way to convert date time data into a form **R** can recognise it.
 * Allows for calculation of durations and intervals between dates.
-* This package recognises multiple date time formats and parses them to a standardised 'POSIX' format that R uses (`ymd` for dates; `ymd_hms` for date and time parsing)
+* This package recognises multiple date time formats and parses them to a standardised 'POSIX' format that **R** uses (`ymd` for dates; `ymd_hms` for date and time parsing)
 * essential when working with spatio-temporal datasets like telemetry data
 
 Currently in our `blacktip` dataset the "Date and Time (UTC)" column is recognised as "characters" and recorded in the Universal Coordinated Time Zone (UTC). We want to convert this to local time (UTC + 10 hours). Lets use `lubridate` to convert this column into the 'POSIX' format and into local date time.
@@ -478,7 +474,7 @@ blacktip$local.Date.time<-
 ##### `dplyr`
 
 * `dplyr` is the data wrangling workhorse of the tidyverse.
-* Provides functions, **verbs**, that can manipulate tibbles into the shape you need for analysis.
+* Provides functions, **verbs**, that can manipulate data into the shape you need for analysis.
 * Has many backends allowing dplyr code to work on data stored in SQL databases and big data clusters.
     - Works via translation to SQL. Keep an eye out for the SQL flavour in `dplyr`
 
@@ -515,10 +511,12 @@ head(blacktip)
 
 Subset the data to rows matching logical conditions and then arrange according to particular attributes
 ```{r, eval=FALSE}
-filter(blacktip, Transmitter.Name == "Ana") %>%
+blacktip %>%
+  filter(Transmitter.Name == "Ana") %>%
   arrange(local.Date.time) # arrange Ana's detections in chronological order
 
-filter(blacktip, Transmitter.Name == "Bruce") %>%
+blacktip %>%
+  filter(Transmitter.Name == "Bruce") %>%
   arrange(desc(local.Date.time)) # arrange Bruce's detections in descending chronological order
 ```
 
@@ -543,7 +541,7 @@ blacktip %>%
 
 Adding and removing data to the data frame through a pipe
 ```{r}
-blacktip<-
+blacktip <- 
   blacktip %>%
   mutate(date=date(local.Date.time)) %>% # adding a column to the blacktip data with date of each detection
   mutate(Transmitter=NULL) # removing the `Transmitter` column
@@ -662,9 +660,11 @@ blacktip %>%
 
 <br>
 
-R offers a variety of functions for importing, manipulating, analysing and exporting spatial data. Although one might at first consider this to be the exclusive domain of GIS software, using R can frequently provide a much more lightweight, yet equally effective solution that embeds within a larger analytic workflow.
+**R** offers a variety of functions for importing, manipulating, analysing and exporting spatial data. Although one might at first consider this to be the exclusive domain of GIS software, using **R** can frequently provide a much more lightweight, yet equally effective solution that embeds within a larger analytic workflow.
 
-One of the tricky aspects of pulling spatial data into your analytic workflow is that there are numerous complicated data formats. In fact, even within R itself, functions from different user-contributed packages often require the data to be structured in very different ways. The good news is that efforts are underway to standardize spatial data classes in R. This movement is facilitated by sp, an important base package for spatial operations in R. It provides definitions for basic spatial classes (points, lines, polygons, pixels, and grids) in an attempt to unify the way R packages represent and manage these sorts of data. It also includes some core functions for creating and manipulating these data structures. The hope is that all spatial R packages will use (or at least provide conversions to) the 'Spatial' data class and it's derivatives, as now defined in the sp package. All else being equal, we favor R functions and packages that conform to the sp standard, as these are likely to provide the greatest future utility and durability.
+One of the tricky aspects of pulling spatial data into your analytic workflow is that there are numerous complicated data formats. In fact, even within **R** itself, functions from different user-contributed packages often require the data to be structured in very different ways. The good news is that just like the `tidyr` package family, efforts are underway to standardize spatial data classes in R. 
+
+This movement is facilitated by sp, an important base package for spatial operations in R. It provides definitions for basic spatial classes (points, lines, polygons, pixels, and grids) in an attempt to unify the way R packages represent and manage these sorts of data. It also includes some core functions for creating and manipulating these data structures. The hope is that all spatial **R** packages will use (or at least provide conversions to) the 'Spatial' data class and its derivatives, as now defined in the `sp` package. All else being equal, we favor **R** functions and packages that conform to the sp standard, as these are likely to provide the greatest future utility and durability.
 
 [Here](http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html) is a very useful style guide for coding using `Spatial` objects.
 
@@ -672,11 +672,11 @@ One of the tricky aspects of pulling spatial data into your analytic workflow is
 
 ## Coordinate Reference Systems (CRS)
 
-Central to working with spatial data, is that these data have a coordinate reference system (CRS class) associated with it. Geographical CRS are expressed in degrees and associated with an ellipse, a prime meridian and a datum. Projected CRS are expressed in a measure of length and a chosen position on the earth, as well as the underlying ellipse, prime meridian and datum.
+Central to working with spatial data, is that these data have a coordinate reference system (CRS) associated with it. Geographical CRS are expressed in degrees and associated with an ellipse, a prime meridian and a datum. Projected CRS are expressed in a measure of length and a chosen position on the earth, as well as the underlying ellipse, prime meridian and datum.
 
 Most countries have multiple coordinate reference systems, and where they meet there is usually a big mess — this led to the collection by the European Petroleum Survey Group (EPSG) of a geodetic parameter dataset.
 
-The EPSG list among other sources is used in the workhorse PROJ.4 library, and handles transformation of spatial positions between different CRS. This library is interfaced with R in the `rgdal` package, and the CRS class is defined partly in the `sp` package and partly in `rgdal`.
+The EPSG list among other sources is used in the workhorse PROJ.4 library, and handles transformation of spatial positions between different CRS. This library is interfaced with R in the `rgdal` package, and the CRS is defined partly in the `sp` package and partly in `rgdal`.
 
 In the next step, we will convert our blacktip dataset (`blacktip`) into a spatial object and specify the CRS. We therefore need to refer to the correct proj4 string information which is contained within the `rgdal` package.
 
@@ -724,7 +724,7 @@ In this exercise we are going to convert our receiver locations from a standard 
 ```{r, echo=TRUE}
 # First load our VR2-W installation dataset for the Cleveland Bay study
 statinfo <- read.csv('Data/Station_information.csv')
-cb <- statinfo[statinfo$Installation%in%"Cleveland Bay",]
+cb <- statinfo[statinfo$Installation %in% "Cleveland Bay",]
 
 # Now convert the data.frame object into a SpatialPoints object
 coordinates(cb) <- c("Longitude", "Latitude")
@@ -849,7 +849,7 @@ Additional Task: Now try adding detection data from "Colin" and "Bruce" to the m
 
 <br>
 
-Finally, you can save this leaflet document as an html file and share it with your friends or colleagues
+Finally, you can save this leaflet document as an html file and share it with your friends or colleagues. To save the interactive map as an html document, type the code below into R and the file will be saved in your project folrder. 
 
 
 ```{r, eval = FALSE}
@@ -870,12 +870,26 @@ saveWidget(myleafletplot, file="mymap.html") # uses the htmlwidgets package
 
 In this third session we are going to work with a data set containing detection data from 3 Estuarine Crocodiles (*Crocodylus porosus*) as shown in the image above. These animals were captured and tagged within the Wenlock River, Cape York. Crocodiles were dual tagged using both GPS transmitters and using a network of acoustic hydrophones deployed along the river system. You can read more about this study [here](http://www.publish.csiro.au/mf/mf14042)
 
-For this session, we will need the most recent version of the VTrack R package from our GitHub repository. This contains some new functionality that currently is not on CRAN.
+For this session, we will need the most recent version of the `VTrack` package from our GitHub repository. This contains some new functionality that currently is not on CRAN.
 
 ```{r, eval=FALSE}
 library(devtools) # Helps download development versions of R packages
 
 devtools::install_github("RossDwyer/VTrack") # Install development version of VTrack directly from github
+```
+
+We then load the dataset containing the crocodile tracks and the receiver locations from within the `VTrack` package using the `data()` command
+
+```{r}
+library(VTrack)
+
+data(crocs) # Load crocodile demo  datset from the VTrack package
+crocs %>% head()
+
+data(PointsDirect_crocs) # Load reciever location dataset
+# Load Wenlock points file
+data(PointsDirect_crocs)
+PointsDirect_crocs %>% head()
 ```
 
 <br>
@@ -906,17 +920,9 @@ get_libraries()
 <br>
 <br>
 
-Now lets load and format our croc data.
+Now lets format our croc data.
 
 ```{r}
-library(VTrack)
-
-# Load crocodile demo  datset from the VTrack package
-data(crocs)
-
-# Load reciever location dataset
-data(PointsDirect_crocs)
-
 # Merge locations of recievers with detection data for "Jack-o-saurus D"
 jacko_detections <- 
   crocs %>%
@@ -948,11 +954,11 @@ Now lets animate Jacko's tracks using the `move` and `moveVis` packages
 ```{r, eval=FALSE}
 # We first have to create a 'move' object that has at least 3 sets of data
 # 'x' (longitude), 'y' (latitude) and 'time'
-jacko_move<- move(x = jacko$Longitude.coa,
-                  y = jacko$Latitude.coa,
-                  time = jacko$dt,
-                  proj = CRS("+proj=longlat +datum=WGS84"),
-                  data = jacko)
+jacko_move <- move(x = jacko$Longitude.coa,
+                   y = jacko$Latitude.coa,
+                   time = jacko$dt,
+                   proj = CRS("+proj=longlat +datum=WGS84"),
+                   data = jacko)
 ```
 
 Now lets set some additional variables needed to create the animation:
@@ -996,27 +1002,22 @@ vembedr::embed_youtube(id = "aNLCVLYRd7Q") %>%
 
 ## Integration with [Google Earth](http://googleearth.com/)
 
-Google Earth offers a simple yet powerful way of visualising your acoustic tracking data through time. However Pulling detection datasets into Google earth can be challenging given the size of many detection files. The [VTrack](http://plotkml.r-forge.r-project.org/) R package has a few handy functions for visualising your tag detections as track animations in [Google Earth](https://www.google.com/earth/)). 
+Google Earth offers a simple yet powerful way of visualising your acoustic tracking data through time. However Pulling detection datasets into Google earth can be challenging given the size of many detection files. The [VTrack](http://plotkml.r-forge.r-project.org/) **R** package has a few handy functions for visualising your tag detections as track animations in [Google Earth](https://www.google.com/earth/)). 
 
-For this to work, your receiver locations MUST be in the datum WGS84 and you will need to have Google Earth downloaded on your machine. If you have not already got it, Google Earth can be downloaded for free [here](https://www.google.com/earth/download/gep/agree.html)
+For this to work, your receiver locations MUST be in the WGS84 coordinate reference system (CRS) and you will need to have Google Earth downloaded on your machine. If you have not already got it, Google Earth can be downloaded for free [here](https://www.google.com/earth/download/gep/agree.html)
 
-Lets load our croc tracking detection dataset into the VTrack format and extract a list of transmitters. 
+Lets load our croc tracking detection dataset into the `VTrack` format and extract a list of transmitters. 
 
 ```{r}
 # Load crocodile datset into VTrack archive
-data(crocs)
 Vcrocs <- ReadInputData(infile=crocs,
                         iHoursToAdd=10,
                         dateformat = NULL,
                         sVemcoFormat='1.0')
 Vcrocs %>% head()
-
-# Load Wenlock points file
-data(PointsDirect_crocs)
-PointsDirect_crocs %>% head()
 ```
 
-Once we have our dataset in the VTrack archive format and a seperate Points file containing the receiver locations, we can then run VTrack's KML creator functions. `GenerateAnimationKMLFile_Track()` generates a moving arrow for a single transmitter as it moves between the detection field of adjacent receiver stations. 
+Once we have our dataset in the `VTrack` archive format and a seperate data frame containing the receiver locations, we can then run VTrack's KML creator functions. `GenerateAnimationKMLFile_Track()` generates a moving arrow for a single transmitter as it moves between the detection field of adjacent receiver stations. 
 
 ```{r, eval=FALSE}
 
@@ -1060,7 +1061,7 @@ VR2ArrayDM
 ```
 
 ### Circuitous distance
-In our crocodile example however, our animal's movements are bounded by the banks of the river and so cannot move directly (as the crow flies) between hydrophone stations. As a work around, the VTrack Package has a function `GenerateCircuitousDistance()` that calculates distances in series through a set of locations and waypoints to form an indirect path between receiver stations.
+In our crocodile example however, our animal's movements are bounded by the banks of the river and so cannot move directly (as the crow flies) between hydrophone stations. As a work around,  `VTrack` has a function `GenerateCircuitousDistance()` that calculates distances in series through a set of locations and waypoints to form an indirect path between receiver stations.
 
 ```{r}
 # Load the points file
@@ -1086,14 +1087,15 @@ PointsCircuitous_crocs %>%
 
 ```
 
-We would then use this within the `RunResidenceExtraction()` function in VTrack to extract the movements between hydrophone stations and link this to our measure of distance travelled
+We would then use this within the `RunResidenceExtraction()` function in `VTrack` to extract the movements between hydrophone stations and link this to our measure of distance travelled
 
 ```{r}
-Res<- RunResidenceExtraction(Vcrocs,  
-                             "RECEIVERID",    
-                             1,              
-                             60*60*12,
-                             sDistanceMatrix=CircuitousDM)
+Res<- RunResidenceExtraction(Vcrocs,  # Our data frmae
+                             "RECEIVERID",  # Whether we want to work with receiver serial numbers of Station names 
+                             1, # the minimun number of detections at a receiver to record the presence of a tag             
+                             60*60*12, # the time period between detections before a residence efent 'times out'
+                             sDistanceMatrix=CircuitousDM) # our distance matrix containing distances between receiver locations
+
 # Our residence file
 head(Res$residences)
 
@@ -1151,7 +1153,7 @@ ggplot(data=df, aes(y=Y, x=X)) +
 
 <br>
 
-Finally we run the `GenerateLeastCostDistance()` function in VTrack to generate the Distance matrix containing the Least cost paths.
+Finally we run the new `GenerateLeastCostDistance()` function in VTrack to generate the Distance matrix containing the Least cost paths.
 
 ```{r, eval=FALSE}
 GenerateLeastCostDistance(sPointsFile = PointsLeastCost_crocs,
@@ -1174,7 +1176,10 @@ row.names(Vcrocsm) <- NULL
 Vcrocsm <- Vcrocsm[,c("DATETIME","TRANSMITTERID","SENSOR1","UNITS1","RECEIVERID","STATIONNAME","Distance.DS")]
 
 Vcrocsm %>%
-ggplot(aes(x=DATETIME, y=Distance.DS,group=TRANSMITTERID,colour=TRANSMITTERID)) +
+ggplot(aes(x = DATETIME,
+           y=Distance.DS,
+           group=TRANSMITTERID,
+           colour=TRANSMITTERID)) +
   geom_line(alpha=0.5) +
   scale_y_continuous(name="Distance from most downstream receiver (km)")+
   xlab("Date") +
@@ -1379,27 +1384,9 @@ tiger_plot +
 
 ## **ESRI Shapefile** import and export (NEED TO UPDATE)
 
-Once you have the `Spatial` object the way you like it, you will want to export it to view in a GIS. Here we show you two options for exporting your `Spatial` object, as a **shapefile** or as a **.kml** for viewing in [Google Earth](https://www.google.com/earth/). As with reading in spatial objects, there are a number of **R** packages out there to help you. Simply type `??kml` or `??shapefile` to look up a few of these options.
+Once you have the `Spatial` object the way you like it, you will want to export it to view in a GIS. 
 
-In this example we are goint to use the `writeOGR()` function in the rgdal package. to write the data containing the movement metrics to a shapefile.
-
-The `ld` function allows to quickly convert an object of class ltraj to a data.frame. We then reproject our data back to Longs and Lats (WGS 1984) for viewing in Arc GIS or Google Earth
-
-```{r, eval=FALSE}
-
-# Convert the ltraj object into a standard data frame
-cassdat.lt.proj <- ld(cassdat.lt) # Change to a dataframe object
-cassdat.lt.proj$date <- as.POSIXct(cassdat.lt.proj$date) # Reassigns date as a date object
-
-# Convert the data frame object into a SpatialPointsDataFrame
-coordinates(cassdat.lt.proj) <- ~x+y # Extract the coordinates
-proj4string(cassdat.lt.proj) <- GDA  # Assigns the coordinate reference system
-
-# Change it back to WGS 1984 projection
-cassdat.lt.WGS <- spTransform(cassdat.lt.proj,WGS)
-```
-
-Finally we run the `writeOGR` function to write this file to disk. We specify the folder as being within the GIS folder.
+In this example we use the `writeOGR()` function in the rgdal package to write the data containing the movement metrics to a shapefile. We specify the data to be written within the GIS folder.
 
 ```{r,eval=FALSE}
 writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines* or SpatialPolygons* object
