@@ -48,7 +48,7 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 
 <br>
 
-* Session 1: *Data wrangling*
+* Session 1: *Wrangling Large Tracking Datasets and Data Visualisation*
 0.  A brief introduction to **R**
 1.  **Import** large telemetry datasets into **R** using [data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html)
 2.  **Filter** and **manipulate** our data using %pipes% and the [tidyverse](http://tidyverse.org/) group of **R** packages
@@ -56,13 +56,13 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 
 <br>
 
-* Session 2: *Working with spatial objects*
+* Session 2: *Working with Spatial Objects and Interactive Mapping*
 4.  Working with **Spatial* objects**
 5.  Generating interactive maps using [leaflet](http://leafletjs.com/) 
 
 <br>
 
-* Session 3: *Assessing temporal components of tracking datasets*
+* Session 3: *Visualising Animal Movements through Time*
 6.  Producing track **animations** 
 7.  Integration with [Google Earth](http://googleearth.com/) 
 8.  Calculating **distance metrics** (direct, circuitous, least cost)
@@ -70,7 +70,7 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 
 <br>
 
-* Session 4: *Calculating home ranges*
+* Session 4: *Centres of Activity and Home Range Estimation*
 10. Calculating short-term centers of activity (**COA**)
 11. Calculating and plotting **home range** area metrics using
     + MCPs (array/matrix)
@@ -93,13 +93,13 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 
 ---------------------------------------
 
-# Session 1: Data wrangling
+# Session 1: Wrangling Large Tracking Datasets and Data Visualisation
 
 ![ ](Images/telemetry.png)
 
 <br>
 
-## A brief introduction to **R**
+## A brief Introduction to **R**
 
 The process of turning raw telemetry data into publishable results is a highly involved process. Tracking data sets are becoming larger, and larger as they are being gathered over longer time periods, over larger spatial extents and at increasing temporal resolutions. While this is increasing our ability to detect subtle patterns, these data sets are becoming vast and require analytical tools that easily handle, manipulate and visualise these complex datasets.
 
@@ -123,7 +123,7 @@ As **R** is open source, the more people we can get helping out on the **R** spa
 
 <br>
 
-## Course resources
+## Course Resources
 
 To access data and scripts we will work through in this course, download the **OCS-2018-Rworkshop** folder from [GitHub](https://github.com/RossDwyer/OCS-2018-Rworkshop). This folder contains the course documents, telemetry data and R scripts we are going to work with. To download the folder click on the green "Clone or download" dropdown menu and select "Download ZIP"
 
@@ -158,7 +158,7 @@ When a *New Project* is created, R Studio:
 
 <br>
 
-## Why Projects are awesome
+## Why Projects are Awesome
 
 There are a number of good reasons why you should work with Projects in RStudio.
 1.  We may want our R scripts to be saved into a place where they link seamlessly to other documents and data files for our research project.
@@ -185,8 +185,11 @@ Multiple packages can be loaded at the same time by listing the required package
 ``` {r, include=TRUE, eval=FALSE}
 install.packages(c("rgdal","rgeos","adehabitatHR",
                    "raster","gdistance",
-                   "leaflet","tidyverse",
-                   'XML', 'gstat', 'Hmisc', 'checkmate',"devtools"), repos='http://cran.us.r-project.org')
+                   "tidyverse",
+                   "XML", "gstat", "Hmisc",
+                   "checkmate","devtools",
+                   "vembedr",
+                   "leaflet","htmlwidgets"), repos='http://cran.us.r-project.org')
 ```
 
 We then load the required packages from our computer's R package library using the `library()` function.
@@ -201,6 +204,8 @@ library(leaflet)
 library(tidyverse)
 library(devtools)
 ```
+
+It is that simple to access powerful statistical, visualisation and GIS tools in R. Best of all, it' completely *FREE!!
 
 <br>  
 <br> 
@@ -651,7 +656,7 @@ blacktip %>%
 
 ----------------------------
 
-# Session 2: Working with spatial objects
+# Session 2: Working with Spatial Objects in R and Interactive Mapping
 
 ![ ](Images/banner1.png)
 
@@ -780,7 +785,7 @@ ggmap(cb_map) +
 
 Now that we have allocated our data as a Spatial* object, we can also use the incredibly powerful [Leaflet](https://rstudio.github.io/leaflet/) package in R to plot the locations of our hydrophones on an interactive map that  you can share with your collaborators. The leaflet package utilises the open-access leaflet JavaScript library (a web programming language), to create web-based maps. We will cover a basic map with some points on it today. See [Rstudio’s leaflet page](http://rstudio.github.io/leaflet/) for help and more mapping features, like polygons.
 
-To get started with leaflet, first, make sure you have the `leaflet` and `htmlwidgets` packages installed, and then load it into this session:
+To get started with leaflet, first, make sure you have the `leaflet` and `htmlwidgets` packages installed (we did this earlier in the workshop using `install.packages()`), and then load it into this session:
 
 ```{r, message=FALSE}
 library(leaflet)
@@ -838,13 +843,13 @@ myleafletplot %>%
     baseGroups= c("Satellite","Map"),
     overlayGroups = c("Ana"), # add the groups you want to overlay on the base maps
     options = layersControlOptions(collapsed = FALSE))
-
-# Now try adding detection data from "Colin" and "Bruce" to the map
 ```
+
+Additional Task: Now try adding detection data from "Colin" and "Bruce" to the map!
 
 <br>
 
-Finally, you can save this leaflet document at an html file and share it with your friends or colleagues
+Finally, you can save this leaflet document as an html file and share it with your friends or colleagues
 
 
 ```{r, eval = FALSE}
@@ -857,7 +862,7 @@ saveWidget(myleafletplot, file="mymap.html") # uses the htmlwidgets package
 
 -------------------------------------
 
-# Session 3: Accessing the temporal component of tracking datasets
+# Session 3: Visualising Animal Movements through Time
 
 ![ ](Images/Croc.png)
 
@@ -867,12 +872,10 @@ In this third session we are going to work with a data set containing detection 
 
 For this session, we will need the most recent version of the VTrack R package from our GitHub repository. This contains some new functionality that currently is not on CRAN.
 
-```{r, message=FALSE}
+```{r, eval=FALSE}
 library(devtools) # Helps download development versions of R packages
 
-install_github("RossDwyer/VTrack") # Install development version of VTrack directly from github
-library(VTrack)
-
+devtools::install_github("RossDwyer/VTrack") # Install development version of VTrack directly from github
 ```
 
 <br>
@@ -905,8 +908,10 @@ get_libraries()
 
 Now lets load and format our croc data.
 
-```{r, eval=FALSE}
-# Load crocodile datset
+```{r}
+library(VTrack)
+
+# Load crocodile demo  datset from the VTrack package
 data(crocs)
 
 # Load reciever location dataset
@@ -943,8 +948,11 @@ Now lets animate Jacko's tracks using the `move` and `moveVis` packages
 ```{r, eval=FALSE}
 # We first have to create a 'move' object that has at least 3 sets of data
 # 'x' (longitude), 'y' (latitude) and 'time'
-jacko_move<- move(x = jacko$Longitude.coa, y = jacko$Latitude.coa, time = jacko$dt,
-                  proj = CRS("+proj=longlat +datum=WGS84"), data = jacko)
+jacko_move<- move(x = jacko$Longitude.coa,
+                  y = jacko$Latitude.coa,
+                  time = jacko$dt,
+                  proj = CRS("+proj=longlat +datum=WGS84"),
+                  data = jacko)
 ```
 
 Now lets set some additional variables needed to create the animation:
@@ -979,6 +987,7 @@ animate_move(jacko_move, out_dir, conv_dir = conv_dir,
 ```
 
 ```{r, echo=FALSE}
+library(vembedr)
 vembedr::embed_youtube(id = "aNLCVLYRd7Q") %>%
   htmltools::div(align = "center")
 ```
@@ -1011,9 +1020,7 @@ Once we have our dataset in the VTrack archive format and a seperate Points file
 
 ```{r, eval=FALSE}
 
-levels(Vcrocs$TRANSMITTERID)
-
-# NEED TO CHECK THIS WORKS
+levels(Vcrocs$TRANSMITTERID) # Extracts the transmitter code
 
 # Run the function to generate the KML for a single transmitter
 GenerateAnimationKMLFile_Track(Vcrocs, # VTrack archive file
@@ -1029,7 +1036,9 @@ The file will be written in your Project folder and can be opened in Google Eart
 
 ![ ](Images/timeslider.png)
 
-There is also a another handy function for visualising the movements of multiple animals at a time.
+As an additional excercise, try generating animations for the other crocodiles in the file.
+
+There is also a another handy function for visualising the movements of multiple animals at the same time.
 
 ```{r, eval=FALSE}
 GenerateAnimationKMLFile_Multitag(Vcrocs,
@@ -1040,7 +1049,7 @@ GenerateAnimationKMLFile_Multitag(Vcrocs,
 
 ## Calculating **distance metrics** (direct, circuitous, least cost)
 
-In this next exercise we will extract a metric to compare how far each of our tagged animals moved during the period of study. To do this, we use one of the `Generate*Distance()` functions within VTrack which calculates the distances between each of our hydrophone stations and assemble the distances within a matrix.
+In this next exercise we will extract a metric to compare how far each of our tagged animals moved during the period of study. To do this, we use one of the `Generate*Distance()` functions within VTrack which calculates the distances between each of our hydrophone stations,  assembling these distances within a matrix.
 
 ### Direct distance
 If our receivers are in open water or in an enclosed bay or dam, there may be no obvious barriers to animal movement so we could use the `GenerateDirectDistance()` function to generate our distance matrix. 
@@ -1051,7 +1060,7 @@ VR2ArrayDM
 ```
 
 ### Circuitous distance
-In, our crocodile example however, our animal's movements are bounded by the banks of the river and so cannot move directly (as the crow flies) between hydrophone stations. As a work around, the VTrack Package has a function `GenerateCircuitousDistance()` that calculates distances in series through a set of locations and waypoints to form an indirect path between receiver stations.
+In our crocodile example however, our animal's movements are bounded by the banks of the river and so cannot move directly (as the crow flies) between hydrophone stations. As a work around, the VTrack Package has a function `GenerateCircuitousDistance()` that calculates distances in series through a set of locations and waypoints to form an indirect path between receiver stations.
 
 ```{r}
 # Load the points file
@@ -1081,29 +1090,37 @@ We would then use this within the `RunResidenceExtraction()` function in VTrack 
 
 ```{r}
 Res<- RunResidenceExtraction(Vcrocs,  
-                             "STATIONNAME",    
-                             2,              
+                             "RECEIVERID",    
+                             1,              
                              60*60*12,
                              sDistanceMatrix=CircuitousDM)
+# Our residence file
+head(Res$residences)
+
+# Our log file
+head(Res$residenceslog)
 
 # Our movements file
-CrocMovements <- Res$nonresidences
+head(Res$nonresidences)
 ```
 
+
 ### Least cost distance
-Finally, many acoustic array designs will not fall in series like our above example and will insead be made up of multiple creeks and branches like this.
+In many situations however, acoustic array designs will not fall into perfect series like our above example. Arrays will insead be made up of multiple creeks and branches like this.
 
 ![ ](Images/wenlock_recievers.jpeg)
 
-In this image the green area is the river and red crosses are the hydrophone locations. This function works by using a rasterised version of our study region (1 = water, 0 = land) then calculating the shortest (i.e. least cost) route transitioning from one cell to another to connect adjacent receiver stations. The function makes use of the [gdistance](https://cran.r-project.org/web/packages/gdistance/vignettes/gdistance1.pdf) R package and will work using any arrangement of acoustic arrays provided they are connected by water. 
+In this image the green area is the river and red crosses are the hydrophone locations. In this sort of array design, it would be very challenging to calculate the distances between so many receiver stations.
+
+This function works by using a rasterised version of our study region (1 = water, 0 = land) then calculating the shortest (i.e. least cost) route transitioning from one cell to another to connect adjacent receiver stations. The function makes use of the [gdistance](https://cran.r-project.org/web/packages/gdistance/vignettes/gdistance1.pdf) R package and will work using any arrangement of acoustic arrays provided they are connected by water. 
 
 First we load the raster layer of our study area using the raster R package and convert this to a transition object
 ```{r, message=FALSE}
 library(raster)
 library(gdistance)
 
-r5 <- raster("GIS/wenlock raster UTM.tif") # Load the raster
-tr <- transition(r5, transitionFunction=mean, directions=8) # Create a Transition object from the raster
+WaterRaster <- raster("GIS/wenlock raster UTM.tif") # Load the raster
+tr <- transition(WaterRaster, transitionFunction=mean, directions=8) # Create a Transition object from the raster
 ```
 
 <br>
@@ -1111,22 +1128,22 @@ tr <- transition(r5, transitionFunction=mean, directions=8) # Create a Transitio
 Next we load the tracking dataset and points file which uses a multi-branch array 
 
 ```{r, eval=FALSE}
-library(VTrack)
+## Load the detection dataset (NEED TO DO THIS)
 barra <- read.csv('Data/barra.csv', header = TRUE)
 barra[,1] <- as.POSIXct(barra[,1])
 
+# Load the points file
 PointsLeastCost_crocs <- read.csv("Data/PointsLeastCost_crocs.csv")
 
-
 # convert the raster to points for plotting
-map.p <- rasterToPoints(r5)
+map.p <- rasterToPoints(WaterRaster)
 df <- data.frame(map.p) # Make the points a dataframe for ggplot
 colnames(df) <- c("X", "Y", "Water") # Make appropriate column headings
 
 # Now plot the map
 ggplot(data=df, aes(y=Y, x=X)) +
   geom_raster(aes(fill=Water)) +
-  geom_point(data=POINTS3, 
+  geom_point(data=PointsLeastCost_crocs, 
              aes(x=X, y=Y), color="white", size=3, shape=16) +
   theme_bw() +
   coord_equal() 
@@ -1134,10 +1151,10 @@ ggplot(data=df, aes(y=Y, x=X)) +
 
 <br>
 
-Finally we run the `GenerateRasterDistance()` function in VTrack to generate the Distance matrix containing the Least cost paths.
+Finally we run the `GenerateLeastCostDistance()` function in VTrack to generate the Distance matrix containing the Least cost paths.
 
 ```{r, eval=FALSE}
-GenerateLeastCostDistance(sPointsFile = POINTS3,
+GenerateLeastCostDistance(sPointsFile = PointsLeastCost_crocs,
                        sTransition = tr)
 ```
 
@@ -1147,7 +1164,7 @@ GenerateLeastCostDistance(sPointsFile = POINTS3,
 
 Generating distance matrices can also be a useful way of extracting the distance of each receiver stations to a specific location (i.e. receiver positioned at the mouth of an estuary, instream structure or other point of interest). These distances can then be merged with the original detection dataset and plotted through time to look at associations and commonality in the timing of animal movements.
 
-```{r, eval=FALSE}
+```{r}
 DistDownstream <- CircuitousDM[,1:2] # i.e. distance from the the most downstream hydrophone - serial number 103561 
 names(DistDownstream) <- c("RECEIVERID","Distance.DS")
 
@@ -1176,7 +1193,7 @@ ggplot(aes(x=DATETIME, y=Distance.DS,group=TRANSMITTERID,colour=TRANSMITTERID)) 
 
 --------------------------------------
 
-# Session 4: Calculating home ranges
+# Session 4: Centres of Activity and Home Range Estimation
 
 ![ ](Images/tiger_banner.png)
 
@@ -1186,7 +1203,11 @@ In this last session, we will be working with data from 3 Tiger sharks (*Galeoce
 
 <br>
 
-```{r, echo=FALSE,message=FALSE,include=TRUE}
+```{r, eval=FALSE}
+
+## r, echo=FALSE,message=FALSE,include=TRUE
+##This wont draw if the tiger_coa.csv file hasn't already been created
+
 require(leaflet)
 require(sp) 
 require(raster)
@@ -1211,19 +1232,21 @@ projection(coa.ll)<-CRS("+proj=longlat +datum=WGS84")
 mcp.ll<-mcp(coa.ll[,"Transmitter.Name"], percent=100)
 
 # Fixed Kernel
-kud.ras<-raster("GIS/Tiger_FixedKUD.asc"); projection(kud.ras)<-CRS("+proj=longlat +datum=WGS84")
-kud<-rasterToContour(kud.ras, levels=c(50,95))
-kud.ras[values(kud.ras)>95]<-NA
-p1 <- colorNumeric(rev(c("steelblue2","gold", "red")), values(kud.ras),na.color = "transparent")
+kud.ras <- raster("GIS/Tiger_FixedKUD.asc")
+projection(kud.ras) <- CRS("+proj=longlat +datum=WGS84")
+kud <- rasterToContour(kud.ras, levels=c(50,95))
+kud.ras[values(kud.ras) > 95] <- NA
+p1 <- colorNumeric(rev(c("steelblue2","gold", "red")), 
+                   values(kud.ras),na.color = "transparent")
 
 # Brownian Bridge KUD calculation
-kbb.ras<-raster("GIS/Tiger_BrownianBridgeUD.asc"); projection(kbb.ras)<-CRS("+proj=longlat +datum=WGS84")
-kbb<-rasterToContour(kbb.ras, levels=c(50,95))
-kbb.ras[values(kbb.ras)>95]<-NA
+kbb.ras <- raster("GIS/Tiger_BrownianBridgeUD.asc")
+projection(kbb.ras) <- CRS("+proj=longlat +datum=WGS84")
+kbb <- rasterToContour(kbb.ras, levels=c(50,95))
+kbb.ras[values(kbb.ras)>95] <- NA
 p2 <- colorNumeric(rev(c("steelblue2","gold", "red")), values(kbb.ras),na.color = "transparent")
 
 leaflet() %>%
-  
   # Base groups
   addProviderTiles(providers$Esri.WorldImagery, group="Satellite") %>%
   
@@ -1243,13 +1266,12 @@ leaflet() %>%
   # addRasterImage(kbb.ras, colors = p2, group="Brownian Bridge KUD", opacity = 0.4) %>%
   addPolygons(data=kbb[kbb$level%in%"95",], color="white", weight=2, group="Brownian Bridge KUD", fillOpacity = 0.1) %>%
   addPolygons(data=kbb[kbb$level%in%"50",], color="firebrick", weight=2, group="Brownian Bridge KUD", fillOpacity = 0.4) %>%
-
+  
   # Layers control
   addLayersControl(
     # baseGroups = c("Map","Satellite"),
     overlayGroups = c("Centers of Activity", "Minimum Convex Polygon", "Fixed KUD", "Movement Trajectories", "Brownian Bridge KUD"),
     options = layersControlOptions(collapsed = FALSE)) %>%
-
   
   hideGroup(c("Movement Trajectories", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"))
 
