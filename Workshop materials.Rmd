@@ -857,20 +857,27 @@ data(crocs)
 data(PointsDirect_crocs)
 
 # Merge locations of recievers with detection data for "Jack-o-saurus D"
-jacko <- 
+jacko_detections <- 
   crocs %>%
   subset(`Transmitter.Name` == "Jack-o-saurus D") %>%
-  merge(., PointsDirect_crocs, by.x="Receiver.S.N", by.y="LOCATION")
+  merge(., PointsDirect_crocs, by.x="Receiver.S.N", by.y="LOCATION") %>%
+  mutate(Latitude=LATITUDE, Longitude=LONGITUDE, Transmitter=ID,
+         Transmitter.Serial=Transmitter.S.N, Sensor.Value=Sensor.1, Sensor.Unit=Units.1)
+
+# Temporally standardise detection data using short-term centers of activity 
+# (We will cover this in more detail in Session 4!!)
+source("R Code/COA.R")
+jacko <- COA(jacko_detections, "Transmitter.Name", 200)
 
 # Format the date time field so R can read it properly
-jacko$dt <- lubridate::ymd_hms(jacko$Date.Time)
-jacko <- jacko[order(jacko$dt),]
+jacko$dt <- lubridate::ymd_hms(jacko$DateTime)
+#jacko <- jacko[order(jacko$dt),]
 
 # Lets have a quick look at what jacko's tracks look like
-jacko %>%
-  ggplot(mapping = aes(x = LONGITUDE, y = LATITUDE)) + 
-  xlab("Longitude") + ylab("Latitude") +
-  geom_point()
+ggplot() +
+  geom_point(aes(x=Longitude, y=Latitude), data=jacko_detections, shape=19) +
+  geom_point(aes(x=Longitude.coa, y=Latitude.coa), data=jacko, color=2, size=0.5) +
+  xlab("Longitude") + ylab("Latitude")
 
 ```
 
@@ -881,8 +888,7 @@ Now lets animate Jacko's tracks using the `move` and `moveVis` packages
 ```{r, eval=FALSE}
 # We first have to create a 'move' object that has at least 3 sets of data
 # 'x' (longitude), 'y' (latitude) and 'time'
-
-jacko_move<- move(x = jacko$LONGITUDE, y = jacko$LATITUDE, time = jacko$dt,
+jacko_move<- move(x = jacko$Longitude.coa, y = jacko$Latitude.coa, time = jacko$dt,
                   proj = CRS("+proj=longlat +datum=WGS84"), data = jacko)
 ```
 
@@ -909,16 +915,18 @@ Finally, we can use the `animate_move()` function to create our track animation.
 ```{r, eval=FALSE}
 # Create jacko's track animation
 animate_move(jacko_move, out_dir, conv_dir = conv_dir,
-             paths_mode = "true_data", frames_nmax = 50, layer="basemap",
+             paths_mode = "simple", frames_nmax = 50, layer="basemap",
              img_title = img_title, img_sub = img_sub, out_format = "mp4")
 
-# Note: for this demonstration we have limited the animation to 100 frames
+# Note: for this demonstration we have limited the animation to 50 frames
 # It can take multiple hours/days to produce a full track animation when you
 # have so much data!!
-
 ```
 
-
+<div align="center">
+   <iframe width="560" height="315" src="/Data/Jacko_track.mp4" frameborder="0" allowfullscreen>
+   </iframe>
+</div>
 
 <br>
 
@@ -1191,10 +1199,8 @@ writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines
 
 <br>
 
+In this last session, we will be working with data from 3 Tiger sharks (*Galeocerdo cuvier*) that were monitored around Heron and One Tree Islands, and was kindly contributed for this workshop by [Dr. Michelle Heupel](http://data.aims.gov.au/staffcv/jsf/external/view.xhtml?partyId=900003933). Sharks were monitored over three years as part of a larger study examining the ecology and movement patterns of reef predators. We will use this data to  
 
-In this last session, we will be working with passive telemetry data from three Tiger sharks (*Galeocerdo cuvier*) that were monitored around Heron and One Tree Islands, and was kindly contributed for this workshop by [Dr. Michelle Heupel](http://data.aims.gov.au/staffcv/jsf/external/view.xhtml?partyId=900003933). Sharks were monitored over three years as part of a larger study examining the ecology and movement patterns of reef predators.
-
-We will use this dataset to  
 
 
 
