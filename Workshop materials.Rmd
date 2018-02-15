@@ -2,7 +2,7 @@
 title: Animals in Motion 2018 Workshop 
 subtitle: North Stradbroke Island
 author: Dr Ross Dwyer & Dr Vinay Udyawer
-date: Feb 14, 2018
+date: Feb 16, 2018
 output:
   html_document:
     toc: true
@@ -59,24 +59,24 @@ This R workshop will be divided into 4 sessions intended to run about 1 hr 15 mi
 * Session 2: *Working with spatial objects*
 4.  Working with **Spatial* objects**
 5.  Generating interactive maps using [leaflet](http://leafletjs.com/) 
+6.  **ESRI Shapefile** import and export
 
 <br>
 
 * Session 3: *Assessing temporal components of tracking datasets*
-6.  Producing track **animations** 
-7.  Integration with [Google Earth](http://googleearth.com/) 
-8.  Calculating **distance metrics** (direct, circuitous, least cost)
-9.  Plotting distance travelled through time
+7.  Producing track **animations** 
+8.  Integration with [Google Earth](http://googleearth.com/) 
+9.  Calculating **distance metrics** (direct, circuitous, least cost)
+10.  Plotting distance travelled through time
 
 <br>
 
 * Session 4: *Calculating home ranges*
-10. Calculating short-term centers of activity (**COA**)
-11. Calculating and plotting **home range** area metrics using
+11. Calculating short-term centers of activity (**COA**)
+12. Calculating and plotting **home range** area metrics using
     + MCPs (array/matrix)
     + Kernel distributions
     + Brownian bridges
-12.  **ESRI Shapefile** import and export
 
 <br>
 <br>
@@ -706,6 +706,34 @@ From the above graphic, can you see which is the correct projection for the Town
 ```{r, eval=FALSE}
 GDA <- CRS("+init=epsg:28355") # The equivalent EPSG code for WGS 84 is 28355. 
 blacktip.GDA <- spTransform(blacktip,GDA)
+```
+
+<br>
+
+## **ESRI Shapefile** import and export
+
+Once you have the `Spatial` object the way you like it, you will want to export it to view in a GIS. Here we show you two options for exporting your `Spatial` object, as a *shapefile* or as a *.kml* for viewing in [Google Earth](https://www.google.com/earth/). As with reading in spatial objects, there are a number of **R** packages out there to help you. Simply type `??kml` or `??shapefile` to look up a few of these options.
+
+In this example we are goin to use the `writeOGR()` function in the `rgdal` package to write the data containing our blacktip dataset to a shapefile.
+
+```{r, eval=FALSE}
+# First lets make sure our data is a spatial object
+class(blacktip)
+```
+
+We can then run the `writeOGR` function to write this file to disk. We specify the folder as being within the GIS folder in our R course project.
+
+```{r,eval=FALSE}
+writeOGR(blacktip, # This field needs to be a SpatialPoints*, SpatialLines* or SpatialPolygons* object
+         dsn="GIS/blacktip.shp", layer= "blacktip.shp", driver="ESRI Shapefile")
+
+# For KML files, replace the driver to "KML" and replace '.shp' to '.kml'
+```
+
+Similarly, we can use the `readOGR()` function to upload our blacktip data onto R
+```{r,eval=FALSE}
+blacktip_shp<-
+  readOGR(dsn="GIS/blacktip.shp", layer= "blacktip")
 ```
 
 <br>
@@ -1355,36 +1383,6 @@ tiger_plot +
 
 
 
-## **ESRI Shapefile** import and export (NEED TO UPDATE)
-
-Once you have the `Spatial` object the way you like it, you will want to export it to view in a GIS. Here we show you two options for exporting your `Spatial` object, as a **shapefile** or as a **.kml** for viewing in [Google Earth](https://www.google.com/earth/). As with reading in spatial objects, there are a number of **R** packages out there to help you. Simply type `??kml` or `??shapefile` to look up a few of these options.
-
-In this example we are goint to use the `writeOGR()` function in the rgdal package. to write the data containing the movement metrics to a shapefile.
-
-The `ld` function allows to quickly convert an object of class ltraj to a data.frame. We then reproject our data back to Longs and Lats (WGS 1984) for viewing in Arc GIS or Google Earth
-
-```{r, eval=FALSE}
-
-# Convert the ltraj object into a standard data frame
-cassdat.lt.proj <- ld(cassdat.lt) # Change to a dataframe object
-cassdat.lt.proj$date <- as.POSIXct(cassdat.lt.proj$date) # Reassigns date as a date object
-
-# Convert the data frame object into a SpatialPointsDataFrame
-coordinates(cassdat.lt.proj) <- ~x+y # Extract the coordinates
-proj4string(cassdat.lt.proj) <- GDA  # Assigns the coordinate reference system
-
-# Change it back to WGS 1984 projection
-cassdat.lt.WGS <- spTransform(cassdat.lt.proj,WGS)
-```
-
-Finally we run the `writeOGR` function to write this file to disk. We specify the folder as being within the GIS folder.
-
-```{r,eval=FALSE}
-writeOGR(cassdat.lt.WGS, # This field needs to be a SpatialPoints*, SpatialLines* or SpatialPolygons* object
-         dsn="GIS",
-         layer= "cass_points", driver="ESRI Shapefile",
-         dataset_options=c("NameField=id"))
-```
 
 
 
