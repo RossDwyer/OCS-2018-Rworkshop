@@ -823,14 +823,12 @@ library(VTrack)
 
 Understanding movement paths using telemetry data can easily be done using animations of tracks. Here we will use the `move` and `moveVis` packages to create a simple animation of croc tracks.
 
-```{r, message=FALSE}
+```{r, eval=FALSE}
 # install packages and load libraries
 devtools::install_github("16EAGLE/moveVis")
 library(move)
 library(moveVis)
 ```
-
-<br>
 
 ### *External library requirements*
 
@@ -842,7 +840,7 @@ First, check if you have these external libraries already installed by running t
 get_libraries()
 ```
 
-If you do not have any of the above external libraries installed on your system, follow [these instructions](https://github.com/16EAGLE/moveVis#external-libraries) to get you up and running!
+**If you do not have any of the above external libraries installed on your system, follow [these instructions](https://github.com/16EAGLE/moveVis#external-libraries) to get you up and running!**
 
 <br>
 <br>
@@ -923,10 +921,10 @@ animate_move(jacko_move, out_dir, conv_dir = conv_dir,
 # have so much data!!
 ```
 
-<div align="center">
-   <iframe width="560" height="315" src="/Data/Jacko_track.mp4" frameborder="0" allowfullscreen>
-   </iframe>
-</div>
+```{r, echo=FALSE}
+vembedr::embed_youtube(id = "aNLCVLYRd7Q") %>%
+  htmltools::div(align = "center")
+```
 
 <br>
 
@@ -934,7 +932,7 @@ animate_move(jacko_move, out_dir, conv_dir = conv_dir,
 
 Google Earth offers a simple yet powerful way of visualising your acoustic tracking data through time. However Pulling detection datasets into Google earth can be challenging given the size of many detection files. The [VTrack](http://plotkml.r-forge.r-project.org/) R package has a few handy functions for visualising your tag detections as track animations in [Google Earth](https://www.google.com/earth/)). 
 
-For this to work, your receiver locations MUST be in the datum WGS84 and you will need to have Google Earth downloaded on your machine. If you have not already got it, Google Earth can be downloaded for free [here]<https://www.google.com/earth/download/gep/agree.html>
+For this to work, your receiver locations MUST be in the datum WGS84 and you will need to have Google Earth downloaded on your machine. If you have not already got it, Google Earth can be downloaded for free [here](https://www.google.com/earth/download/gep/agree.html)
 
 Lets load our croc tracking detection dataset into the VTrack format and extract a list of transmitters. 
 
