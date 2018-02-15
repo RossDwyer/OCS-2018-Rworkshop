@@ -8,7 +8,7 @@
 ## hydrophones and its use in studying animal movements. 
 ## Canadian Journal of Fisheries and Aquatic Sciences 59:23-32.
 
-COA<-function(data, id , timestep, ...){
+COA<-function(tagdata, id , timestep, ...){
   ####################################################################################
   ## data         data frame containing passive telemetry dataset; VEMCO field naming accepted 
   ## id           field in 'data' with unique individual tag/animal identifier
@@ -18,6 +18,7 @@ COA<-function(data, id , timestep, ...){
   sapply(c("lubridate","plyr"), require, character.only=TRUE)
   
   ## Format date time
+  data<-as.data.frame(tagdata)
   data$dt<-ymd_hms(data[,grep("Date",colnames(data))])
   data[,id]<-droplevels(as.factor(data[,id]))
   
