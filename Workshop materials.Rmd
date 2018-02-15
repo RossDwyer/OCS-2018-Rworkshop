@@ -330,20 +330,20 @@ To understand the enhancements of the data.table format we must first understand
 
 ```{r,eval=FALSE}
 # Subset rows within a data.table
-blacktip[`Transmitter Name` == "Ana" & Receiver == "VR2W-104912",] # Select detections from 'Ana' detected on "VR2W-104912" receiver.
+blacktip[Transmitter.Name == "Ana" & Receiver == "VR2W-104912",] # Select detections from 'Ana' detected on "VR2W-104912" receiver.
 
 # Subset rows and columns within a data.table
-blacktip[`Transmitter Name` == "Ana", .(Receiver, Latitude, Longitude),] # Subsets Receiver, Latitude and Longitude data from `Ana`
+blacktip[Transmitter.Name == "Ana", .(Receiver, Latitude, Longitude),] # Subsets Receiver, Latitude and Longitude data from `Ana`
 
 # Aggregate numbers of detections from each of the three tagged animal
-blacktip[ , .(.N), by = "Transmitter Name"]
+blacktip[ , .(.N), by = "Transmitter.Name"]
 ```
 
 The `.N` call is a special variable that holds the number of rows in that current group. Grouping by `Transmitter Name` obtains the number of rows (i.e. detections) for each shark. We can include multiple variables in the `by` parameter to subset our datset further:
 
 ```{r, eval=FALSE}
 # Aggregate numbers of detections at each reciever for each tagged animal
-blacktip[ , .(.N), by = c("Transmitter Name", "Receiver")]
+blacktip[ , .(.N), by = c("Transmitter.Name", "Receiver")]
 ```
 
 We encourage you to use the package vignettes to explore additional functionality of the `data.table` package to make data subsetting and manipulation quicker and easier.
@@ -404,12 +404,12 @@ blacktip %>% summary() # provides result summary of the data frame
 ```
 ```{r, eval=TRUE, results='hide'}
 # pipes can be used for single column within data frames
-blacktip$`Transmitter Name`<-
-  blacktip$`Transmitter Name` %>% as.factor()
+blacktip$Transmitter.Name<-
+  blacktip$Transmitter.Name %>% as.factor()
 
 # pipes are used to conduct multiple functions on the dataset in a certain order
 blacktip %>% 
-  subset(`Transmitter Name` == "Colin") %>% # subset dataset to include only detections by 'Colin'
+  subset(Transmitter.Name == "Colin") %>% # subset dataset to include only detections by 'Colin'
   nrow() # number of rows (i.e. detections) from 'Colin'
 ```
 
@@ -417,8 +417,8 @@ Pipes can also be used to pre-process our data before plotting them. Lets now us
 
 ```{r, eval=TRUE}
 blacktip %>% 
-  subset(`Transmitter Name` == "Colin") %>% # subset dataset to include only detections by 'Colin'
-  with(table(`Station Name`)) %>% # create a table with the number of rows (i.e. detections) per receiver
+  subset(Transmitter.Name == "Colin") %>% # subset dataset to include only detections by 'Colin'
+  with(table(Station.Name)) %>% # create a table with the number of rows (i.e. detections) per receiver
   barplot(las=2, xlab="Receiver station", ylab="Number of Detections") # barplot of number of Colins detections recorded per receiver
 ```
 
@@ -461,7 +461,7 @@ Currently in our `blacktip` dataset the "Date and Time (UTC)" column is recognis
 ```{r, eval=TRUE, message=FALSE}
 library(lubridate)
 blacktip$local.Date.time<- 
-  blacktip$`Date and Time (UTC)` %>%
+  blacktip$`Date.and.Time.(UTC)` %>%
   ymd_hms(tz="UTC") %>% # first convert the `Date and Time (UTC)` column into a 'POSIX' format 
   with_tz(tzone="Australia/Brisbane") # convert to local "Australia/Brisbane" date time (UTC + 10hrs)
 ```
@@ -495,8 +495,8 @@ We can use the `select` function in dplyr to choose the columns we want to inclu
 # Select the rows we are interested in
 blacktip <- 
   blacktip %>% 
-  select(`local.Date.time`,`Latitude`,`Longitude`,`Receiver`,`Station Name`,`Transmitter Name`,`Transmitter`,`Sensor Value`) %>%
-  select(-`Sensor Value`)
+  select(local.Date.time, Latitude, Longitude, Receiver, Station.Name, Transmitter.Name, Transmitter, Sensor.Value) %>%
+  select(-Sensor.Value)
 
 head(blacktip)
 ```
@@ -506,10 +506,10 @@ head(blacktip)
 ##### `filter` and `arrange`
 Subset the data to rows matching logical conditions and then arrange according to particular attributes
 ```{r, eval=FALSE}
-filter(blacktip, `Transmitter Name` == "Ana") %>%
+filter(blacktip, Transmitter.Name == "Ana") %>%
   arrange(local.Date.time) # arrange Ana's detections in chronological order
 
-filter(blacktip, `Transmitter Name` == "Bruce") %>%
+filter(blacktip, Transmitter.Name == "Bruce") %>%
   arrange(desc(local.Date.time)) # arrange Bruce's detections in descending chronological order
 ```
 
@@ -519,11 +519,11 @@ filter(blacktip, `Transmitter Name` == "Bruce") %>%
 Determine the total number of detections for each tagged shark
 ```{r, eval=FALSE}
 blacktip %>%
-  group_by(`Transmitter Name`) %>%
+  group_by(Transmitter.Name) %>%
   summarise(NumDetections = n()) # summarise number of detections per tagged shark
 
 blacktip %>%
-  group_by(`Transmitter Name`, `Receiver`) %>%
+  group_by(Transmitter.Name, Receiver) %>%
   summarise(NumDetections = n()) # summarise number of detections per shark at each receiver
 ```
 
@@ -605,9 +605,10 @@ In the below script we call the data set we have just made (`blacktip`) and then
 library(ggplot2)   
 
 blacktip %>%
-  group_by(`Transmitter Name`,`date`) %>% 
+  group_by(Transmitter.Name, date) %>% 
   summarise(DailyDetections= n()) %>% # use summarise to calculate numbers of detections per day per animal
-  ggplot(mapping = aes(x = `Transmitter Name`, y = DailyDetections)) + # define the aesthetic map (what to plot)
+  ggplot(mapping = aes(x = Transmitter.Name, y = DailyDetections)) + # define the aesthetic map (what to plot)
+  xlab("Tag") + ylab("Number of detections per day") +
   geom_boxplot() # define the geometric object (how to plot it).. in this case a boxplot
 
 ```
@@ -618,7 +619,7 @@ We can adapt the above script to create an abacus plot using our `blacktip` data
 
 ```{r}
 blacktip %>%
-  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Transmitter Name`))) + 
+  ggplot(mapping = aes(x = local.Date.time, y = as.factor(Transmitter.Name))) + 
   xlab("Date") + ylab("Tag") +
   geom_point()
 ```
@@ -627,10 +628,10 @@ We can also use the `facet_wrap` function to explore the detection data further 
 
 ```{r}
 blacktip %>%
-  ggplot(mapping = aes(x = `local.Date.time`, y = as.factor(`Station Name`))) + 
+  ggplot(mapping = aes(x = local.Date.time, y = as.factor(Station.Name))) + 
   xlab("Date") + ylab("Receiver station") +
   geom_point() +
-  facet_wrap(~`Transmitter Name`, nrow=1) # This time plot seperate boxplots for each shark
+  facet_wrap(~Transmitter.Name, nrow=1) # This time plot seperate boxplots for each shark
 ```
 
 <br>  
@@ -805,7 +806,7 @@ coordinates(blacktip)<-c("Longitude","Latitude")
 # Subset detection data from "Ana" and remove duplicate positions
 ana <-
   blacktip %>%
-  subset(`Transmitter.Name` == "Ana") %>%
+  subset(Transmitter.Name == "Ana") %>%
   remove.duplicates() # remove duplicated positions to reduce the number of points to plot on our leaflet map
 ```
 
@@ -902,7 +903,7 @@ data(PointsDirect_crocs)
 # Merge locations of recievers with detection data for "Jack-o-saurus D"
 jacko_detections <- 
   crocs %>%
-  subset(`Transmitter.Name` == "Jack-o-saurus D") %>%
+  subset(Transmitter.Name == "Jack-o-saurus D") %>%
   merge(., PointsDirect_crocs, by.x="Receiver.S.N", by.y="LOCATION") %>%
   mutate(Latitude=LATITUDE, Longitude=LONGITUDE, Transmitter=ID,
          Transmitter.Serial=Transmitter.S.N, Sensor.Value=Sensor.1, Sensor.Unit=Units.1)
@@ -1224,17 +1225,17 @@ leaflet() %>%
   addPolygons(data=mcp.ll, color="green", weight=2, group="Minimum Convex Polygon") %>%
   
   # addRasterImage(kud.ras, colors = p1, group="Fixed KUD", opacity = 0.4) %>%
-  addPolygons(data=kud[kud$level%in%"95",], color="white", weight=2, group="Fixed KUD", fillOpacity = 0) %>%
+  addPolygons(data=kud[kud$level%in%"95",], color="white", weight=2, group="Fixed KUD", fillOpacity = 0.1) %>%
   addPolygons(data=kud[kud$level%in%"50",], color="firebrick", weight=2, group="Fixed KUD", fillOpacity = 0.4) %>%
   
   # addRasterImage(kbb.ras, colors = p2, group="Brownian Bridge KUD", opacity = 0.4) %>%
-  addPolygons(data=kbb[kbb$level%in%"95",], color="white", weight=2, group="Brownian Bridge KUD", fillOpacity = 0) %>%
+  addPolygons(data=kbb[kbb$level%in%"95",], color="white", weight=2, group="Brownian Bridge KUD", fillOpacity = 0.1) %>%
   addPolygons(data=kbb[kbb$level%in%"50",], color="firebrick", weight=2, group="Brownian Bridge KUD", fillOpacity = 0.4) %>%
 
   # Layers control
   addLayersControl(
     # baseGroups = c("Map","Satellite"),
-    overlayGroups = c("Centers of Activity", "Movement Trajectories", "Minimum Convex Polygon", "Fixed KUD", "Brownian Bridge KUD"),
+    overlayGroups = c("Centers of Activity", "Minimum Convex Polygon", "Fixed KUD", "Movement Trajectories", "Brownian Bridge KUD"),
     options = layersControlOptions(collapsed = FALSE)) %>%
 
   
@@ -1248,7 +1249,7 @@ leaflet() %>%
 
 A primary use of telemetry data is to understand where animals go and estimate how much space they use. Passive acoustic telemetry, compared to other forms of telemetry (e.g. satellite telemetry, active tracking), are inherently spatio-temporally biased depending on where we deploy our recievers and how often animals come close to recievers. Using raw detection data can produce heavily biased measures of home ranges. 
 
-Estimating short-term centers of activity (`COA`) as a first step can help account for some of the spatio-temporal biases when calculating home range metrics. COAs are estimated by calculating mean positions for a tagged animal within set time bins. These positions do not account for the varying listening ranges between recievers within an array, therefore detection probability needs to be considered using other techniques (e.g. kernel distribution smoothing parameter). This technique of calculating short-term centers of activity is based on [this](http://www.nrcresearchpress.com/doi/abs/10.1139/f01-191#.WoUvUGZ7ExE) previous work.
+Estimating short-term centers of activity (`COA`) as a first step can help account for some of the spatio-temporal biases when calculating home range metrics. COAs are estimated by calculating mean positions for a tagged animal within set time bins. These positions do not account for the varying listening ranges between recievers within an array, therefore detection probability needs to be considered using other techniques (e.g. kernel distribution smoothing parameter). This technique of calculating short-term centers of activity is based on [this study](http://www.nrcresearchpress.com/doi/abs/10.1139/f01-191#.WoUvUGZ7ExE).
 
 <br>
 
@@ -1266,26 +1267,23 @@ tiger <- fread("Data/TigerShark_HeronIsland.csv")
 
 # Lets convert the UTC time recorded to local time (UTC + 10 hours)
 tiger$local.Date.time<- 
-  tiger$`Date and Time (UTC)` %>%
+  tiger$`Date.and.Time.(UTC)` %>%
   ymd_hms(tz="UTC") %>% 
   with_tz(tzone="Australia/Brisbane") 
 
 tiger <- 
   tiger %>%
-  mutate(ID=`Transmitter Name`) %>%
-  select(-c(`Date and Time (UTC)`,`Transmitter Name`))
+  dplyr::select(-`Date.and.Time.(UTC)`)
 
 # Lets plot our raw detection using `ggmap`
 hoi_bbox <- make_bbox(lon = tiger$Longitude, lat = tiger$Latitude, f=0.3)
 
-# Lets download a Google base map for our region
 hoi_map <- get_map(location = hoi_bbox, source = "google", maptype = "satellite")
 
-# Finally plot the reciever stations using the same `ggplot` grammar
 tiger_plot <-
   ggmap(hoi_map) + 
   geom_point(data = tiger, mapping = aes(x = Longitude, y = Latitude), shape=1, color=8) +
-  facet_wrap(~`ID`, nrow=1)
+  facet_wrap(~`Transmitter.Name`, nrow=1)
 
 tiger_plot # view map of raw detections
   
@@ -1309,12 +1307,26 @@ There are three input variables needed to calculate COAs using this function:
 
 <br>
 
-```{r}
+```{r, results=FALSE}
 # lets estimate COAs for our tiger dataset. We will use 60 min timesteps for this excersise
-tiger_coa <- COA(tagdata=tiger, id="ID", timestep= 60)
+tiger_coa <- COA(tagdata=tiger, id="Transmitter.Name", timestep= 60)
+```
+```{r, eval=FALSE}
+# This function outputs a list with COAs estimated every 60 minutes for each of out tagged sharks
+summary(tiger_coa)
 
 ```
+```{r}
+# to help with plotting lets combine all the COAs into one data.table using the `rbindlist()` function
+coa_df <- rbindlist(tiger_coa)
+```
 
+```{r}
+# Now we can compare our COAs with the raw detections
+tiger_plot +
+  geom_point(data = coa_df, mapping = aes(x = Longitude.coa, y = Latitude.coa), color=2, size=0.2)
+
+```
 
 ## Calculating and plotting **home range** area metrics
 
