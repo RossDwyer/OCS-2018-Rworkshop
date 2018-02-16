@@ -733,8 +733,6 @@ We start by specifying a base layer, then we can add features to it. We will str
 
 
 ```{r}
-library(leaflet)
-
 myleafletplot <- leaflet() %>%
   
   # Base groups (you can add multiple basemaps)
@@ -790,7 +788,6 @@ Finally, you can save this leaflet document at an html file and share it with yo
 
 
 ```{r, eval = FALSE}
-library(htmlwidgets)
 saveWidget(myleafletplot, file="mymap.html") # uses the htmlwidgets package
 ```
 
@@ -812,7 +809,7 @@ For this session, we will need the most recent version of the VTrack R package f
 ```{r, message=FALSE}
 library(devtools) # Helps download development versions of R packages
 
-install_github("RossDwyer/VTrack") # Install development version of VTrack directly from github
+devtools::install_github("RossDwyer/VTrack") # Install development version of VTrack directly from github
 library(VTrack)
 
 ```
@@ -825,7 +822,7 @@ Understanding movement paths using telemetry data can easily be done using anima
 
 ```{r, eval=FALSE}
 # install packages and load libraries
-devtools::install_github("16EAGLE/moveVis")
+devtools::install_github("16EAGLE/moveVis") # Install development version of moveVis directly from github
 library(move)
 library(moveVis)
 ```
@@ -962,7 +959,7 @@ levels(Vcrocs$TRANSMITTERID)
 GenerateAnimationKMLFile_Track(Vcrocs, # VTrack archive file
                                "139", # Transmitter code
                                PointsDirect_crocs, # points file
-                               "Track1.kml", # file name
+                               "GIS/Track1.kml", # file name
                                "cc69deb3", # colour of the track
                                sLocation="RECEIVERID")
 ```
@@ -977,7 +974,7 @@ There is also a another handy function for visualising the movements of multiple
 ```{r, eval=FALSE}
 GenerateAnimationKMLFile_Multitag(Vcrocs,
                                   PointsDirect_crocs,
-                                  "Croc Multi.kml",
+                                  "GIS/Croc Multi.kml",
                                   sLocation="RECEIVERID")
 ```
 
@@ -1009,8 +1006,8 @@ CircuitousDM <- GenerateCircuitousDistance(PointsCircuitous_crocs)
 
 PointsCircuitous_crocs %>% 
   ggplot(aes(x=LONGITUDE, y=LATITUDE)) +
-  xlab("LONGITUDE") +
-  ylab("LATITUDE") +
+  xlab("Longitude") +
+  ylab("Latitude") +
   geom_path() + 
   geom_point() +
   geom_point(data=PointsDirect_crocs, 
@@ -1024,13 +1021,15 @@ We would then use this within the `RunResidenceExtraction()` function in VTrack 
 
 ```{r}
 Res<- RunResidenceExtraction(Vcrocs,  
-                             "STATIONNAME",    
-                             2,              
+                             "RECEIVERID",    
+                             1,              
                              60*60*12,
                              sDistanceMatrix=CircuitousDM)
 
 # Our movements file
 CrocMovements <- Res$nonresidences
+
+head(CrocMovements)
 ```
 
 ### Least cost distance
@@ -1058,8 +1057,7 @@ library(VTrack)
 barra <- read.csv('Data/barra.csv', header = TRUE)
 barra[,1] <- as.POSIXct(barra[,1])
 
-PointsLeastCost_crocs <- read.csv("Data/PointsLeastCost_crocs.csv")
-
+PointsLeastCost <- read.csv("Data/PointsLeastCost_crocs.csv")
 
 # convert the raster to points for plotting
 map.p <- rasterToPoints(r5)
@@ -1069,7 +1067,7 @@ colnames(df) <- c("X", "Y", "Water") # Make appropriate column headings
 # Now plot the map
 ggplot(data=df, aes(y=Y, x=X)) +
   geom_raster(aes(fill=Water)) +
-  geom_point(data=POINTS3, 
+  geom_point(data=PointsLeastCost, 
              aes(x=X, y=Y), color="white", size=3, shape=16) +
   theme_bw() +
   coord_equal() 
@@ -1080,7 +1078,7 @@ ggplot(data=df, aes(y=Y, x=X)) +
 Finally we run the `GenerateRasterDistance()` function in VTrack to generate the Distance matrix containing the Least cost paths.
 
 ```{r, eval=FALSE}
-GenerateLeastCostDistance(sPointsFile = POINTS3,
+GenerateLeastCostDistance(sPointsFile = PointsLeastCost,
                        sTransition = tr)
 ```
 
