@@ -705,7 +705,7 @@ From the above graphic, can you see which is the correct projection for the Town
 
 ```{r, eval=FALSE}
 GDA <- CRS("+init=epsg:28355") # The equivalent EPSG code for WGS 84 is 28355. 
-blacktip.GDA <- spTransform(blacktip,GDA)
+blacktip.GDA <- spTransform(blacktip, CRSobj = GDA)
 ```
 
 <br>
@@ -972,7 +972,7 @@ Now lets animate Jacko's tracks using the `move` and `moveVis` packages
 # We first have to create a 'move' object that has at least 3 sets of data
 # 'x' (longitude), 'y' (latitude) and 'time'
 jacko_move<- move(x = jacko$Longitude.coa, y = jacko$Latitude.coa, time = jacko$dt,
-                  proj = CRS("+proj=longlat +datum=WGS84"), data = jacko)
+                  proj = CRS("+init=epsg:4326"), data = jacko)
 ```
 
 Now lets set some additional variables needed to create the animation:
@@ -1313,6 +1313,7 @@ tiger$local.Date.time<-
 
 tiger <- 
   tiger %>%
+  mutate(id=Transmitter.Name) %>%
   dplyr::select(-`Date.and.Time.(UTC)`)
 
 # Lets plot our raw detection using `ggmap`
@@ -1323,7 +1324,8 @@ hoi_map <- get_map(location = hoi_bbox, source = "google", maptype = "satellite"
 tiger_plot <-
   ggmap(hoi_map) + 
   geom_point(data = tiger, mapping = aes(x = Longitude, y = Latitude), shape=1, color=8) +
-  facet_wrap(~`Transmitter.Name`, nrow=1)
+  xlab("Longitude") + ylab("Latitude") +
+  facet_wrap(~`id`, nrow=1)
 
 tiger_plot # view map of raw detections
   
@@ -1343,45 +1345,129 @@ There are three input variables needed to calculate COAs using this function:
 * `id`        : the name of the column with a unique identifier for each tag/animal
 * `timestep`  : the size of the temporal bin used to calculate COAs (in minutes)
 
-**Note:** The selection of time bins (`timesteps`) can greatly influence your COA positions, therefore test multiple timestep bins before you conduct further analyses.
+**Note:** The selection of time bins (`timesteps`) can greatly influence your COA positions, therefore test multiple timestep bins before you conduct further analyses. See [this paper](http://www.nrcresearchpress.com/doi/abs/10.1139/f01-191#.WoUvUGZ7ExE) for more details on how to choose a timestep. 
 
 <br>
 
 ```{r, results=FALSE, warnings=FALSE, message=FALSE}
 # lets estimate COAs for our tiger dataset. We will use 60 min timesteps for this excersise
-tiger_coa <- COA(tagdata=tiger, id="Transmitter.Name", timestep= 60)
+coa_list <- COA(tagdata=tiger, id="Transmitter.Name", timestep= 60)
 ```
 ```{r, eval=FALSE}
-# This function outputs a list with COAs estimated every 60 minutes for each of out tagged sharks
-summary(tiger_coa)
+# If your tagdata file has multiple ids this function outputs a list with COAs estimated for each tag id
+summary(coa_list)
 
 ```
 ```{r}
 # to help with plotting lets combine all the COAs into one data.table using the `rbindlist()` function
-coa_df <- rbindlist(tiger_coa)
-```
+tiger_coa <- 
+  rbindlist(coa_list) %>% 
+  mutate(id=Transmitter.Name)
 
-```{r}
 # Now we can compare our COAs with the raw detections
 tiger_plot +
-  geom_point(data = coa_df, mapping = aes(x = Longitude.coa, y = Latitude.coa), color=2, size=0.2)
-
+  geom_point(data = tiger_coa, mapping = aes(x = Longitude.coa, y = Latitude.coa), color=2, size=0.2)
 ```
+
+<br>
 
 ## Calculating and plotting **home range** area metrics
 
+Now that we have our COA positions estimated for the tiger shark dataset (`tiger_coa`) lets look at different options of calculating home ranges. In this workshop we will go through three commonly used home range metrics used in movement ecology. These range in modelling complexity, and will give you different values of home range. Which one you use will depend on the research question you want to answer and what level of modelling complexity is most appropriate for your work.
 
-### Minimum Convex Polygons (MCP)
+In this workshop we will be using the [`adehabitatHR`](https://cran.r-project.org/web/packages/adehabitatHR/vignettes/adehabitatHR.pdf) package to calculate all three metrics for our tiger shark data. 
+
+```{r, message=FALSE, warning=FALSE}
+# lets load up the adehabitatHR library and others we will need
+library(adehabitatHR)
+library(raster)
+```
+
+### Minimum Convex Polygons (**MCP**)
+
+Minimum convex polygons (MCP) are the simplest metric of home range we can calculate for a tagged animal. This is probably the most widely used metric for home range in both marine and terrestrial systems. All this technique does is simply calculating the smallest convex polygon that encapsulates your relocation data, in our case COA positions.
+
+Lets use the `mcp()` function to calculate MCPs for all three tiger sharks and calculate the area within using the `mcp.area()` function.
+
+```{r, message=FALSE, warning=FALSE}
+# Before we calculate the MCP we need to make our tiger_coa data into a spatial object
+coordinates(tiger_coa) <- c("Longitude.coa", "Latitude.coa")
+proj4string(tiger_coa) <- CRS("+init=epsg:4326")
+
+# Now we can use the mcp() fuction to calculate mcps
+tiger_mcp <- mcp(tiger_coa[,"id"], percent = 100)
+
+# Lets add our COA positions and mcps for all our tiger sharks
+mcp_ll <-
+  tiger_mcp %>%
+  fortify()
+
+tiger_plot +
+  geom_point(data = data.frame(tiger_coa), mapping = aes(x = Longitude.coa, y = Latitude.coa), color=2, size=0.2) +
+  geom_polygon(data= mcp_ll, aes(x = long, y = lat), fill=NA, color="green")
+
+```
+
+Lets calculate the area of MCPs using the `mcp.area()` function
+
+```{r}
+# first lets project our data so the area calculations are not in degrees
+tiger_GDA <- spTransform(tiger_coa, CRSobj = CRS("+init=epsg:28355"))
+
+# now we can calculate MCP area in square kilometers
+mcp.area(tiger_GDA[,"Transmitter.Name"], unin = "m", unout ="km2", percent = 100, plotit=FALSE)
+
+```
+
+<br>
+
+### Kernel Utilisation Distributions (**KUD**)
+
+Although MCPs are the most commonly used metric of space use of animals, they provide limited information on how animals use that space. The next level of complexity when examining activity space is to understand its 'utilisation distribution'. This is in essence, a bivariate probability density function fitted to relocation data from a tagged animal. In movement ecology, kernel models are most often used to fit these probability functions. 
+
+For this next step, lets calculate kernel utilisation distributions (KUDs) for our tiger shark dataset using the `kernelUD()` function. 
+
+One of the main considerations for this analysis is the selection of the 'smoothing parameter' `h`. The selection of smoothing parameter is related to the level of imprecision related to each relocation, and in the context of passive acoustic telemetry can be related to reciever listening range. There are several things to consider when selecting an appropriate `h` value, and you can read more about that [here](https://animalbiotelemetry.biomedcentral.com/articles/10.1186/2050-3385-1-13), but for this workshop lets use the "reference bandwidth".
+
+```{r}
+# Lets use our projected data `tiger_GDA` to calculate KUDs for each shark
+# We will use "href" as our smoothing parameter
+tiger_KUD <- kernelUD(tiger_GDA[,"Transmitter.Name"], h="href", grid=300) # grid value indicates output resolution
+```
+
+Core home ranges are often defined as the 50% UD contour and extent of home range as the 95% UD contour. Now we can use the `kernel.area()` function to calculate the area of 50% and 95% KUD.
+
+```{r}
+kernel.area(tiger_KUD, percent=c(50, 95), unin="m", unout="km2")
+```
+
+We can also plot these KUDs on our map
+
+```{r, warning=FALSE, message=FALSE}
+# define core and extent home ranges, transform them back to geographic projection and reformat for plotting
+core_KUD<-
+  getverticeshr(tiger_KUD, percent = 50) %>%
+  spTransform(CRS("+init=epsg:4326"))
+  
+extent_KUD<-
+  getverticeshr(tiger_KUD, percent = 95) %>%
+  spTransform(CRS("+init=epsg:4326"))
+
+# Now lets add it to our plot
+tiger_plot +
+  geom_point(data = data.frame(tiger_coa), mapping = aes(x = Longitude.coa, y = Latitude.coa), color=2, size=0.2) +
+  geom_polygon(data= extent_KUD, aes(x = long, y = lat, group=group), fill="white", color="white", alpha=0.1) +
+  geom_polygon(data= core_KUD, aes(x = long, y = lat, group=group), fill="red", alpha=0.4, color="red") 
+
+```
+
+<br>
+
+### Incorporting movement paths using Brownian bridges (**BBKUD**)
 
 
 
-### Kernel Utilisation Distributions (KUD)
-
-
-
-### Incorporting movement paths using Brownian bridges (BBKUD)
-
-
+![ ](Images/BrownianBridgeMethod.png)
 
 
 
