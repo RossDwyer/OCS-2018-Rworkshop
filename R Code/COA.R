@@ -1,5 +1,5 @@
 #### Function to calculate Short-term centers of activity positions from passive telemetry data
-## Last Edited: 2018-02-07 (VU)
+## Last Edited: 2018-02-16 (VU)
 ##
 ## Based on technique described in: 
 ## 
@@ -30,7 +30,7 @@ COA<-function(tagdata, id , timestep, ...){
   data$DateTime<-cut(data$dt, breaks=ex)
 
   ## Calculate short term center of activity positions (3D if depth data available) 
-  cenac<-ddply(data, c("DateTime",id), summarize, .progress="text",
+  cenac<-ddply(data, c("DateTime",id), summarize,
                Transmitter=Transmitter[1], Transmitter.Name=Transmitter.Name[1],
                Transmitter.Serial=Transmitter.Serial[1], Sensor.Value.coa=mean(Sensor.Value),Sensor.Unit=Sensor.Unit[1],
                Latitude.coa=mean(Latitude, na.rm=T), Longitude.coa=mean(Longitude, na.rm=T), ...)
