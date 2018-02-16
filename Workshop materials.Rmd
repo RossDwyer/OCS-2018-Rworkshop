@@ -756,7 +756,8 @@ cb <- statinfo[statinfo$Installation %in% "Cleveland Bay",]
 
 # Now convert the data.frame object into a SpatialPoints object
 coordinates(cb) <- c("Longitude", "Latitude")
-
+```
+```{r, eval=FALSE}
 # Have a look at the created object
 class(cb)
 str(cb)
@@ -790,7 +791,7 @@ data.frame(cb) %>%
 
 We can also plot nicer looking static maps using the [ggmap](https://github.com/dkahle/ggmap) package
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 # Lets replot our reciever stations with a Google base map using the `ggmap` package
 library(ggmap)
 
@@ -824,8 +825,6 @@ We start by specifying a base layer, then we can add features to it. We will str
 
 
 ```{r}
-library(leaflet)
-
 myleafletplot <- leaflet() %>%
   
   # Base groups (you can add multiple basemaps)
@@ -873,7 +872,7 @@ myleafletplot %>%
     options = layersControlOptions(collapsed = FALSE))
 ```
 
-Additional Task: Now try adding detection data from "Colin" and "Bruce" to the map!
+**Additional Task: Now try adding detection data from "Colin" and "Bruce" to the map!**
 
 <br>
 
@@ -908,7 +907,7 @@ devtools::install_github("RossDwyer/VTrack") # Install development version of VT
 
 We then load the dataset containing the crocodile tracks and the receiver locations from within the `VTrack` package using the `data()` command
 
-```{r}
+```{r, message=FALSE}
 library(VTrack)
 
 data(crocs) # Load crocodile demo  datset from the VTrack package
@@ -1452,7 +1451,7 @@ Lets calculate the area of MCPs using the `mcp.area()` function
 tiger_GDA <- spTransform(tiger_coa, CRSobj = CRS("+init=epsg:28355"))
 
 # now we can calculate MCP area in square kilometers
-mcp.area(tiger_GDA[,"Transmitter.Name"], unin = "m", unout ="km2", percent = 100, plotit=FALSE)
+mcp.area(tiger_GDA[,"id"], unin = "m", unout ="km2", percent = 100, plotit=FALSE)
 
 ```
 
