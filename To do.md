@@ -14,19 +14,19 @@ Working with and manipulating large datasets
 Working with spatial objects
 - [X] libraries - sp, rgeos, raster
 - [ ] polygons of land
-- [ ] lines or contours
+- [X] lines or contours
 - [ ] raster (land vs sea)
 - [X] points and the locations of hydrophones
 - [X] leaflet
-- [ ] export import of shapefiles
-- [ ] animations 
+- [X] export import of shapefiles
+- [X] animations 
 - [X] google earth
 
 Calculating area metrics
-- [ ] centers of activity
-- [ ] MCPs (array/matrix)
-- [ ] linear home rnage
-- [ ] brownian bridge
+- [X] centers of activity
+- [X] MCPs (array/matrix)
+- [X] linear home rnage
+- [X] brownian bridge
 
 Calculating distance metrics
 - [X] distance travelled (direct, circuitous, least cost)
