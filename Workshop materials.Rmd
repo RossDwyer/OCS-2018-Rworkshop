@@ -1503,9 +1503,116 @@ Remember, you can use the `writeOGR()` function here to output the `core_KUD` an
 
 ### Incorporting movement paths using Brownian bridges (**BBKUD**)
 
+Finally, for the last excersise for this workshop, we will use an extended version of the KUD, taking movement paths of tagged individuals into account when estimating its utilisation distribution. This is done by incorporating the time dependence between relocations using a 'Brownian bridge' process. 
 
+In short, the process models a probability distribution on a set of nodes (in our case COAs) and the trajectories between the nodes. The probabilities assigned on the nodes are relatively fixed (i.e. detection probability of a reciever), with the probabilities varying along the length of trajectories based on brownian motion. 
 
 ![ ](Images/BrownianBridgeMethod.png)
+
+<br>
+
+We will use the `kernelbb()` function to produce brownian bridge KUDs (BBKUDs) for our tiger sharks. First we need to produce trajectories for our tiger shark data using the `as.ltraj()` function.
+
+```{r}
+# Produce movement trajectories for tigershark data
+traj <- as.ltraj(xy = coordinates(tiger_GDA),
+                 date = lubridate::ymd_hms(tiger_GDA$DateTime, tz="Australia/Brisbane"),
+                 id = tiger_GDA$id,
+                 proj4string = CRS("+init=epsg:28355"))
+
+traj
+
+# Have a look at the trajectories
+plot(traj)
+```
+
+<br>
+
+The next step is parameter selection. The calculation of BBKUDs require two smoothing parameters:
+
+* `sig1` : This parameter is *related to* the uncertainty of relocation along each step trajectory. This parameter is somewhat related to the speed of the tagged animal. 
+* `sig2` : This parameter is related to the uncertainty of relocation at the nodes (in our case COAs). This parameter is similar to the `h` parameter we used earlier.
+
+For this excersise we will use a conservative estimate of reciever listening range of ~50 m. We encourage you to conduct range testing on your acoustic arrays to improve these models!
+
+We can use the `liker()` function to define `sig1` based on a maximum liklihood estimation. 
+
+```{r}
+sig2 <- 50 # our conservative estimate of reciever listening range on Heron and One Tree Island
+sig1.df<- liker( traj, 
+                 rangesig1 = c(0,100), 
+                 sig2 = sig2,
+                 plotit = FALSE) # this function can plot the results of the maximum likelihood estimation
+
+sig1<-(unname(sapply(sig1.df, '[[', 1)))/7 # extract the sig1 values for each animal
+```
+
+<br>
+
+Now that we have estimates for smoothing parameters, we can calculate the BBKUDs for our tiger sharks
+
+```{r}
+# Calculate brownian bridge KUD.. This may take some time with large datasets!!
+# *we have reduced the grid resolution here so it runs quicker for the workshop
+tiger_BBKUD <- kernelbb(traj, sig1 = sig1, sig2 = sig2, grid = 100, extent = 1)
+```
+
+<br>
+
+From here, the process of estimating area and plotting BBKUD is the same as the fixed KUD (see above)
+
+```{r}
+kernel.area(tiger_BBKUD, percent=c(50, 95), unin="m", unout="km2")
+```
+
+Lets add BBKUDs to our map.
+
+```{r, warning=FALSE, message=FALSE}
+# define core and extent home ranges, transform them back to geographic projection and reformat for plotting
+core_BBKUD.GDA <- getverticeshr(tiger_BBKUD, percent = 50)
+proj4string(core_BBKUD.GDA) <- CRS("+init=epsg:28355")
+core_BBKUD <- spTransform(core_BBKUD.GDA, CRS("+init=epsg:4326"))
+  
+extent_BBKUD.GDA <- getverticeshr(tiger_BBKUD, percent = 95)
+proj4string(extent_BBKUD.GDA) <- CRS("+init=epsg:28355")
+extent_BBKUD <- spTransform(extent_BBKUD.GDA, CRS("+init=epsg:4326"))
+
+# Now lets add it to our plot
+tiger_plot +
+  geom_point(data = data.frame(tiger_coa), mapping = aes(x = Longitude.coa, y = Latitude.coa), color=2, size=0.2) +
+  geom_polygon(data= extent_BBKUD, aes(x = long, y = lat, group=group), fill="white", color="white", alpha=0.1) +
+  geom_polygon(data= core_BBKUD, aes(x = long, y = lat, group=group), fill="red", alpha=0.4, color="red") 
+
+```
+
+Again, remember you can export these outputs as shapefiles or kml files using the `writeORG()` function we worked with earlier.
+
+<br>
+<br>
+
+---------------------------------------
+
+# Signoff!
+
+This is where we end our workshop! There may have been a few bits of code that you had trouble with or need more time to work through. We encourage you to discuss these with us as well as others at the workshop to help get a handle on the R code. 
+
+We thank [VEMCO](https://vemco.com) and [MBRS](http://www.uq.edu.au/moreton-bay-research-station/content/front-page) for supporting this R workshop.
+
+<br>
+
+If you have any comments or queries reguarding this workshop feel free to contact us:
+
+* Dr. Ross Dwyer: <ross.dwyer@uq.edu.au>
+* Dr. Vinay Udyawer: <v.udyawer@aims.gov.au>
+* Dr Christine Dudgeon: <c.dudgeon@uq.edu.au>
+
+
+**Happy Tracking!**
+
+<br>
+
+![ ](Images/telemetry.png)
+
 
 
 
