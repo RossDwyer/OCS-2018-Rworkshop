@@ -13,7 +13,7 @@ output:
     highlight: pygments
 ---
 ```{r, echo=FALSE}
-htmltools::img(src =knitr::image_uri(Images/OCS.jpeg),
+htmltools::img(src =knitr::image_uri('Images/OCS.jpeg'),
                alt = 'logo', 
                style = 'position:absolute; top:0; right:0; padding:10px;')
 ```
