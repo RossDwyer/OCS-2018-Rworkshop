@@ -1636,7 +1636,8 @@ If you have any comments or queries reguarding this workshop feel free to contac
 
 <br>
 
-Insert
+![ ](Images/telemetry.png)
+
 Thanks to our sponsors for supporting this R workshop.
 
 
