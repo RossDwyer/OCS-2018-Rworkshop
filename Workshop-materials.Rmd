@@ -17,6 +17,10 @@ htmltools::img(src =knitr::image_uri('Images/OCS.jpeg'),
                alt = 'logo', 
                style = 'position:absolute; top:0; right:0; padding:10px;')
 ```
+
+
+![ ](Images/Sponsors.png)
+
 <br>  
 <br> 
 
@@ -127,19 +131,16 @@ As **R** is open source, the more people we can get helping out on the **R** mai
 
 ## Course Resources
 
-To access data and scripts we will work through in this course, download the **OCS-2018-Rworkshop** folder from [GitHub](https://github.com/RossDwyer/OCS-2018-Rworkshop). This folder contains the course documents, telemetry data and R scripts we are going to work with. To download the folder click on the green <span style="color:green">Clone or download</span>, dropdown menu and select "Download ZIP"
+To access data and scripts we will work through in this course, download the **Animals-in-Motion-2018** folder from [GitHub](https://github.com/vinayudyawer/Animals-in-Motion-2018). This folder contains the course documents, telemetry data and R scripts we are going to work with. To download the folder click on the green <span style="color:green">Clone or download</span>, dropdown menu and select "Download ZIP"
 
 
-![ ](Images/Github download.png)
+![ ](Images/github_download.png)
 
 Once downloaded, the workshop folder contains the following sub folders:
 
 1.  Data
 2.  Documents
 3.  GIS
-4.  Images
-5.  R Code
-
 
 <br>
 
@@ -645,6 +646,8 @@ blacktip %>%
   geom_point()
 ```
 
+**Additional Task: Now that you've plotted the raw dates, can you figure out how to plot daily detections of our tagged sharks**
+
 We can also use the `facet_wrap()` function to explore the detection data further and look at how animals were detected at each reciever.
 
 ```{r}
@@ -654,6 +657,7 @@ blacktip %>%
   geom_point() +
   facet_wrap(~Transmitter.Name, nrow=1) # This time plot seperate boxplots for each shark
 ```
+**Additional Task: Can you now plot this with a different colour for each shark?**
 
 <br>  
 <br> 
@@ -738,6 +742,9 @@ We can then run the `writeOGR` function to write this file to disk. We specify t
 writeOGR(blacktip, # This field needs to be a SpatialPoints*, SpatialLines* or SpatialPolygons* object
          dsn="GIS/blacktip.shp", layer= "blacktip.shp", driver="ESRI Shapefile")
 ```
+**Additional Task: Can you output the blacktip shark data as a KML file to view on Google Earth?**
+
+<br>
 
 Similarly, we can use the `readOGR()` function to upload our blacktip data onto R
 ```{r,eval=FALSE}
@@ -941,7 +948,7 @@ leaflet() %>%
              lat = PointsDirect_crocs$LATITUDE, 
              fill=TRUE, color="white", weight=10) 
 ```
-
+**Additional Task: Add the detections of "Gecko" the croc (from the `crocs` dataset) to this leaflet plot. [hint: you will have to use `left_join()` to merge the receiver location to the crocs dataset]**
 
 <br>
 
@@ -984,7 +991,6 @@ jacko_detections <-
 
 # Temporally standardise detection data using short-term centers of activity 
 # (We will cover this in more detail in Session 4!!)
-source("R Code/COA.R")
 jacko <- COA(jacko_detections, "Transmitter.Name", 200)
 
 # Format the date time field so R can read it properly
@@ -1087,7 +1093,7 @@ The file will be written in your Project folder and can be opened in Google Eart
 
 ![ ](Images/timeslider.png)
 
-As an additional exercise, try generating animations for the other crocodiles in the data frame.
+***Additional Task: try generating animations for the other crocodiles in the data frame**
 
 There is also a another handy function for visualising the movements of multiple animals at the same time.
 
@@ -1391,10 +1397,11 @@ tiger_plot # view map of raw detections
   
 ```
 
-Now that the data is correctly formatted, we can calculate centers of activity using the custom `COA()` function we have provided in the course. This function is in the **R Code** folder within the course materials and can be sourced directly into your **R** project using this bit of code
+Now that the data is correctly formatted, we can calculate centers of activity using the `COA()` function in the `VTrack` package.
 
 ```{r}
-source("R Code/COA.R")
+library(VTrack)
+?COA
 ```
 
 There are three input variables needed to calculate COAs using this function:
@@ -1525,6 +1532,8 @@ tiger_plot +
 
 <br>
 
+**BONUS SECTION: For the eager folk who want to progress onto more advanced utilisation distribution models, the following section will help get you get your head around Brownian bridge models. We will not be going through this at the workshop (for lack of time), but you can work through this on your own time.**
+
 ### Incorporating movement paths using Brownian bridges (**BBKUD**)
 
 Finally, for the last excersise for this workshop, we will use an extended version of the KUD, taking movement paths of tagged individuals into account when estimating its utilisation distribution. This is done by incorporating the time dependence between relocations using a 'Brownian bridge' process. 
@@ -1636,8 +1645,9 @@ If you have any comments or queries reguarding this workshop feel free to contac
 
 <br>
 
-Insert
-Thanks to our sponsors for supporting this R workshop.
+![ ](Images/Sponsors.png)
+
+
 
 
 
