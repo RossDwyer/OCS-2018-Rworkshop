@@ -18,6 +18,8 @@ htmltools::img(src =knitr::image_uri('Images/OCS.jpeg'),
                style = 'position:absolute; top:0; right:0; padding:10px;')
 ```
 
+<br>
+<br>
 
 ![ ](Images/Sponsors.png)
 
