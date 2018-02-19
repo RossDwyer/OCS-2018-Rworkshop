@@ -659,6 +659,7 @@ blacktip %>%
   geom_point() +
   facet_wrap(~Transmitter.Name, nrow=1) # This time plot seperate boxplots for each shark
 ```
+
 **Additional Task: Can you now plot this with a different colour for each shark?**
 
 <br>  
@@ -744,6 +745,7 @@ We can then run the `writeOGR` function to write this file to disk. We specify t
 writeOGR(blacktip, # This field needs to be a SpatialPoints*, SpatialLines* or SpatialPolygons* object
          dsn="GIS/blacktip.shp", layer= "blacktip.shp", driver="ESRI Shapefile")
 ```
+
 **Additional Task: Can you output the blacktip shark data as a KML file to view on Google Earth?**
 
 <br>
@@ -950,7 +952,8 @@ leaflet() %>%
              lat = PointsDirect_crocs$LATITUDE, 
              fill=TRUE, color="white", weight=10) 
 ```
-**Additional Task: Add the detections of "Gecko" the croc (from the `crocs` dataset) to this leaflet plot. [hint: you will have to use `left_join()` to merge the receiver location to the crocs dataset]**
+
+**Additional Task: Add the detections of "Gecko" the croc (from the `crocs` dataset) to this leaflet plot. [hint: you will have to use the 'left_join()' function to merge the receiver location to the crocs dataset, lookup `?left_join()`]**
 
 <br>
 
@@ -1095,7 +1098,7 @@ The file will be written in your Project folder and can be opened in Google Eart
 
 ![ ](Images/timeslider.png)
 
-***Additional Task: try generating animations for the other crocodiles in the data frame**
+**Additional Task: try generating animations for the other crocodiles in the data frame**
 
 There is also a another handy function for visualising the movements of multiple animals at the same time.
 
@@ -1408,7 +1411,7 @@ library(VTrack)
 
 There are three input variables needed to calculate COAs using this function:
 
-* `tagdata`   : the data frame with your tag detection data
+* `data`      : the data frame with your tag detection data
 * `id`        : the name of the column with a unique identifier for each tag/animal
 * `timestep`  : the size of the temporal bin used to calculate COAs (in minutes)
 
@@ -1447,6 +1450,8 @@ In this workshop we will be using the [`adehabitatHR`](https://cran.r-project.or
 library(adehabitatHR)
 library(raster)
 ```
+
+<br>
 
 ### Minimum Convex Polygons (**MCP**)
 
@@ -1534,7 +1539,7 @@ tiger_plot +
 
 <br>
 
-**BONUS SECTION: For the eager folk who want to progress onto more advanced utilisation distribution models, the following section will help get you get your head around Brownian bridge models. We will not be going through this at the workshop (for lack of time), but you can work through this on your own time.**
+**BONUS SECTION: For the eager folk who want to progress onto more advanced utilisation distribution models, the following section will introduce the Brownian bridge models. We will not be going through this at the workshop (for lack of time), but you can work through this on your own time.**
 
 ### Incorporating movement paths using Brownian bridges (**BBKUD**)
 
@@ -1565,8 +1570,8 @@ plot(traj)
 
 The next step is parameter selection. The calculation of BBKUDs require two smoothing parameters:
 
-* `sig1` : This parameter is *related to* the uncertainty of relocation along each step trajectory. This parameter is somewhat related to the speed of the tagged animal. 
-* `sig2` : This parameter is related to the uncertainty of relocation at the nodes (in our case COAs). This parameter is similar to the `h` parameter we used earlier.
+* `sig1` : This parameter is *related to* the uncertainty of relocation along each step trajectory. This parameter is somewhat related to the speed of the tagged animal but not equal to the speed of the animal. 
+* `sig2` : This parameter is related to the uncertainty of relocation at the nodes (in our case COAs). This parameter is similar to the `h` parameter we used earlier and somewhat related to the listening range of recievers in your array.
 
 For this exercise we will use a conservative estimate of receiver listening range of ~50 m. We encourage you to conduct range testing on your acoustic arrays to improve these models!
 
@@ -1581,6 +1586,8 @@ sig1.df <- liker(traj,
 
 sig1 <- (unname(sapply(sig1.df, '[[', 1)))/7 # extract the sig1 values for each animal
 ```
+
+**Note:** The `sig1` parameters are divided by 7. This is a smoothing parameter divisor used to adjust the shape of the final BBKUD. Higher values for divisors will produce narrower BBKUD estimates. This divisor needs to be chosen carefully, by first testing multiple values and choosing the one that produces KUD estimates that look reasonable.
 
 <br>
 
