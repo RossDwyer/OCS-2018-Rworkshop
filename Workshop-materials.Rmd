@@ -156,7 +156,7 @@ Next, create a New Project using the *Create Project* command (available on the 
 
 ![ ](Images/RStudio_newproj.png)
 
-Select **Existing Directory** then save the project within the "OCS-2018-Rworkshop" folder. 
+Select **Existing Directory** then save the project within the "Animals-in-Motion-2018" folder. 
 
 When a *New Project* is created, R Studio:
 
