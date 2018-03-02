@@ -20,6 +20,7 @@ htmltools::img(src =knitr::image_uri('Images/OCS.jpeg'),
 
 <br>
 <br>
+<br> 
 
 ![ ](Images/Sponsors.png)
 
@@ -918,13 +919,10 @@ saveWidget(myleafletplot, file="mymap.html") # uses the htmlwidgets package
 
 In this third session we are going to work with a data set containing detection data from 3 Estuarine Crocodiles (*Crocodylus porosus*) as shown in the image above. These animals were captured and tagged within the Wenlock River, Cape York. Crocodiles were dual tagged using both GPS transmitters and using a network of acoustic hydrophones deployed along the river system. You can read more about this study [here](http://www.publish.csiro.au/mf/mf14042)
 
-For this session, we will need the most recent version of the `VTrack` package from our GitHub repository. This contains some new functionality that currently is not on CRAN.
+For this session, we will need the most recent version of the `VTrack` package from CRAN.
 
 ```{r, eval=FALSE}
-library(devtools) # Helps download development versions of R packages
-
-devtools::install_github("RossDwyer/VTrack") # Install development version of VTrack directly from github
-
+library(VTrack) # Version 1.2 has new COA functionality and works more effectively with Station names
 ```
 
 We then load the dataset containing the crocodile tracks and the receiver locations from within the `VTrack` package using the `data()` command
@@ -963,6 +961,8 @@ Understanding movement paths using telemetry data can easily be done using anima
 
 ```{r, eval=FALSE}
 # install packages and load libraries
+library(devtools)  # Helps download development versions of R packages
+
 devtools::install_github("16EAGLE/moveVis") # Install development version of moveVis directly from github
 library(move)
 library(moveVis)
